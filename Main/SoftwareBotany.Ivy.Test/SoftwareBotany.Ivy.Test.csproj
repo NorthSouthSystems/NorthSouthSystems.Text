@@ -49,6 +49,9 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfoShared.cs">
+      <Link>Properties\AssemblyInfoShared.cs</Link>
+    </Compile>
     <Compile Include="CharExtensionsTests.cs" />
     <Compile Include="Positional\StringPositionalHelperTests.cs" />
     <Compile Include="Positional\StringPositionalJoinExtensionsTests.cs" />
