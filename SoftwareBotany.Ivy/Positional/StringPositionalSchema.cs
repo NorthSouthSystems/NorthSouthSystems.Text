@@ -4,45 +4,46 @@ using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
-    public class StringPositionalSchema
+    public sealed class StringPositionalSchema
     {
         public StringPositionalSchema() { }
 
-        public StringPositionalSchema(IEnumerable<KeyValuePair<string, int[]>> entries)
+        public StringPositionalSchema(IEnumerable<StringPositionalSchemaEntry> entries)
         {
-            foreach (KeyValuePair<string, int[]> entry in entries)
+            if (entries == null)
+                throw new ArgumentNullException("entries");
+
+            foreach (StringPositionalSchemaEntry entry in entries)
                 AddEntry(entry);
         }
 
-        private readonly Dictionary<string, int[]> _entries = new Dictionary<string, int[]>();
+        private readonly Dictionary<string, StringPositionalSchemaEntry> _entries = new Dictionary<string, StringPositionalSchemaEntry>();
 
-        public void AddEntry(KeyValuePair<string, int[]> entry)
+        public void AddEntry(StringPositionalSchemaEntry entry)
         {
+            if (entry == null)
+                throw new ArgumentNullException("entry");
+
             VerifyEntry(entry);
-            _entries.Add(entry.Key, entry.Value);
+            _entries.Add(entry.Header, entry);
         }
 
-        internal int[] this[string key] { get { return _entries[key]; } }
+        internal StringPositionalSchemaEntry this[string header] { get { return _entries[header]; } }
 
-        internal KeyValuePair<string, int[]> GetEntryForValue(string value)
+        internal StringPositionalSchemaEntry GetEntryForValue(string value)
         {
-            foreach (KeyValuePair<string, int[]> entry in _entries)
-                if (value.StartsWith(entry.Key))
+            foreach (StringPositionalSchemaEntry entry in _entries.Values)
+                if (value.StartsWith(entry.Header, StringComparison.Ordinal))
                     return entry;
 
-            throw new ArgumentException("No matching schema definition found for value: " + value);
+            throw new ArgumentOutOfRangeException("value", value, "No matching schema definition.");
         }
 
-        private void VerifyEntry(KeyValuePair<string, int[]> entry)
+        private void VerifyEntry(StringPositionalSchemaEntry entry)
         {
-            if (string.IsNullOrEmpty(entry.Key))
-                throw new ArgumentException("Each schema.Key must be non-null and non-empty.");
-
-            StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(entry.Value);
-
-            foreach(KeyValuePair<string, int[]> existingEntry in _entries)
-                if (existingEntry.Key.StartsWith(entry.Key) || entry.Key.StartsWith(existingEntry.Key))
-                    throw new ArgumentException("No schema.Key may StartWith any other schema.Key.");
+            foreach (StringPositionalSchemaEntry existingEntry in _entries.Values)
+                if (existingEntry.Header.StartsWith(entry.Header, StringComparison.Ordinal) || entry.Header.StartsWith(existingEntry.Header, StringComparison.Ordinal))
+                    throw new ArgumentOutOfRangeException("entry", entry.Header, "No entry.Header may StartWith any other existing entry.Header.");
         }
     }
 }

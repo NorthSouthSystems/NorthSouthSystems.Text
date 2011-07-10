@@ -209,7 +209,7 @@ namespace SoftwareBotany.Ivy
                             break;
 
                         default:
-                            throw new NotSupportedException(category.ToString());
+                            throw new NotImplementedException(category.ToString());
                     }
 
                     index++;

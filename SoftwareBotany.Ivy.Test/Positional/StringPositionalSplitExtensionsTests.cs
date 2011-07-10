@@ -90,35 +90,35 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void SchemaSingle()
         {
-            var schema = new StringPositionalSchema(new KeyValuePair<string, int[]>[]
+            var schema = new StringPositionalSchema(new StringPositionalSchemaEntry[]
             {
-                new KeyValuePair<string, int[]>("A", new []{1, 1, 1}),
-                new KeyValuePair<string, int[]>("B", new []{2, 2, 2})
+                new StringPositionalSchemaEntry("A", new []{1, 1, 1}),
+                new StringPositionalSchemaEntry("B", new []{2, 2, 2})
             });
 
             var split = "A123".SplitPositionalSchema(schema);
-            Assert.AreEqual("A", split.Key);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, split.Value);
+            Assert.AreEqual("A", split.Entry.Header);
+            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, split.ToArray());
 
             split = "B123456".SplitPositionalSchema(schema);
-            Assert.AreEqual("B", split.Key);
-            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, split.Value);
+            Assert.AreEqual("B", split.Entry.Header);
+            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, split.ToArray());
         }
 
         [TestMethod]
         public void SchemaEnumerable()
         {
-            var schema = new StringPositionalSchema(new KeyValuePair<string, int[]>[]
+            var schema = new StringPositionalSchema(new StringPositionalSchemaEntry[]
             {
-                new KeyValuePair<string, int[]>("A", new []{1, 1, 1}),
-                new KeyValuePair<string, int[]>("B", new []{2, 2, 2})
+                new StringPositionalSchemaEntry("A", new []{1, 1, 1}),
+                new StringPositionalSchemaEntry("B", new []{2, 2, 2})
             });
 
             var splits = new[] { "A123", "B123456" }.SplitPositionalSchema(schema).ToArray();
-            Assert.AreEqual("A", splits[0].Key);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, splits[0].Value);
-            Assert.AreEqual("B", splits[1].Key);
-            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, splits[1].Value);
+            Assert.AreEqual("A", splits[0].Entry.Header);
+            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, splits[0].ToArray());
+            Assert.AreEqual("B", splits[1].Entry.Header);
+            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, splits[1].ToArray());
         }
 
         #region Exceptions
@@ -198,6 +198,23 @@ namespace SoftwareBotany.Ivy
         public void RepeatingArgument7()
         {
             "1234567".SplitPositionalRepeating(1, 2).ToArray();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SchemaValueNull()
+        {
+            var schema = new StringPositionalSchema();
+            string value = null;
+            value.SplitPositionalSchema(schema);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SchemaSchemaNull()
+        {
+            string value = "Afoo";
+            value.SplitPositionalSchema(null);
         }
 
         #endregion

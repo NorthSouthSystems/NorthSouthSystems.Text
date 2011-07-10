@@ -7,7 +7,7 @@ namespace SoftwareBotany.Ivy
     /// themselves to contain an instance of the delimiter, put onto rows in the case of serialization, and how
     /// newlines in a column are substituted in the case of serialization.
     /// </summary>
-    public class StringQuotedSignals
+    public sealed class StringQuotedSignals
     {
         public static readonly StringQuotedSignals Csv = new StringQuotedSignals(",", "\"", Environment.NewLine);
         public static readonly StringQuotedSignals Pipe = new StringQuotedSignals("|", "\"", Environment.NewLine);

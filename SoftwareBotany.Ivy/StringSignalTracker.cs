@@ -17,17 +17,18 @@ namespace SoftwareBotany.Ivy
     {
         public StringSignalTracker(string signal)
         {
-            Signal = signal.NullToEmpty();
-            _activeCounters = new List<int>(Signal.Length);
+            _signal = signal.NullToEmpty();
+            _activeCounters = new List<int>(_signal.Length);
         }
 
-        public readonly string Signal;
+        public string Signal { get { return _signal; } }
+        private readonly string _signal;
 
         private bool _triggered;
         private readonly List<int> _activeCounters;
 
-        public bool IsCounting { get { return Signal.Length > 0 && _activeCounters.Count > 0; } }
-        public bool IsTriggered { get { return Signal.Length > 0 && _triggered; } }
+        public bool IsCounting { get { return _signal.Length > 0 && _activeCounters.Count > 0; } }
+        public bool IsTriggered { get { return _signal.Length > 0 && _triggered; } }
         public int CharsProcessed { get; private set; }
 
         public void Reset()
@@ -38,29 +39,29 @@ namespace SoftwareBotany.Ivy
             CharsProcessed = 0;
         }
 
-        public void ProcessChar(char c)
+        public void ProcessChar(char value)
         {
             CharsProcessed++;
 
-            if (Signal.Length == 0)
+            if (_signal.Length == 0)
                 return;
 
             if (_triggered)
-                throw new InvalidOperationException("Cannot ProcessChar when a StringSignalTracker IsTriggered.");
+                throw new InvalidOperationException("Cannot process a char when a String Signal Tracker is triggered.");
 
             // Iterate backwards because we will be removing from the list during the iteration.
             for (int i = _activeCounters.Count - 1; i >= 0; i--)
             {
-                if (Signal[_activeCounters[i]] == c)
+                if (_signal[_activeCounters[i]] == value)
                     _activeCounters[i]++;
                 else
                     _activeCounters.RemoveAt(i);
             }
 
-            if (Signal[0] == c)
+            if (_signal[0] == value)
                 _activeCounters.Add(1);
 
-            if (_activeCounters.Any(counter => counter == Signal.Length))
+            if (_activeCounters.Any(counter => counter == _signal.Length))
             {
                 _triggered = true;
                 _activeCounters.Clear();

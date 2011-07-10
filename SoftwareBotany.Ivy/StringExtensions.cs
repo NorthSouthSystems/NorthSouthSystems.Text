@@ -38,19 +38,19 @@ namespace SoftwareBotany.Ivy
 
         public static string NormalizeWhiteSpace(this string value, string respectNewLine) { return new string(NormalizeWhiteSpace((IEnumerable<char>)value, respectNewLine).ToArray()); }
 
-        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> value) { return NormalizeWhiteSpace(value, Environment.NewLine); }
+        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars) { return NormalizeWhiteSpace(chars, Environment.NewLine); }
 
-        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> value, string respectNewLine)
+        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars, string respectNewLine)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
             bool nonWhiteSpaceHit = false;
             bool bufferedSpace = false;
             bool bufferedNewLine = false;
             StringSignalTracker newLineTracker = new StringSignalTracker(respectNewLine);
 
-            foreach (char c in value)
+            foreach (char c in chars)
             {
                 if (char.IsWhiteSpace(c))
                 {
@@ -75,7 +75,7 @@ namespace SoftwareBotany.Ivy
 
                         bufferedSpace = false;
                     }
-                    
+
                     yield return c;
 
                     nonWhiteSpaceHit = true;
@@ -117,21 +117,21 @@ namespace SoftwareBotany.Ivy
 
         public static string ToLowerCamelCase(this string value) { return new string(ToCamelCaseImplementation(value, true).ToArray()); }
 
-        public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> value) { return ToCamelCaseImplementation(value, true); }
+        public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, true); }
 
         public static string ToUpperCamelCase(this string value) { return new string(ToCamelCaseImplementation(value, false).ToArray()); }
 
-        public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> value) { return ToCamelCaseImplementation(value, false); }
+        public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, false); }
 
-        private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> value, bool isLower)
+        private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> chars, bool isLower)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
             bool previousWhiteSpace = true;
             int outputIndex = 0;
 
-            foreach (char c in value)
+            foreach (char c in chars)
             {
                 if (!char.IsWhiteSpace(c))
                 {
@@ -156,12 +156,12 @@ namespace SoftwareBotany.Ivy
 
         public static string SpaceCamelCase(this string value) { return new string(SpaceCamelCase((IEnumerable<char>)value).ToArray()); }
 
-        public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> value)
+        public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> chars)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
-            if (!value.Any())
+            if (!chars.Any())
                 yield break;
 
             bool first = true;
@@ -171,7 +171,7 @@ namespace SoftwareBotany.Ivy
             bool previousIsLower = false;
             bool previousIsUpper = false;
 
-            foreach (char c in value)
+            foreach (char c in chars)
             {
                 bool isDigit = char.IsDigit(c);
                 bool isLetter = char.IsLetter(c);
@@ -210,12 +210,12 @@ namespace SoftwareBotany.Ivy
 
         #region Filtering
 
-        public static string Filter(this string s, CharFilters filters)
+        public static string Filter(this string value, CharFilters filters)
         {
-            if (s == null)
-                throw new ArgumentNullException("s");
+            if (value == null)
+                throw new ArgumentNullException("value");
 
-            return filters == CharFilters.None ? s : new string(s.Where(c => c.PassesFilters(filters)).ToArray());
+            return filters == CharFilters.None ? value : new string(value.Where(c => c.PassesFilters(filters)).ToArray());
         }
 
         #endregion

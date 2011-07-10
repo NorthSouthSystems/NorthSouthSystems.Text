@@ -15,16 +15,16 @@ namespace SoftwareBotany.Ivy
 
     public static class CharExtensions
     {
-        public static bool PassesFilters(this char c, CharFilters filters)
+        public static bool PassesFilters(this char value, CharFilters filters)
         {
             if (filters == CharFilters.None)
                 return true;
 
-            return (!filters.HasFlag(CharFilters.RemoveLetters) || !char.IsLetter(c))
-                && (!filters.HasFlag(CharFilters.RemoveDigits) || !char.IsDigit(c))
-                && (!filters.HasFlag(CharFilters.RemovePunctuation) || !char.IsPunctuation(c))
-                && (!filters.HasFlag(CharFilters.RemoveWhiteSpace) || !char.IsWhiteSpace(c))
-                && (!filters.HasFlag(CharFilters.RemoveOther) || char.IsLetter(c) || char.IsDigit(c) || char.IsPunctuation(c) || char.IsWhiteSpace(c));
+            return (!filters.HasFlag(CharFilters.RemoveLetters) || !char.IsLetter(value))
+                && (!filters.HasFlag(CharFilters.RemoveDigits) || !char.IsDigit(value))
+                && (!filters.HasFlag(CharFilters.RemovePunctuation) || !char.IsPunctuation(value))
+                && (!filters.HasFlag(CharFilters.RemoveWhiteSpace) || !char.IsWhiteSpace(value))
+                && (!filters.HasFlag(CharFilters.RemoveOther) || char.IsLetter(value) || char.IsDigit(value) || char.IsPunctuation(value) || char.IsWhiteSpace(value));
         }
     }
 }

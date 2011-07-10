@@ -32,42 +32,42 @@ namespace SoftwareBotany.Ivy
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SplitOrJoinPositionalVerifyLengthsArgumentBadLength1()
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(new[] { 0 });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SplitOrJoinPositionalVerifyLengthsArgumentBadLength2()
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(new[] { -1 });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void SplitOrJoinPositionalVerifyLengthsArgumentExceptionBadLength3()
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SplitOrJoinPositionalVerifyLengthsArgumentBadLength3()
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(new[] { 0, 1 });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SplitOrJoinPositionalVerifyLengthsArgumentBadLength4()
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(new[] { -1, 1 });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SplitOrJoinPositionalVerifyLengthsArgumentBadLength5()
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(new[] { 1, 0 });
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void SplitOrJoinPositionalVerifyLengthsArgumentBadLength6()
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(new[] { 1, -1 });

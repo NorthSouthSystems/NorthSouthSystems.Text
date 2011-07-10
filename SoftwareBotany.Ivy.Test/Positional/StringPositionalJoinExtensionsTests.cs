@@ -31,32 +31,37 @@ namespace SoftwareBotany.Ivy
         }
 
         [TestMethod]
-        public void PositionalSchema()
+        public void Schema()
         {
-            var schema = new StringPositionalSchema(new KeyValuePair<string, int[]>[]
-            {
-                new KeyValuePair<string, int[]>("A", new []{1, 1, 1}),
-                new KeyValuePair<string, int[]>("B", new []{2, 2, 2})
-            });
+            var a = new StringPositionalSchemaEntry("A", new []{1, 1, 1});
+            var b = new StringPositionalSchemaEntry("B", new []{2, 2, 2});
 
-            var split = new KeyValuePair<string, string[]>("A", new[] { "1", "2", "3" });
-            string join = split.JoinPositionalSchema(' ', schema);
+            var split = new StringPositionalSchemaEntryAndStrings(a, new[] { "1", "2", "3" });
+            string join = split.JoinPositionalSchema(' ');
             Assert.AreEqual("A123", join);
 
-            split = new KeyValuePair<string, string[]>("B", new[] { "12", "34", "56" });
-            join = split.JoinPositionalSchema(' ', schema);
+            split = new StringPositionalSchemaEntryAndStrings(b, new[] { "12", "34", "56" });
+            join = split.JoinPositionalSchema(' ');
             Assert.AreEqual("B123456", join);
 
-            split = new KeyValuePair<string, string[]>("B", new[] { "1", "2", "3" });
-            join = split.JoinPositionalSchema(' ', schema);
+            split = new StringPositionalSchemaEntryAndStrings(b, new[] { "1", "2", "3" });
+            join = split.JoinPositionalSchema(' ');
             Assert.AreEqual("B1 2 3 ", join);
 
-            split = new KeyValuePair<string, string[]>("B", new[] { "1", "2", "3" });
-            join = split.JoinPositionalSchema('-', schema);
+            split = new StringPositionalSchemaEntryAndStrings(b, new[] { "1", "2", "3" });
+            join = split.JoinPositionalSchema('-');
             Assert.AreEqual("B1-2-3-", join);
         }
 
         #region Exceptions
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void PositionalNull()
+        {
+            string[] strings = null;
+            strings.JoinPositional(' ', 1, 1, 1);
+        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -77,6 +82,14 @@ namespace SoftwareBotany.Ivy
         public void PositionalArgument3()
         {
             new[] { "A", "BC" }.JoinPositional(' ', 1, 1);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SchemaNull()
+        {
+            StringPositionalSchemaEntryAndStrings split = null;
+            split.JoinPositionalSchema(' ');
         }
 
         #endregion
