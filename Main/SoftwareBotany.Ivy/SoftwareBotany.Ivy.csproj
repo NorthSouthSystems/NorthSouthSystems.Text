@@ -55,6 +55,9 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="CharExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Positional\StringPositionalSchemaEntry.cs" />
+    <Compile Include="Positional\StringPositionalSchemaEntryAndStrings.cs" />
     <Compile Include="Positional\StringPositionalHelpers.cs" />
     <Compile Include="Positional\StringPositionalJoinExtensions.cs" />
     <Compile Include="Positional\StringPositionalSchema.cs" />

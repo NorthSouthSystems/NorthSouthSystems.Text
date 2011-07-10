@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SoftwareBotany.Ivy
 {
@@ -14,11 +13,11 @@ namespace SoftwareBotany.Ivy
             return SplitPositionalImplementation(value, lengths);
         }
 
-        public static IEnumerable<string[]> SplitPositional(this IEnumerable<string> value, params int[] lengths)
+        public static IEnumerable<string[]> SplitPositional(this IEnumerable<string> strings, params int[] lengths)
         {
             StringPositionalHelpers.SplitOrJoinPositionalVerifyLengths(lengths);
 
-            foreach (string s in value)
+            foreach (string s in strings)
                 yield return SplitPositionalImplementation(s, lengths);
         }
 
@@ -29,7 +28,7 @@ namespace SoftwareBotany.Ivy
             int lengthsSum = lengths.Sum();
 
             if (value.Length % lengthsSum != 0)
-                throw new ArgumentException("String length must be a multiple the sum of all lengths.");
+                throw new ArgumentException("String length must be a multiple the sum of all lengths.", "value");
 
             int iterations = value.Length / lengthsSum;
 
@@ -37,15 +36,21 @@ namespace SoftwareBotany.Ivy
                 yield return SplitPositionalImplementation(value.Substring(i * lengthsSum, lengthsSum), lengths);
         }
 
-        public static KeyValuePair<string, string[]> SplitPositionalSchema(this string value, StringPositionalSchema schema)
+        public static StringPositionalSchemaEntryAndStrings SplitPositionalSchema(this string value, StringPositionalSchema schema)
         {
-            KeyValuePair<string, int[]> entry = schema.GetEntryForValue(value);
-            return new KeyValuePair<string, string[]>(entry.Key, SplitPositionalImplementation(value.Substring(entry.Key.Length), entry.Value));
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            if (schema == null)
+                throw new ArgumentNullException("schema");
+
+            StringPositionalSchemaEntry entry = schema.GetEntryForValue(value);
+            return new StringPositionalSchemaEntryAndStrings(entry, SplitPositionalImplementation(value.Substring(entry.Header.Length), entry.Lengths));
         }
 
-        public static IEnumerable<KeyValuePair<string, string[]>> SplitPositionalSchema(this IEnumerable<string> value, StringPositionalSchema schema)
+        public static IEnumerable<StringPositionalSchemaEntryAndStrings> SplitPositionalSchema(this IEnumerable<string> strings, StringPositionalSchema schema)
         {
-            foreach (string s in value)
+            foreach (string s in strings)
                 yield return SplitPositionalSchema(s, schema);
         }
 
@@ -60,14 +65,14 @@ namespace SoftwareBotany.Ivy
                 int length = lengths[i];
 
                 if (value.Length < startIndex + length)
-                    throw new ArgumentException("String length must equal the sum of all lengths.");
+                    throw new ArgumentException("String length must equal the sum of all lengths.", "value");
 
                 results[i] = value.Substring(startIndex, length);
                 startIndex += length;
             }
 
             if (value.Length != startIndex)
-                throw new ArgumentException("String length must equal the sum of all lengths.");
+                throw new ArgumentException("String length must equal the sum of all lengths.", "value");
 
             return results;
         }
