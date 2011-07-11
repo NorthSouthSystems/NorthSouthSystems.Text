@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
 namespace SoftwareBotany.Ivy
 {
-    public static class StringPositionalJoinExtensions
+    public static partial class StringPositionalJoinExtensions
     {
         public static string JoinPositional(this string[] strings, char fillCharacter, params int[] lengths)
         {
@@ -18,14 +17,6 @@ namespace SoftwareBotany.Ivy
                 throw new ArgumentException("Number of strings to be joined must equal number of lengths.");
 
             return JoinPositionalImplementation(strings, fillCharacter, lengths);
-        }
-
-        public static string JoinPositionalSchema(this StringPositionalSchemaEntryAndStrings entryAndStrings, char fillCharacter)
-        {
-            if (entryAndStrings == null)
-                throw new ArgumentNullException("entryAndStrings");
-
-            return entryAndStrings.Entry.Header + JoinPositionalImplementation(entryAndStrings.Strings, fillCharacter, entryAndStrings.Entry.Lengths);
         }
 
         private static string JoinPositionalImplementation(string[] strings, char fillCharacter, int[] lengths)

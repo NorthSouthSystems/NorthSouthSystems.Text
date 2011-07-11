@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
-    public sealed class StringPositionalSchemaEntryAndStrings : IEnumerable<string>
+    public sealed class StringSchemaEntryAndStrings : IEnumerable<string>
     {
-        public StringPositionalSchemaEntryAndStrings(StringPositionalSchemaEntry entry, IEnumerable<string> strings)
+        public StringSchemaEntryAndStrings(StringSchemaEntry entry, IEnumerable<string> strings)
         {
             if (entry == null)
                 throw new ArgumentNullException("entry");
@@ -20,8 +20,8 @@ namespace SoftwareBotany.Ivy
             _strings = strings.ToArray();
         }
 
-        public StringPositionalSchemaEntry Entry { get { return _entry; } }
-        private readonly StringPositionalSchemaEntry _entry;
+        public StringSchemaEntry Entry { get { return _entry; } }
+        private readonly StringSchemaEntry _entry;
 
         internal string[] Strings { get { return _strings; } }
         private readonly string[] _strings;
