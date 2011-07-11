@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,15 +6,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Ivy
 {
     [TestClass]
-    public class StringPositionalSchemaTests
+    public class StringSchemaTests
     {
         [TestMethod]
         public void Basic()
         {
-            var schema = new StringPositionalSchema(new StringPositionalSchemaEntry[]
+            var schema = new StringSchema(new StringSchemaEntry[]
             {
-                new StringPositionalSchemaEntry("A", new [] { 1 }),
-                new StringPositionalSchemaEntry("B", new [] { 2 }),
+                new StringSchemaEntry("A", new [] { 1 }),
+                new StringSchemaEntry("B", new [] { 2 }),
             });
 
             CollectionAssert.AreEqual(new[] { 1 }, schema["A"].ToArray());
@@ -38,14 +37,14 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentNullException))]
         public void ConstructorNull()
         {
-            var schema = new StringPositionalSchema(null);
+            var schema = new StringSchema(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void AddEntryNull()
         {
-            var schema = new StringPositionalSchema();
+            var schema = new StringSchema();
             schema.AddEntry(null);
         }
 
@@ -53,8 +52,8 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void GetEntryForValueArgument()
         {
-            var schema = new StringPositionalSchema();
-            StringPositionalSchemaEntry entry = new StringPositionalSchemaEntry("A", new[] { 1 });
+            var schema = new StringSchema();
+            StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1 });
             schema.AddEntry(entry);
             schema.GetEntryForValue("Bfoo");
         }
@@ -63,8 +62,8 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentException))]
         public void VerifyEntryArgumentBadKey()
         {
-            var schema = new StringPositionalSchema();
-            StringPositionalSchemaEntry entry = new StringPositionalSchemaEntry(string.Empty, new[] { 1 });
+            var schema = new StringSchema();
+            StringSchemaEntry entry = new StringSchemaEntry(string.Empty, new[] { 1 });
             schema.AddEntry(entry);
         }
 
@@ -72,10 +71,10 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void VerifyEntryArgumentOverlappedKey1()
         {
-            var schema = new StringPositionalSchema();
-            StringPositionalSchemaEntry entry = new StringPositionalSchemaEntry("A", new[] { 1 });
+            var schema = new StringSchema();
+            StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1 });
             schema.AddEntry(entry);
-            entry = new StringPositionalSchemaEntry("AB", new[] { 1 });
+            entry = new StringSchemaEntry("AB", new[] { 1 });
             schema.AddEntry(entry);
         }
 
@@ -83,26 +82,11 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void VerifyEntryArgumentOverlappedKey2()
         {
-            var schema = new StringPositionalSchema();
-            StringPositionalSchemaEntry entry = new StringPositionalSchemaEntry("AB", new[] { 1 });
+            var schema = new StringSchema();
+            StringSchemaEntry entry = new StringSchemaEntry("AB", new[] { 1 });
             schema.AddEntry(entry);
-            entry = new StringPositionalSchemaEntry("A", new[] { 1 });
+            entry = new StringSchemaEntry("A", new[] { 1 });
             schema.AddEntry(entry);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void SchemaEntryAndStringsEntryNull()
-        {
-            StringPositionalSchemaEntryAndStrings split = new StringPositionalSchemaEntryAndStrings(null, new[] { "Dan", "Terry" });
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void SchemaEntryAndStringsStringsNull()
-        {
-            StringPositionalSchemaEntry entry = new StringPositionalSchemaEntry("A", new[] { 10, 10 });
-            StringPositionalSchemaEntryAndStrings split = new StringPositionalSchemaEntryAndStrings(entry, null);
         }
 
         #endregion

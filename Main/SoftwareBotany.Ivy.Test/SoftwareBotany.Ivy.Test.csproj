@@ -55,7 +55,10 @@
     <Compile Include="CharExtensionsTests.cs" />
     <Compile Include="Positional\StringPositionalHelperTests.cs" />
     <Compile Include="Positional\StringPositionalJoinExtensionsTests.cs" />
-    <Compile Include="Positional\StringPositionalSchemaTests.cs" />
+    <Compile Include="Schema\StringSchemaSplitExtensionsTests.cs" />
+    <Compile Include="Schema\StringSchemaJoinExtensionsTests.cs" />
+    <Compile Include="Schema\StringSchemaEntryAndStringsTests.cs" />
+    <Compile Include="Schema\StringSchemaTests.cs" />
     <Compile Include="Positional\StringPositionalSplitExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quoted\StringQuotedJoinExtensionsTests.cs" />
@@ -70,6 +73,7 @@
       <Name>SoftwareBotany.Ivy</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

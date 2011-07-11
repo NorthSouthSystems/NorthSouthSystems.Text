@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SoftwareBotany.Ivy
 {
-    public sealed class StringPositionalSchemaEntry : IEnumerable<int>
+    public sealed class StringSchemaEntry : IEnumerable<int>
     {
-        public StringPositionalSchemaEntry(string header, int[] lengths)
+        public StringSchemaEntry(string header, int[] lengths)
         {
             if (string.IsNullOrEmpty(header))
                 throw new ArgumentException("Must be non-null non-empty.", "header");
