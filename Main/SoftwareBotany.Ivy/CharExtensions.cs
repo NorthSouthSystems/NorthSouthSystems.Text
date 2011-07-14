@@ -2,6 +2,9 @@
 
 namespace SoftwareBotany.Ivy
 {
+    /// <summary>
+    /// Flags used to determine which characters to filter out of an enumeration of chars.
+    /// </summary>
     [Flags]
     public enum CharFilters
     {
@@ -13,8 +16,17 @@ namespace SoftwareBotany.Ivy
         RemoveOther = 16,
     }
 
+    /// <summary>
+    /// Extensions for the System.Char primitive data type.
+    /// </summary>
     public static class CharExtensions
     {
+        /// <summary>
+        /// Determines whether or not a char can pass through a given set of CharFilters.
+        /// </summary>
+        /// <param name="value">The char to test.</param>
+        /// <param name="filters">Bitwise union of 1 or more CharFilters designating which characters to filter.</param>
+        /// <returns>Returns true if the char passes through the filters.</returns>
         public static bool PassesFilters(this char value, CharFilters filters)
         {
             if (filters == CharFilters.None)
