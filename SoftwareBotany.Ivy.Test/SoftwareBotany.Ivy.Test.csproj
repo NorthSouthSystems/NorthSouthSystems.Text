@@ -53,17 +53,22 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="CharExtensionsTests.cs" />
-    <Compile Include="Positional\StringPositionalHelperTests.cs" />
-    <Compile Include="Positional\StringPositionalJoinExtensionsTests.cs" />
+    <Compile Include="Fixed\StringFixedSplitLineTests.cs" />
+    <Compile Include="Fixed\StringFixedSplitLinesTests.cs" />
+    <Compile Include="Fixed\StringFixedHelperVerifyWidthsTests.cs" />
+    <Compile Include="Fixed\StringFixedJoinExtensionsTests.cs" />
+    <Compile Include="Quoted\StringQuotedSplitLineTests.cs" />
+    <Compile Include="Quoted\StringQuotedSplitLinesTests.cs" />
+    <Compile Include="Schema\StringSchemaEntryTests.cs" />
     <Compile Include="Schema\StringSchemaSplitExtensionsTests.cs" />
     <Compile Include="Schema\StringSchemaJoinExtensionsTests.cs" />
     <Compile Include="Schema\StringSchemaEntryAndStringsTests.cs" />
     <Compile Include="Schema\StringSchemaTests.cs" />
-    <Compile Include="Positional\StringPositionalSplitExtensionsTests.cs" />
+    <Compile Include="Fixed\StringFixedSplitLinesStreamTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quoted\StringQuotedJoinExtensionsTests.cs" />
     <Compile Include="Quoted\StringQuotedSignalsTests.cs" />
-    <Compile Include="Quoted\StringQuotedSplitExtensionsTests.cs" />
+    <Compile Include="Quoted\StringQuotedSplitLinesStreamTests.cs" />
     <Compile Include="StringExtensionsTests.cs" />
     <Compile Include="StringSignalTrackerTests.cs" />
   </ItemGroup>

@@ -5,41 +5,32 @@ using System.Text;
 
 namespace SoftwareBotany.Ivy
 {
-    public static class StringQuotedSplitExtensions
+    public static partial class StringQuotedExtensions
     {
         /// <summary>
         /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
         /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes will
         /// cause an exception because multiple lines are not allowed.
         /// </summary>
-        /// <param name="chars">The quoted delimited string to split.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>The string columns after the split.</returns>
-        public static string[] SplitQuoted(this IEnumerable<char> chars, StringQuotedSignals signals)
+        public static string[] SplitQuotedLine(this IEnumerable<char> chars, StringQuotedSignals signals)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (signals == null)
+                throw new ArgumentNullException("signals");
 
-            SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            string[] split = processor.Process(chars).SingleOrDefault();
-            return split == null ? new string[0] : split;
+            return SplitQuotedLine(chars, new SplitQuotedProcessor(signals));
         }
 
-        /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes are
-        /// allowed and signal a new split array to begin.
-        /// </summary>
-        /// <param name="chars">The quoted delimited string to split.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>An enumeration of sets of string columns after each line in the delimited string has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedMultiline(this IEnumerable<char> chars, StringQuotedSignals signals)
+        private static string[] SplitQuotedLine(IEnumerable<char> chars, SplitQuotedProcessor processor)
         {
             if (chars == null)
                 throw new ArgumentNullException("chars");
 
-            SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            return processor.Process(chars);
+            string[][] splits = processor.Process(chars).Take(2).ToArray();
+
+            if (splits.Length > 1)
+                throw new ArgumentException("Instances of signals' NewLine are not allowed outside of quotes.", "chars");
+
+            return splits.Length == 0 ? new string[0] : splits[0];
         }
 
         /// <summary>
@@ -48,24 +39,35 @@ namespace SoftwareBotany.Ivy
         /// cause an exception because multiple lines are not allowed in an individual string; i.e. multiple
         /// lines are determined by the strings parameter and not by each individual string.
         /// </summary>
-        /// <param name="strings">The quoted delimited strings to split.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>An enumeration of sets of string columns after each line in the delimited string has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedMultiline(this IEnumerable<IEnumerable<char>> strings, StringQuotedSignals signals)
+        /// <returns>A sequence of sets of string columns after each line has been split.</returns>
+        public static IEnumerable<string[]> SplitQuotedLines(this IEnumerable<IEnumerable<char>> strings, StringQuotedSignals signals)
         {
             if (strings == null)
                 throw new ArgumentNullException("strings");
 
+            if (signals == null)
+                throw new ArgumentNullException("signals");
+
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
+            return strings.Select(str => SplitQuotedLine(str, processor));
+        }
 
-            foreach (IEnumerable<char> str in strings)
-            {
-                if (str == null)
-                    throw new ArgumentException("strings");
+        /// <summary>
+        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
+        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes are
+        /// allowed and signal a new split array to begin.
+        /// </summary>
+        /// <returns>A sequence of sets of string columns after each line in the stream has been split.</returns>
+        public static IEnumerable<string[]> SplitQuotedLinesStream(this IEnumerable<char> chars, StringQuotedSignals signals)
+        {
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
-                string[] split = processor.Process(str).SingleOrDefault();
-                yield return split == null ? new string[0] : split;
-            }
+            if (signals == null)
+                throw new ArgumentNullException("signals");
+
+            SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
+            return processor.Process(chars);
         }
 
         /// <summary>

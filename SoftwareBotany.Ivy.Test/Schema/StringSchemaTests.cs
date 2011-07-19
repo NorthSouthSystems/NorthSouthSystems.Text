@@ -13,8 +13,8 @@ namespace SoftwareBotany.Ivy
         {
             var schema = new StringSchema(new StringSchemaEntry[]
             {
-                new StringSchemaEntry("A", new [] { 1 }),
-                new StringSchemaEntry("B", new [] { 2 }),
+                new StringSchemaEntry("A", 1),
+                new StringSchemaEntry("B", 2),
             });
 
             CollectionAssert.AreEqual(new[] { 1 }, schema["A"].ToArray());
@@ -53,18 +53,9 @@ namespace SoftwareBotany.Ivy
         public void GetEntryForValueArgument()
         {
             var schema = new StringSchema();
-            StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1 });
+            StringSchemaEntry entry = new StringSchemaEntry("A", 1);
             schema.AddEntry(entry);
             schema.GetEntryForValue("Bfoo");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void VerifyEntryArgumentBadKey()
-        {
-            var schema = new StringSchema();
-            StringSchemaEntry entry = new StringSchemaEntry(string.Empty, new[] { 1 });
-            schema.AddEntry(entry);
         }
 
         [TestMethod]
@@ -72,9 +63,9 @@ namespace SoftwareBotany.Ivy
         public void VerifyEntryArgumentOverlappedKey1()
         {
             var schema = new StringSchema();
-            StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1 });
+            StringSchemaEntry entry = new StringSchemaEntry("A", 1);
             schema.AddEntry(entry);
-            entry = new StringSchemaEntry("AB", new[] { 1 });
+            entry = new StringSchemaEntry("AB", 1);
             schema.AddEntry(entry);
         }
 
@@ -83,9 +74,9 @@ namespace SoftwareBotany.Ivy
         public void VerifyEntryArgumentOverlappedKey2()
         {
             var schema = new StringSchema();
-            StringSchemaEntry entry = new StringSchemaEntry("AB", new[] { 1 });
+            StringSchemaEntry entry = new StringSchemaEntry("AB", 1);
             schema.AddEntry(entry);
-            entry = new StringSchemaEntry("A", new[] { 1 });
+            entry = new StringSchemaEntry("A", 1);
             schema.AddEntry(entry);
         }
 

@@ -5,27 +5,27 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Ivy
 {
     [TestClass]
-    public class StringPositionalJoinExtensionsTests
+    public class StringFixedJoinExtensionsTests
     {
         [TestMethod]
         public void Basic()
         {
-            string join = new [] { "A", "B", "C"}.JoinPositional(' ', 1, 1, 1);
+            string join = new [] { "A", "B", "C"}.JoinFixedLine(1, 1, 1);
             Assert.AreEqual("ABC", join);
 
-            join = new[] { "A", "B", "C" }.JoinPositional(' ', 2, 1, 1);
+            join = new[] { "A", "B", "C" }.JoinFixedLine(2, 1, 1);
             Assert.AreEqual("A BC", join);
 
-            join = new[] { "A", "B", "C" }.JoinPositional('1', 2, 1, 1);
+            join = new[] { "A", "B", "C" }.JoinFixedLine('1', 2, 1, 1);
             Assert.AreEqual("A1BC", join);
 
-            join = new[] { "A", "B", "C" }.JoinPositional(' ', 2, 2, 2);
+            join = new[] { "A", "B", "C" }.JoinFixedLine(2, 2, 2);
             Assert.AreEqual("A B C ", join);
 
-            join = new[] { "AB", "CD", "EF" }.JoinPositional(' ', 2, 2, 2);
+            join = new[] { "AB", "CD", "EF" }.JoinFixedLine(2, 2, 2);
             Assert.AreEqual("ABCDEF", join);
 
-            join = new[] { "AB", "CD", "EF" }.JoinPositional('1', 3, 2, 2);
+            join = new[] { "AB", "CD", "EF" }.JoinFixedLine('1', 3, 2, 2);
             Assert.AreEqual("AB1CDEF", join);
         }
 
@@ -36,28 +36,28 @@ namespace SoftwareBotany.Ivy
         public void ThisNull()
         {
             string[] strings = null;
-            strings.JoinPositional(' ', 1, 1, 1);
+            strings.JoinFixedLine(1, 1, 1);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Argument1()
         {
-            new[] { "A", "B" }.JoinPositional(' ', 1);
+            new[] { "A", "B" }.JoinFixedLine(1);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Argument2()
         {
-            new[] { "AB", "C" }.JoinPositional(' ', 1, 1);
+            new[] { "AB", "C" }.JoinFixedLine(1, 1);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Argument3()
         {
-            new[] { "A", "BC" }.JoinPositional(' ', 1, 1);
+            new[] { "A", "BC" }.JoinFixedLine(1, 1);
         }
 
         #endregion

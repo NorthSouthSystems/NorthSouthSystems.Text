@@ -9,33 +9,33 @@ namespace SoftwareBotany.Ivy
     public class StringSchemaSplitExtensionsTests
     {
         [TestMethod]
-        public void Single()
+        public void Line()
         {
             var schema = new StringSchema(new StringSchemaEntry[]
             {
-                new StringSchemaEntry("A", new []{1, 1, 1}),
-                new StringSchemaEntry("B", new []{2, 2, 2})
+                new StringSchemaEntry("A", 1, 1, 1),
+                new StringSchemaEntry("B", 2, 2, 2)
             });
 
-            var split = "A123".SplitSchema(schema);
+            var split = "A123".SplitSchemaLine(schema);
             Assert.AreEqual("A", split.Entry.Header);
             CollectionAssert.AreEqual(new[] { "1", "2", "3" }, split.ToArray());
 
-            split = "B123456".SplitSchema(schema);
+            split = "B123456".SplitSchemaLine(schema);
             Assert.AreEqual("B", split.Entry.Header);
             CollectionAssert.AreEqual(new[] { "12", "34", "56" }, split.ToArray());
         }
 
         [TestMethod]
-        public void Enumerable()
+        public void Lines()
         {
             var schema = new StringSchema(new StringSchemaEntry[]
             {
-                new StringSchemaEntry("A", new []{1, 1, 1}),
-                new StringSchemaEntry("B", new []{2, 2, 2})
+                new StringSchemaEntry("A", 1, 1, 1),
+                new StringSchemaEntry("B", 2, 2, 2)
             });
 
-            var splits = new[] { "A123", "B123456" }.SplitSchema(schema).ToArray();
+            var splits = new[] { "A123", "B123456" }.SplitSchemaLines(schema).ToArray();
             Assert.AreEqual("A", splits[0].Entry.Header);
             CollectionAssert.AreEqual(new[] { "1", "2", "3" }, splits[0].ToArray());
             Assert.AreEqual("B", splits[1].Entry.Header);
@@ -50,7 +50,7 @@ namespace SoftwareBotany.Ivy
         {
             var schema = new StringSchema();
             string value = null;
-            value.SplitSchema(schema);
+            value.SplitSchemaLine(schema);
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace SoftwareBotany.Ivy
         public void SchemaNull()
         {
             string value = "Afoo";
-            value.SplitSchema(null);
+            value.SplitSchemaLine(null);
         }
 
         #endregion
