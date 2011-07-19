@@ -60,10 +60,10 @@
     <Compile Include="Schema\StringSchemaSplitExtensions.cs" />
     <Compile Include="Schema\StringSchemaEntry.cs" />
     <Compile Include="Schema\StringSchemaEntryAndStrings.cs" />
-    <Compile Include="Positional\StringPositionalHelpers.cs" />
-    <Compile Include="Positional\StringPositionalJoinExtensions.cs" />
+    <Compile Include="Fixed\StringFixedHelpers.cs" />
+    <Compile Include="Fixed\StringFixedJoinExtensions.cs" />
     <Compile Include="Schema\StringSchema.cs" />
-    <Compile Include="Positional\StringPositionalSplitExtensions.cs" />
+    <Compile Include="Fixed\StringFixedSplitExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quoted\StringQuotedJoinExtensions.cs" />
     <Compile Include="Quoted\StringQuotedSignals.cs" />

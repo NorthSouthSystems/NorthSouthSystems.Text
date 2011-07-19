@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
-    public static partial class StringPositionalSplitExtensions
+    public static partial class StringSchemaExtensions
     {
-        public static StringSchemaEntryAndStrings SplitSchema(this string value, StringSchema schema)
+        public static StringSchemaEntryAndStrings SplitSchemaLine(this string value, StringSchema schema)
         {
             if (value == null)
                 throw new ArgumentNullException("value");
@@ -14,13 +15,16 @@ namespace SoftwareBotany.Ivy
                 throw new ArgumentNullException("schema");
 
             StringSchemaEntry entry = schema.GetEntryForValue(value);
-            return new StringSchemaEntryAndStrings(entry, SplitPositionalImplementation(value.Substring(entry.Header.Length), entry.Lengths));
+
+            using (var charEnumerator = value.Substring(entry.Header.Length).GetEnumerator())
+            {
+                return new StringSchemaEntryAndStrings(entry, StringFixedExtensions.SplitFixedImplementation(charEnumerator, entry.FillCharacter, entry.Widths));
+            }
         }
 
-        public static IEnumerable<StringSchemaEntryAndStrings> SplitSchema(this IEnumerable<string> strings, StringSchema schema)
+        public static IEnumerable<StringSchemaEntryAndStrings> SplitSchemaLines(this IEnumerable<string> strings, StringSchema schema)
         {
-            foreach (string s in strings)
-                yield return SplitSchema(s, schema);
+            return strings.Select(s => SplitSchemaLine(s, schema));
         }
     }
 }

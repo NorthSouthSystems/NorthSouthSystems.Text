@@ -14,19 +14,10 @@ namespace SoftwareBotany.Ivy
         public static readonly StringQuotedSignals Tab = new StringQuotedSignals("\t", "\"", Environment.NewLine);
 
         /// <summary>
-        /// Represents the Signals that determine how columns of a delimited string are delimited, quoted to allow
-        /// themselves to contain an instance of the delimiter, put onto rows in the case of serialization, and how
-        /// newlines in a column are substituted in the case of serialization.
+        /// The only constructor available: delimiter is the only value required to be non-null, non-empty.
         /// </summary>
-        /// <param name="delimiter">Delimiter between columns of a quoted string.</param>
-        /// <param name="quote">
-        /// String used to surround (or quote) a column and allow it to contain an instance of the delimiter. E.g. if the
-        /// delimiter = "," and the quote = "'", then the string "'some element, that contains a comma',other element"
-        /// would split into two strings: "some column, that contains a comma" and "other column".
-        /// </param>
-        /// <param name="newLine">
-        /// Sequence of characters used to separate rows during serialization of multiple quoted strings.
-        /// </param>
+        /// <param name="quote">String used to surround (or quote) a column and allow it to contain an instance of the delimiter.</param>
+        /// <param name="newLine">Sequence of characters used to separate rows during serialization of multiple quoted strings.</param>
         public StringQuotedSignals(string delimiter, string quote, string newLine)
         {
             _delimiter = delimiter.NullToEmpty();

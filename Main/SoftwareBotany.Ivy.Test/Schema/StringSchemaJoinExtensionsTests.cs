@@ -10,24 +10,26 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void Basic()
         {
-            var a = new StringSchemaEntry("A", new []{1, 1, 1});
-            var b = new StringSchemaEntry("B", new []{2, 2, 2});
+            var a = new StringSchemaEntry("A", 1, 1, 1);
+            var b = new StringSchemaEntry("B", 2, 2, 2);
 
             var split = new StringSchemaEntryAndStrings(a, new[] { "1", "2", "3" });
-            string join = split.JoinSchema(' ');
+            string join = split.JoinSchemaLine();
             Assert.AreEqual("A123", join);
 
             split = new StringSchemaEntryAndStrings(b, new[] { "12", "34", "56" });
-            join = split.JoinSchema(' ');
+            join = split.JoinSchemaLine();
             Assert.AreEqual("B123456", join);
 
             split = new StringSchemaEntryAndStrings(b, new[] { "1", "2", "3" });
-            join = split.JoinSchema(' ');
+            join = split.JoinSchemaLine();
             Assert.AreEqual("B1 2 3 ", join);
 
-            split = new StringSchemaEntryAndStrings(b, new[] { "1", "2", "3" });
-            join = split.JoinSchema('-');
-            Assert.AreEqual("B1-2-3-", join);
+            var c = new StringSchemaEntry("C", '-', 2, 2, 2);
+
+            split = new StringSchemaEntryAndStrings(c, new[] { "1", "2", "3" });
+            join = split.JoinSchemaLine();
+            Assert.AreEqual("C1-2-3-", join);
         }
 
         #region Exceptions
@@ -37,7 +39,7 @@ namespace SoftwareBotany.Ivy
         public void ThisNull()
         {
             StringSchemaEntryAndStrings split = null;
-            split.JoinSchema(' ');
+            split.JoinSchemaLine();
         }
 
         #endregion

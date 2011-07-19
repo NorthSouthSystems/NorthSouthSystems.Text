@@ -4,38 +4,27 @@ using System.Text;
 
 namespace SoftwareBotany.Ivy
 {
-    public static class StringQuotedJoinExtensions
+    /// <summary>
+    /// Extensions for Splitting and Joining delimited sequences of characters that may possess "quoted" columns in
+    /// order for them to contain instances of the delimiter itself.
+    /// </summary>
+    public static partial class StringQuotedExtensions
     {
-        /// <summary>
-        /// Joins an enumeration of strings, separates them with a delimiter, all the while allowing for instances of the delimiter
-        /// to occur within individual strings (columns).  Such columns must be quoted to allow for this behavior.
-        /// </summary>
-        /// <param name="strings">The enumeration of strings to be joined with a delimiter placed between them.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>
-        /// The strings joined together, quoted when necessary (column contains an instance of the delimiter), and
-        /// separated by the delimiter.
-        /// </returns>
-        public static string JoinQuoted(this IEnumerable<string> strings, StringQuotedSignals signals)
+        /// <inheritdoc cref="JoinQuotedLine(IEnumerable{string}, StringQuotedSignals, bool)"/>
+        public static string JoinQuotedLine(this IEnumerable<string> strings, StringQuotedSignals signals)
         {
-            return JoinQuoted(strings, signals, false);
+            return JoinQuotedLine(strings, signals, false);
         }
 
         /// <summary>
-        /// Joins an enumeration of strings, separates them with a delimiter, all the while allowing for instances of the delimiter
+        /// Joins a sequence of strings, separates them with a delimiter, all the while allowing for instances of the delimiter
         /// to occur within individual strings (columns).  Such columns must be quoted to allow for this behavior.
         /// </summary>
-        /// <param name="strings">The enumeration of strings to be joined with a delimiter placed between them.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
         /// <param name="forceQuotes">
         /// Dictates whether to force every column (string) to be quoted regardless of whether or not the column contains an instance
         /// of the delimiter. Microsoft Excel forces quotes (as far as I remember) when saving spreadsheets to the CSV format.
         /// </param>
-        /// <returns>
-        /// The strings joined together, quoted when necessary (column contains an instance of the delimiter), and
-        /// separated by the delimiter.
-        /// </returns>
-        public static string JoinQuoted(this IEnumerable<string> strings, StringQuotedSignals signals, bool forceQuotes)
+        public static string JoinQuotedLine(this IEnumerable<string> strings, StringQuotedSignals signals, bool forceQuotes)
         {
             if (strings == null)
                 throw new ArgumentNullException("strings");
