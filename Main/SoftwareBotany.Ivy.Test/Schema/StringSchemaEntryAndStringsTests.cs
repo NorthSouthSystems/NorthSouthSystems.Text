@@ -13,7 +13,7 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentNullException))]
         public void ConstructionEntryNull()
         {
-            StringSchemaEntryAndStrings split = new StringSchemaEntryAndStrings(null, new[] { "Dan", "Terry" });
+            StringSchemaEntryAndColumns split = new StringSchemaEntryAndColumns(null, new[] { "Dan", "Terry" });
         }
 
         [TestMethod]
@@ -21,7 +21,7 @@ namespace SoftwareBotany.Ivy
         public void ConstructionStringsNull()
         {
             StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 10, 10 });
-            StringSchemaEntryAndStrings split = new StringSchemaEntryAndStrings(entry, null);
+            StringSchemaEntryAndColumns split = new StringSchemaEntryAndColumns(entry, null);
         }
 
         #endregion

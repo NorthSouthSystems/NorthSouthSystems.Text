@@ -30,13 +30,13 @@ namespace SoftwareBotany.Ivy
 
         internal StringSchemaEntry this[string header] { get { return _entries[header]; } }
 
-        internal StringSchemaEntry GetEntryForValue(string value)
+        internal StringSchemaEntry GetEntryForLine(string line)
         {
             foreach (StringSchemaEntry entry in _entries.Values)
-                if (value.StartsWith(entry.Header, StringComparison.Ordinal))
+                if (line.StartsWith(entry.Header, StringComparison.Ordinal))
                     return entry;
 
-            throw new ArgumentOutOfRangeException("value", value, "No matching schema definition.");
+            throw new ArgumentOutOfRangeException("line", line, "No matching schema definition.");
         }
 
         private void VerifyEntry(StringSchemaEntry entry)
