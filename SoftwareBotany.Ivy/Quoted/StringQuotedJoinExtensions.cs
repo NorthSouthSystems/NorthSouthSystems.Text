@@ -11,41 +11,41 @@ namespace SoftwareBotany.Ivy
     public static partial class StringQuotedExtensions
     {
         /// <inheritdoc cref="JoinQuotedLine(IEnumerable{string}, StringQuotedSignals, bool)"/>
-        public static string JoinQuotedLine(this IEnumerable<string> strings, StringQuotedSignals signals)
+        public static string JoinQuotedLine(this IEnumerable<string> columns, StringQuotedSignals signals)
         {
-            return JoinQuotedLine(strings, signals, false);
+            return JoinQuotedLine(columns, signals, false);
         }
 
         /// <summary>
-        /// Joins a sequence of strings, separates them with a delimiter, all the while allowing for instances of the delimiter
-        /// to occur within individual strings (columns).  Such columns must be quoted to allow for this behavior.
+        /// Joins a sequence of columns, separates them with a delimiter, all the while allowing for instances of the delimiter
+        /// to occur within individual columns.  Such columns must be quoted to allow for this behavior.
         /// </summary>
         /// <param name="forceQuotes">
-        /// Dictates whether to force every column (string) to be quoted regardless of whether or not the column contains an instance
+        /// Dictates whether to force every column to be quoted regardless of whether or not the column contains an instance
         /// of the delimiter. Microsoft Excel forces quotes (as far as I remember) when saving spreadsheets to the CSV format.
         /// </param>
-        public static string JoinQuotedLine(this IEnumerable<string> strings, StringQuotedSignals signals, bool forceQuotes)
+        public static string JoinQuotedLine(this IEnumerable<string> columns, StringQuotedSignals signals, bool forceQuotes)
         {
-            if (strings == null)
-                throw new ArgumentNullException("strings");
+            if (columns == null)
+                throw new ArgumentNullException("columns");
 
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
             StringBuilder result = new StringBuilder();
 
-            foreach (string s in strings)
+            foreach (string column in columns)
             {
                 bool useQuotes = forceQuotes
-                    || s.Contains(signals.Delimiter)
-                    || (signals.NewLineIsSpecified && s.Contains(signals.NewLine));
+                    || column.Contains(signals.Delimiter)
+                    || (signals.NewLineIsSpecified && column.Contains(signals.NewLine));
 
                 if (useQuotes && !signals.QuoteIsSpecified)
                     throw new ArgumentException("Quote'ing necessary; therefore, signals.Quote must not be null or empty.");
 
                 result.AppendFormat("{0}{1}{0}{2}",
                     useQuotes ? signals.Quote : null,
-                    signals.QuoteIsSpecified ? s.Replace(signals.Quote, signals.Quote + signals.Quote) : s,
+                    signals.QuoteIsSpecified ? column.Replace(signals.Quote, signals.Quote + signals.Quote) : column,
                     signals.Delimiter);
             }
 

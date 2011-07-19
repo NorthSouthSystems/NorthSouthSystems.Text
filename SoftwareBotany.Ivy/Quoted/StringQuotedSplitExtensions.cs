@@ -12,23 +12,23 @@ namespace SoftwareBotany.Ivy
         /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes will
         /// cause an exception because multiple lines are not allowed.
         /// </summary>
-        public static string[] SplitQuotedLine(this IEnumerable<char> chars, StringQuotedSignals signals)
+        public static string[] SplitQuotedLine(this IEnumerable<char> line, StringQuotedSignals signals)
         {
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
-            return SplitQuotedLine(chars, new SplitQuotedProcessor(signals));
+            return SplitQuotedLine(line, new SplitQuotedProcessor(signals));
         }
 
-        private static string[] SplitQuotedLine(IEnumerable<char> chars, SplitQuotedProcessor processor)
+        private static string[] SplitQuotedLine(IEnumerable<char> line, SplitQuotedProcessor processor)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (line == null)
+                throw new ArgumentNullException("line");
 
-            string[][] splits = processor.Process(chars).Take(2).ToArray();
+            string[][] splits = processor.Process(line).Take(2).ToArray();
 
             if (splits.Length > 1)
-                throw new ArgumentException("Instances of signals' NewLine are not allowed outside of quotes.", "chars");
+                throw new ArgumentException("Instances of signals' NewLine are not allowed outside of quotes.", "line");
 
             return splits.Length == 0 ? new string[0] : splits[0];
         }
@@ -40,16 +40,16 @@ namespace SoftwareBotany.Ivy
         /// lines are determined by the strings parameter and not by each individual string.
         /// </summary>
         /// <returns>A sequence of sets of string columns after each line has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedLines(this IEnumerable<IEnumerable<char>> strings, StringQuotedSignals signals)
+        public static IEnumerable<string[]> SplitQuotedLines(this IEnumerable<IEnumerable<char>> lines, StringQuotedSignals signals)
         {
-            if (strings == null)
-                throw new ArgumentNullException("strings");
+            if (lines == null)
+                throw new ArgumentNullException("lines");
 
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            return strings.Select(str => SplitQuotedLine(str, processor));
+            return lines.Select(line => SplitQuotedLine(line, processor));
         }
 
         /// <summary>
@@ -58,16 +58,16 @@ namespace SoftwareBotany.Ivy
         /// allowed and signal a new split array to begin.
         /// </summary>
         /// <returns>A sequence of sets of string columns after each line in the stream has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedLinesStream(this IEnumerable<char> chars, StringQuotedSignals signals)
+        public static IEnumerable<string[]> SplitQuotedLinesStream(this IEnumerable<char> lines, StringQuotedSignals signals)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (lines == null)
+                throw new ArgumentNullException("lines");
 
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            return processor.Process(chars);
+            return processor.Process(lines);
         }
 
         /// <summary>
@@ -84,11 +84,11 @@ namespace SoftwareBotany.Ivy
                 _newlineTracker = new StringSignalTracker(_signals.NewLine);
             }
 
-            public IEnumerable<string[]> Process(IEnumerable<char> chars)
+            public IEnumerable<string[]> Process(IEnumerable<char> lines)
             {
                 List<string> results = new List<string>();
 
-                foreach (char c in chars)
+                foreach (char c in lines)
                 {
                     bool triggered = ProcessChar(c);
 

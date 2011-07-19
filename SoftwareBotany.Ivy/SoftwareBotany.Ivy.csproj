@@ -59,7 +59,7 @@
     <Compile Include="Schema\StringSchemaJoinExtensions.cs" />
     <Compile Include="Schema\StringSchemaSplitExtensions.cs" />
     <Compile Include="Schema\StringSchemaEntry.cs" />
-    <Compile Include="Schema\StringSchemaEntryAndStrings.cs" />
+    <Compile Include="Schema\StringSchemaEntryAndColumns.cs" />
     <Compile Include="Fixed\StringFixedHelpers.cs" />
     <Compile Include="Fixed\StringFixedJoinExtensions.cs" />
     <Compile Include="Schema\StringSchema.cs" />

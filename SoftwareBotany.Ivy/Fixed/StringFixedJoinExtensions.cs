@@ -10,9 +10,9 @@ namespace SoftwareBotany.Ivy
     public static partial class StringFixedExtensions
     {
         /// <inheritdoc cref="JoinFixedLine(string[], char, int[])"/>
-        public static string JoinFixedLine(this string[] strings, params int[] widths)
+        public static string JoinFixedLine(this string[] columns, params int[] widths)
         {
-            return JoinFixedLine(strings, ' ', widths);
+            return JoinFixedLine(columns, ' ', widths);
         }
 
         /// <summary>
@@ -20,34 +20,34 @@ namespace SoftwareBotany.Ivy
         /// </summary>
         /// <param name="fillCharacter">When a string is less than its column's width, fillCharacter is added until the width is reached.</param>
         /// <param name="widths">The width of each column. E.g. The first string in strings will be place into a column the size of the first width in widths.</param>
-        public static string JoinFixedLine(this string[] strings, char fillCharacter, params int[] widths)
+        public static string JoinFixedLine(this string[] columns, char fillCharacter, params int[] widths)
         {
-            if (strings == null)
-                throw new ArgumentNullException("strings");
+            if (columns == null)
+                throw new ArgumentNullException("columns");
 
             VerifyWidths(widths);
 
-            if (strings.Length != widths.Length)
-                throw new ArgumentException("Number of strings to be joined must equal number of widths.");
+            if (columns.Length != widths.Length)
+                throw new ArgumentException("Number of columns to be joined must equal number of widths.");
 
-            return JoinFixedImplementation(strings, fillCharacter, widths);
+            return JoinFixedImplementation(columns, fillCharacter, widths);
         }
 
-        internal static string JoinFixedImplementation(string[] strings, char fillCharacter, int[] widths)
+        internal static string JoinFixedImplementation(string[] columns, char fillCharacter, int[] widths)
         {
             StringBuilder result = new StringBuilder();
 
-            for (int i = 0; i < strings.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
-                string s = strings[i];
+                string column = columns[i];
                 int width = widths[i];
 
-                if (s.Length > width)
-                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Each string's length must be <= to its corresponding column's width. Zero-based column: {0}. String length: {1}. Column width: {2}.", i, s.Length, width));
+                if (column.Length > width)
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Each column's length must be <= to its corresponding width. Zero-based column: {0}. Column length: {1}. Width: {2}.", i, column.Length, width));
 
-                result.Append(s);
+                result.Append(column);
 
-                int fillCount = width - s.Length;
+                int fillCount = width - column.Length;
 
                 if (fillCount > 0)
                     result.Append(fillCharacter, fillCount);

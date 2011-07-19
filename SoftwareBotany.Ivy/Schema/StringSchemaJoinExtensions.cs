@@ -4,13 +4,13 @@ namespace SoftwareBotany.Ivy
 {
     public static partial class StringSchemaExtensions
     {
-        public static string JoinSchemaLine(this StringSchemaEntryAndStrings entryAndStrings)
+        public static string JoinSchemaLine(this StringSchemaEntryAndColumns entryAndColumns)
         {
-            if (entryAndStrings == null)
-                throw new ArgumentNullException("entryAndStrings");
+            if (entryAndColumns == null)
+                throw new ArgumentNullException("entryAndColumns");
 
-            return entryAndStrings.Entry.Header
-                + StringFixedExtensions.JoinFixedImplementation(entryAndStrings.Strings, entryAndStrings.Entry.FillCharacter, entryAndStrings.Entry.Widths);
+            return entryAndColumns.Entry.Header
+                + StringFixedExtensions.JoinFixedImplementation(entryAndColumns.Columns, entryAndColumns.Entry.FillCharacter, entryAndColumns.Entry.Widths);
         }
     }
 }

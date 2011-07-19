@@ -6,25 +6,25 @@ namespace SoftwareBotany.Ivy
 {
     public static partial class StringSchemaExtensions
     {
-        public static StringSchemaEntryAndStrings SplitSchemaLine(this string value, StringSchema schema)
+        public static StringSchemaEntryAndColumns SplitSchemaLine(this string line, StringSchema schema)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (line == null)
+                throw new ArgumentNullException("line");
 
             if (schema == null)
                 throw new ArgumentNullException("schema");
 
-            StringSchemaEntry entry = schema.GetEntryForValue(value);
+            StringSchemaEntry entry = schema.GetEntryForLine(line);
 
-            using (var charEnumerator = value.Substring(entry.Header.Length).GetEnumerator())
+            using (var charEnumerator = line.Substring(entry.Header.Length).GetEnumerator())
             {
-                return new StringSchemaEntryAndStrings(entry, StringFixedExtensions.SplitFixedImplementation(charEnumerator, entry.FillCharacter, entry.Widths));
+                return new StringSchemaEntryAndColumns(entry, StringFixedExtensions.SplitFixedImplementation(charEnumerator, entry.FillCharacter, entry.Widths));
             }
         }
 
-        public static IEnumerable<StringSchemaEntryAndStrings> SplitSchemaLines(this IEnumerable<string> strings, StringSchema schema)
+        public static IEnumerable<StringSchemaEntryAndColumns> SplitSchemaLines(this IEnumerable<string> lines, StringSchema schema)
         {
-            return strings.Select(s => SplitSchemaLine(s, schema));
+            return lines.Select(line => SplitSchemaLine(line, schema));
         }
     }
 }

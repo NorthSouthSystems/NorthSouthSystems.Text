@@ -6,68 +6,68 @@ namespace SoftwareBotany.Ivy
 {
     public static partial class StringFixedExtensions
     {
-        public static string[] SplitFixedLine(this IEnumerable<char> chars, params int[] widths)
+        public static string[] SplitFixedLine(this IEnumerable<char> line, params int[] widths)
         {
-            return SplitFixedLine(chars, ' ', widths);
+            return SplitFixedLine(line, ' ', widths);
         }
 
-        public static string[] SplitFixedLine(this IEnumerable<char> chars, char fillCharacter, params int[] widths)
+        public static string[] SplitFixedLine(this IEnumerable<char> line, char fillCharacter, params int[] widths)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (line == null)
+                throw new ArgumentNullException("line");
 
             VerifyWidths(widths);
 
             string[] split;
 
-            using (var charEnumerator = chars.GetEnumerator())
+            using (var charEnumerator = line.GetEnumerator())
             {
                 split = SplitFixedImplementation(charEnumerator, fillCharacter, widths);
 
                 if (split == null)
-                    throw new ArgumentException("Empty enumerable.", "chars");
+                    throw new ArgumentException("Empty enumerable.", "line");
 
                 if (charEnumerator.MoveNext())
-                    throw new ArgumentException("chars length must equal the sum of all widths.", "chars");
+                    throw new ArgumentException("line length must equal the sum of all widths.", "line");
             }
 
             return split;
         }
 
-        public static IEnumerable<string[]> SplitFixedLines(this IEnumerable<IEnumerable<char>> strings, params int[] widths)
+        public static IEnumerable<string[]> SplitFixedLines(this IEnumerable<IEnumerable<char>> lines, params int[] widths)
         {
-            return SplitFixedLines(strings, ' ', widths);
+            return SplitFixedLines(lines, ' ', widths);
         }
 
-        public static IEnumerable<string[]> SplitFixedLines(this IEnumerable<IEnumerable<char>> strings, char fillCharacter, params int[] widths)
+        public static IEnumerable<string[]> SplitFixedLines(this IEnumerable<IEnumerable<char>> lines, char fillCharacter, params int[] widths)
         {
-            if (strings == null)
-                throw new ArgumentNullException("strings");
+            if (lines == null)
+                throw new ArgumentNullException("lines");
 
             VerifyWidths(widths);
 
-            foreach (string s in strings)
+            foreach (string line in lines)
             {
-                if (s == null)
-                    throw new ArgumentNullException("strings", "All strings must be non-null.");
+                if (line == null)
+                    throw new ArgumentNullException("lines", "All lines must be non-null.");
 
-                yield return SplitFixedLine(s, fillCharacter, widths);
+                yield return SplitFixedLine(line, fillCharacter, widths);
             }
         }
 
-        public static IEnumerable<string[]> SplitFixedLinesStream(this IEnumerable<char> chars, params int[] widths)
+        public static IEnumerable<string[]> SplitFixedLinesStream(this IEnumerable<char> lines, params int[] widths)
         {
-            return SplitFixedLinesStream(chars, ' ', widths);
+            return SplitFixedLinesStream(lines, ' ', widths);
         }
 
-        public static IEnumerable<string[]> SplitFixedLinesStream(this IEnumerable<char> chars, char fillCharacter, params int[] widths)
+        public static IEnumerable<string[]> SplitFixedLinesStream(this IEnumerable<char> lines, char fillCharacter, params int[] widths)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (lines == null)
+                throw new ArgumentNullException("lines");
 
             VerifyWidths(widths);
 
-            using (var charEnumerator = chars.GetEnumerator())
+            using (var charEnumerator = lines.GetEnumerator())
             {
                 string[] split = null;
 
