@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Ivy
 {
     [TestClass]
-    public class StringSchemaEntryAndStringsTests
+    public class StringSchemaEntryAndColumnsTests
     {
         #region Exceptions
 
@@ -18,7 +18,7 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ConstructionStringsNull()
+        public void ConstructionColumnsNull()
         {
             StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 10, 10 });
             StringSchemaEntryAndColumns split = new StringSchemaEntryAndColumns(entry, null);

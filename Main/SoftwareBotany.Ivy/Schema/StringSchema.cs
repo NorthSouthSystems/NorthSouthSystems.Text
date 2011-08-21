@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
+    /// <summary>
+    /// StringSchema is a class to manage a Schema's StringSchemaEntries while validating that they are logically correct.
+    /// A valid StringSchema has no Entry with a Header that StartWiths any other Entry's Header.
+    /// <see cref="SoftwareBotany.Ivy.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
+    /// </summary>
     public sealed class StringSchema
     {
+        /// <summary>
+        /// Creates a new StringSchema without any Entries.
+        /// </summary>
         public StringSchema() { }
 
+        /// <summary>
+        /// Creates a new StringSchema with the provided Entries after validation.
+        /// </summary>
         public StringSchema(IEnumerable<StringSchemaEntry> entries)
         {
             if (entries == null)
@@ -19,6 +29,9 @@ namespace SoftwareBotany.Ivy
 
         private readonly Dictionary<string, StringSchemaEntry> _entries = new Dictionary<string, StringSchemaEntry>();
 
+        /// <summary>
+        /// Validates and adds a new StringSchemaEntry to the Schema.
+        /// </summary>
         public void AddEntry(StringSchemaEntry entry)
         {
             if (entry == null)
@@ -28,15 +41,13 @@ namespace SoftwareBotany.Ivy
             _entries.Add(entry.Header, entry);
         }
 
-        internal StringSchemaEntry this[string header] { get { return _entries[header]; } }
-
-        internal StringSchemaEntry GetEntryForLine(string line)
+        internal StringSchemaEntry GetEntryForRow(string row)
         {
             foreach (StringSchemaEntry entry in _entries.Values)
-                if (line.StartsWith(entry.Header, StringComparison.Ordinal))
+                if (row.StartsWith(entry.Header, StringComparison.Ordinal))
                     return entry;
 
-            throw new ArgumentOutOfRangeException("line", line, "No matching schema definition.");
+            throw new ArgumentOutOfRangeException("row", row, "No matching schema definition.");
         }
 
         private void VerifyEntry(StringSchemaEntry entry)

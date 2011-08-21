@@ -6,13 +6,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Ivy
 {
     [TestClass]
-    public class StringQuotedSplitLinesStreamTests
+    public class StringQuotedRowsTests
     {
         [TestMethod]
         public void Basic()
         {
-            string[][] splits = string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.Csv.NewLine)
-                .SplitQuotedLinesStream(StringQuotedSignals.Csv)
+            string[][] splits = string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.Csv.NewRow)
+                .SplitQuotedRows(StringQuotedSignals.Csv)
                 .ToArray();
 
             Assert.AreEqual(3, splits.Length);
@@ -32,8 +32,8 @@ namespace SoftwareBotany.Ivy
             Assert.AreEqual("h", splits[2][1]);
             Assert.AreEqual("i", splits[2][2]);
 
-            splits = string.Format("a,b,c{0}", StringQuotedSignals.Csv.NewLine)
-                .SplitQuotedLinesStream(StringQuotedSignals.Csv)
+            splits = string.Format("a,b,c{0}", StringQuotedSignals.Csv.NewRow)
+                .SplitQuotedRows(StringQuotedSignals.Csv)
                 .ToArray();
 
             Assert.AreEqual(1, splits.Length);
@@ -48,18 +48,18 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentNull1()
+        public void RowsNull()
         {
             string s = null;
-            s.SplitQuotedLinesStream(StringQuotedSignals.Csv).ToArray();
+            s.SplitQuotedRows(StringQuotedSignals.Csv).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentNull2()
+        public void SignalsNull()
         {
             string s = string.Empty;
-            s.SplitQuotedLinesStream(null).ToArray();
+            s.SplitQuotedRows(null).ToArray();
         }
 
         #endregion

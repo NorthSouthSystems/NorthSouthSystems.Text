@@ -168,7 +168,7 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void ProcessCharTriggeredInvalidOperation()
+        public void ProcessCharAlreadyTriggered()
         {
             StringSignalTracker tracker = new StringSignalTracker("a");
             tracker.ProcessChar('a');

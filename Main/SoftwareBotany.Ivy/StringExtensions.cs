@@ -8,8 +8,11 @@ namespace SoftwareBotany.Ivy
     {
         #region Construction
 
+        /// <summary>
+        /// Creates and returns a new string containing all of the characters in the provided enumeration.
+        /// </summary>
         public static string ToNewString(this IEnumerable<char> chars) { return new string(chars.ToArray()); }
-        
+
         #endregion
 
         #region Empty / Null
@@ -49,10 +52,22 @@ namespace SoftwareBotany.Ivy
 
         /// <summary>
         /// Trims the front and back sides of a sequence of chars while replacing any repeating instances of whitespace with a
-        /// single instance of whitespace.  Newlines consisting of more than 1 whitespace character (Windows Newlines = \r\n) are
+        /// single instance of whitespace.  Newlines consisting of more than one whitespace character (Windows Newlines = \r\n) are
         /// treated as a single whitespace instance.
         /// </summary>
-        /// <param name="respectNewLine">The Newline string to treat as a single whitespace instance.</param>
+        /// <param name="respectNewLine">The Newline string to treat as a single whitespace instance. (default = Environment.NewLine)</param>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine(" A  B C   D   ".NormalizeWhiteSpace());
+        /// Console.WriteLine(("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// A B C D
+        /// Lots Of
+        /// Changes
+        /// </code>
+        /// </example>
         public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars, string respectNewLine)
         {
             if (chars == null)
@@ -112,6 +127,21 @@ namespace SoftwareBotany.Ivy
         /// </summary>
         /// <param name="maxLength">The maximum length allowed for the return string. Additional chars from value are truncated.</param>
         /// <returns>The original value truncated to maxLength if necessary.</returns>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("abc".SubstringToFit(1));
+        /// Console.WriteLine("abc".SubstringToFit(2));
+        /// Console.WriteLine("abc".SubstringToFit(3));
+        /// Console.WriteLine("abc".SubstringToFit(4));
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a
+        /// ab
+        /// abc
+        /// abc
+        /// </code>
+        /// </example>
         public static string SubstringToFit(this string value, int maxLength)
         {
             if (value == null)
@@ -136,6 +166,17 @@ namespace SoftwareBotany.Ivy
         /// <summary>
         /// Process a sequence of characters and returns its lower camel case representation.
         /// </summary>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("FooBar".ToLowerCamelCase());
+        /// Console.WriteLine(" FooBar".ToLowerCamelCase());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// fooBar
+        ///  fooBar
+        /// </code>
+        /// </example>
         public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, true); }
 
         /// <inheritdoc cref="ToUpperCamelCase(IEnumerable{char})"/>
@@ -144,6 +185,17 @@ namespace SoftwareBotany.Ivy
         /// <summary>
         /// Process a sequence of characters and returns its upper camel case representation.
         /// </summary>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("fooBar".ToUpperCamelCase());
+        /// Console.WriteLine(" fooBar".ToUpperCamelCase());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// FooBar
+        ///  FooBar
+        /// </code>
+        /// </example>
         public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, false); }
 
         private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> chars, bool isLower)
@@ -184,6 +236,23 @@ namespace SoftwareBotany.Ivy
         /// Process a sequence of characters and returns the same sequence of characters but with spaces inserted
         /// whenever camel casing indicates the start of a new word.
         /// </summary>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("FooBarFoo FooBarFoo".SpaceCamelCase());
+        /// Console.WriteLine("123A".SpaceCamelCase());
+        /// Console.WriteLine("123a".SpaceCamelCase());
+        /// Console.WriteLine("A123".SpaceCamelCase());
+        /// Console.WriteLine("A123A".SpaceCamelCase());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// Foo Bar Foo Foo Bar Foo
+        /// 123 A
+        /// 123 a
+        /// A 123
+        /// A 123 A
+        /// </code>
+        /// </example>
         public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> chars)
         {
             if (chars == null)
@@ -246,6 +315,23 @@ namespace SoftwareBotany.Ivy
         /// </summary>
         /// <param name="filters">Bitwise union of 1 or more CharFilters designating which characters to filter.</param>
         /// <returns>The original sequence of chars with unwanted chars omitted.</returns>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("a1b2c3d".Filter(CharFilters.None));
+        /// Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters));
+        /// Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+        /// Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemovePunctuation));
+        /// Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a1b2c3d
+        /// 123
+        /// 
+        /// a1b2c3d
+        /// -
+        /// </code>
+        /// </example>
         public static IEnumerable<char> Filter(this IEnumerable<char> chars, CharFilters filters)
         {
             if (chars == null)

@@ -9,6 +9,14 @@ namespace SoftwareBotany.Ivy
     public class StringExtensionsTests
     {
         [TestMethod]
+        public void ToNewString()
+        {
+            char[] chars = new[] { 'f', 'o', 'o', 'b', 'a', 'r' };
+            string s = chars.ToNewString();
+            Assert.AreEqual("foobar", s);
+        }
+
+        [TestMethod]
         public void EmptyToNullNullified()
         {
             Assert.IsNull(((string)null).EmptyToNull());
@@ -21,44 +29,6 @@ namespace SoftwareBotany.Ivy
         {
             foreach (string s in new string[] { " ", "a", "A", "1", "abc", "ABC", "123" })
                 Assert.AreEqual(s, s.EmptyToNull());
-        }
-
-        [TestMethod]
-        public void NormalizeWhiteSpaceNewLineNoRespect()
-        {
-            Assert.AreEqual("", "\r".NormalizeWhiteSpace(null));
-            Assert.AreEqual("", "\n".NormalizeWhiteSpace(null));
-            Assert.AreEqual("", "\r\n".NormalizeWhiteSpace(null));
-            Assert.AreEqual("", Environment.NewLine.NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", "a\rb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a\r b".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \rb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \r b".NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", "a\nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a\n b".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \n b".NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", "a\r\nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a\r\n b".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \r\nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \r\n b".NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", ("a" + Environment.NewLine + "b").NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", ("a " + Environment.NewLine + "b").NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", ("a" + Environment.NewLine + " b").NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", ("a " + Environment.NewLine + " b").NormalizeWhiteSpace(null));
-        }
-
-        [TestMethod]
-        public void NormalizeWhiteSpaceNewLineRespect()
-        {
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a" + Environment.NewLine + "b").NormalizeWhiteSpace());
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a " + Environment.NewLine + "b").NormalizeWhiteSpace());
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a" + Environment.NewLine + " b").NormalizeWhiteSpace());
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a " + Environment.NewLine + " b").NormalizeWhiteSpace());
         }
 
         [TestMethod]
@@ -100,6 +70,44 @@ namespace SoftwareBotany.Ivy
             Assert.AreEqual("Lots Of Changes", new string(("Lots\tOf" + Environment.NewLine + "Changes").AsEnumerable().NormalizeWhiteSpace(null).ToArray()));
             Assert.AreEqual("Lots Of" + Environment.NewLine + "Changes", new string((" Lots \t Of " + Environment.NewLine + " Changes ").AsEnumerable().NormalizeWhiteSpace().ToArray()));
             Assert.AreEqual("Lots Of Changes", new string((" Lots \t Of " + Environment.NewLine + " Changes ").AsEnumerable().NormalizeWhiteSpace(null).ToArray()));
+        }
+
+        [TestMethod]
+        public void NormalizeWhiteSpaceNewLineRespect()
+        {
+            Assert.AreEqual("a" + Environment.NewLine + "b", ("a" + Environment.NewLine + "b").NormalizeWhiteSpace());
+            Assert.AreEqual("a" + Environment.NewLine + "b", ("a " + Environment.NewLine + "b").NormalizeWhiteSpace());
+            Assert.AreEqual("a" + Environment.NewLine + "b", ("a" + Environment.NewLine + " b").NormalizeWhiteSpace());
+            Assert.AreEqual("a" + Environment.NewLine + "b", ("a " + Environment.NewLine + " b").NormalizeWhiteSpace());
+        }
+
+        [TestMethod]
+        public void NormalizeWhiteSpaceNewLineNoRespect()
+        {
+            Assert.AreEqual("", "\r".NormalizeWhiteSpace(null));
+            Assert.AreEqual("", "\n".NormalizeWhiteSpace(null));
+            Assert.AreEqual("", "\r\n".NormalizeWhiteSpace(null));
+            Assert.AreEqual("", Environment.NewLine.NormalizeWhiteSpace(null));
+
+            Assert.AreEqual("a b", "a\rb".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a\r b".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a \rb".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a \r b".NormalizeWhiteSpace(null));
+
+            Assert.AreEqual("a b", "a\nb".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a\n b".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a \nb".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a \n b".NormalizeWhiteSpace(null));
+
+            Assert.AreEqual("a b", "a\r\nb".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a\r\n b".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a \r\nb".NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", "a \r\n b".NormalizeWhiteSpace(null));
+
+            Assert.AreEqual("a b", ("a" + Environment.NewLine + "b").NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", ("a " + Environment.NewLine + "b").NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", ("a" + Environment.NewLine + " b").NormalizeWhiteSpace(null));
+            Assert.AreEqual("a b", ("a " + Environment.NewLine + " b").NormalizeWhiteSpace(null));
         }
 
         [TestMethod]
@@ -160,6 +168,8 @@ namespace SoftwareBotany.Ivy
         {
             Assert.AreEqual(string.Empty, string.Empty.SpaceCamelCase());
             Assert.AreEqual("Dan Terry", "DanTerry".SpaceCamelCase());
+            Assert.AreEqual("Dan Terry Dan Terry", "DanTerry DanTerry".SpaceCamelCase());
+            Assert.AreEqual("Dan Terry Dan Dan Terry Dan", "DanTerryDan DanTerryDan".SpaceCamelCase());
             Assert.AreEqual("1 A", "1A".SpaceCamelCase());
             Assert.AreEqual("123 A", "123A".SpaceCamelCase());
             Assert.AreEqual("123 a", "123a".SpaceCamelCase());
@@ -177,6 +187,7 @@ namespace SoftwareBotany.Ivy
             Assert.AreEqual("a1b2c3d", "a1b2c3d".Filter(CharFilters.None));
             Assert.AreEqual("123", "a1b2c3d".Filter(CharFilters.RemoveLetters));
             Assert.AreEqual(string.Empty, "a1b2c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+            Assert.AreEqual("a1b2c3d", "a1b2-c3d".Filter(CharFilters.RemovePunctuation));
             Assert.AreEqual("-", "a1b2-c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
         }
 
@@ -184,7 +195,7 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void NormalizeWhiteSpaceArgumentNull()
+        public void NormalizeWhiteSpaceThisNull()
         {
             string s = null;
             s.NormalizeWhiteSpace();
@@ -192,7 +203,7 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SubstringToFitArgumentNull()
+        public void SubstringToFitThisNull()
         {
             string s = null;
             s.SubstringToFit(1);
@@ -200,14 +211,14 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void SubstringToFitArgumentOutOfRange()
+        public void SubstringToFitMaxLengthLessThanZero()
         {
             "a".SubstringToFit(-1);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ToCamelCaseArgumentNull()
+        public void ToCamelCaseThisNull()
         {
             string s = null;
             s.ToLowerCamelCase();
@@ -215,7 +226,7 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void SpaceCamelCaseArgumentNull()
+        public void SpaceCamelCaseThisNull()
         {
             string s = null;
             s.SpaceCamelCase();
@@ -223,7 +234,7 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void FilterArgumentNull()
+        public void FilterThisNull()
         {
             string s = null;
             s.Filter(CharFilters.None);

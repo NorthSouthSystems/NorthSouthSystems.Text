@@ -5,26 +5,63 @@ using System.Text;
 namespace SoftwareBotany.Ivy
 {
     /// <summary>
-    /// Extensions for Splitting and Joining delimited sequences of characters that may possess "quoted" columns in
-    /// order for them to contain instances of the delimiter itself.
+    /// Extensions for Splitting and Joining delimited sequences of characters (rows) that may possess quoted (surrounded by Quote)
+    /// columns in order for them to contain instances of Delimiter.
     /// </summary>
     public static partial class StringQuotedExtensions
     {
-        /// <inheritdoc cref="JoinQuotedLine(IEnumerable{string}, StringQuotedSignals, bool)"/>
-        public static string JoinQuotedLine(this IEnumerable<string> columns, StringQuotedSignals signals)
-        {
-            return JoinQuotedLine(columns, signals, false);
-        }
+        /// <inheritdoc cref="JoinQuotedRow(IEnumerable{string}, StringQuotedSignals, bool)"/>
+        public static string JoinQuotedRow(this IEnumerable<string> columns, StringQuotedSignals signals) { return JoinQuotedRow(columns, signals, false); }
 
         /// <summary>
-        /// Joins a sequence of columns, separates them with a delimiter, all the while allowing for instances of the delimiter
-        /// to occur within individual columns.  Such columns must be quoted to allow for this behavior.
+        /// Joins a sequence of columns, separates them with Delimiter, and allows for instances of Delimiter (or the NewRow signal)
+        /// to occur within individual columns.  Such columns will be quoted (surrounded by Quote) to allow for this behavior. Instances
+        /// of the Quote signal within columns will be escaped by doubling (Quote + Quote).
         /// </summary>
         /// <param name="forceQuotes">
         /// Dictates whether to force every column to be quoted regardless of whether or not the column contains an instance
-        /// of the delimiter. Microsoft Excel forces quotes (as far as I remember) when saving spreadsheets to the CSV format.
+        /// of Delimiter or NewRow. (default = false)
         /// </param>
-        public static string JoinQuotedLine(this IEnumerable<string> columns, StringQuotedSignals signals, bool forceQuotes)
+        /// <example>
+        /// <code>
+        /// string[] columns = new string[] { "a", "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a,b,c
+        /// </code>
+        /// <code>
+        /// string[] columns = new string[] { "a,a", "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// "a,a",b,c
+        /// </code>
+        /// <code>
+        /// string[] columns = new string[] { "a", "b" + Environment.NewLine + "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv, true);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// "a","b
+        /// b","c"
+        /// </code>
+        /// <code>
+        /// string[] columns = new string[] { "a\"a", "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a""a,b,c
+        /// </code>
+        /// </example>
+        public static string JoinQuotedRow(this IEnumerable<string> columns, StringQuotedSignals signals, bool forceQuotes)
         {
             if (columns == null)
                 throw new ArgumentNullException("columns");
@@ -32,28 +69,28 @@ namespace SoftwareBotany.Ivy
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
-            StringBuilder result = new StringBuilder();
+            StringBuilder row = new StringBuilder();
 
             foreach (string column in columns)
             {
                 bool useQuotes = forceQuotes
                     || column.Contains(signals.Delimiter)
-                    || (signals.NewLineIsSpecified && column.Contains(signals.NewLine));
+                    || (signals.NewRowIsSpecified && column.Contains(signals.NewRow));
 
                 if (useQuotes && !signals.QuoteIsSpecified)
                     throw new ArgumentException("Quote'ing necessary; therefore, signals.Quote must not be null or empty.");
 
-                result.AppendFormat("{0}{1}{0}{2}",
+                row.AppendFormat("{0}{1}{0}{2}",
                     useQuotes ? signals.Quote : null,
                     signals.QuoteIsSpecified ? column.Replace(signals.Quote, signals.Quote + signals.Quote) : column,
                     signals.Delimiter);
             }
 
             // If any output was generated, it will contain a trailing instance of Delimiter; so, remove it.
-            if (result.Length > 0)
-                result.Length -= signals.Delimiter.Length;
+            if (row.Length > 0)
+                row.Length -= signals.Delimiter.Length;
 
-            return result.ToString();
+            return row.ToString();
         }
     }
 }

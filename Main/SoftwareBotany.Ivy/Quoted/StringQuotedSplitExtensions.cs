@@ -8,71 +8,111 @@ namespace SoftwareBotany.Ivy
     public static partial class StringQuotedExtensions
     {
         /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes will
-        /// cause an exception because multiple lines are not allowed.
+        /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
+        /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
+        /// A NewRow signal outside of Quotes will cause an exception because multiple rows are not allowed for this method.
         /// </summary>
-        public static string[] SplitQuotedLine(this IEnumerable<char> line, StringQuotedSignals signals)
+        /// <example>
+        /// <code>
+        /// foreach(string column in "a,b,c".SplitQuotedRow(StringQuotedSignals.Csv);)
+        ///     Console.WriteLine(column);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a
+        /// b
+        /// c
+        /// </code>
+        /// <code>
+        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine);
+        /// 
+        /// foreach(string column in "'a,a',b,c".SplitQuotedRow(signals);)
+        ///     Console.WriteLine(column);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a,a
+        /// b
+        /// c
+        /// </code>
+        /// <code>
+        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine);
+        /// 
+        /// foreach(string column in "a''a,b,c".SplitQuotedRow(signals);)
+        ///     Console.WriteLine(column);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a'a
+        /// b
+        /// c
+        /// </code>
+        /// </example>
+        public static string[] SplitQuotedRow(this IEnumerable<char> row, StringQuotedSignals signals)
         {
+            if (row == null)
+                throw new ArgumentNullException("row");
+
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
-            return SplitQuotedLine(line, new SplitQuotedProcessor(signals));
-        }
-
-        private static string[] SplitQuotedLine(IEnumerable<char> line, SplitQuotedProcessor processor)
-        {
-            if (line == null)
-                throw new ArgumentNullException("line");
-
-            string[][] splits = processor.Process(line).Take(2).ToArray();
+            SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
+            string[][] splits = processor.Process(row).Take(2).ToArray();
 
             if (splits.Length > 1)
-                throw new ArgumentException("Instances of signals' NewLine are not allowed outside of quotes.", "line");
+                throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", "row");
 
             return splits.Length == 0 ? new string[0] : splits[0];
         }
 
         /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes will
-        /// cause an exception because multiple lines are not allowed in an individual string; i.e. multiple
-        /// lines are determined by the strings parameter and not by each individual string.
+        /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
+        /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
+        /// A NewRow signal outside of Quotes is allowed and signals that a new row has begun.
         /// </summary>
-        /// <returns>A sequence of sets of string columns after each line has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedLines(this IEnumerable<IEnumerable<char>> lines, StringQuotedSignals signals)
+        /// <returns>A sets of string columns for each row in the stream as it is identified.</returns>
+        /// <example>
+        /// <code>
+        /// foreach(string[] rowColumns in ("a,b,c" + Environment.NewLine + "d,e,f").SplitQuotedRows(StringQuotedSignals.Csv);)
+        /// {
+        ///     Console.WriteLine("Row");
+        ///     
+        ///     foreach(string column in rowColumns)
+        ///         Console.WriteLine(column);
+        /// }
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// Row
+        /// a
+        /// b
+        /// c
+        /// Row
+        /// d
+        /// e
+        /// f
+        /// </code>
+        /// </example>
+        public static IEnumerable<string[]> SplitQuotedRows(this IEnumerable<char> rows, StringQuotedSignals signals)
         {
-            if (lines == null)
-                throw new ArgumentNullException("lines");
+            if (rows == null)
+                throw new ArgumentNullException("rows");
 
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            return lines.Select(line => SplitQuotedLine(line, processor));
+            return processor.Process(rows);
         }
 
         /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes are
-        /// allowed and signal a new split array to begin.
+        /// Resuable logic for providing the SplitQuoted algorithm.
         /// </summary>
-        /// <returns>A sequence of sets of string columns after each line in the stream has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedLinesStream(this IEnumerable<char> lines, StringQuotedSignals signals)
-        {
-            if (lines == null)
-                throw new ArgumentNullException("lines");
-
-            if (signals == null)
-                throw new ArgumentNullException("signals");
-
-            SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            return processor.Process(lines);
-        }
-
-        /// <summary>
-        /// Resuable logic for processing the SplitQuoted functions.
-        /// </summary>
+        /// <remarks>
+        /// At the moment, processors are only used for Process'ing once; however, the code was trivial to allow
+        /// them to be reused. Very likely a premature optimization, but it cost 1 line of code, so we're going to leave it
+        /// in for now. (In my defense) Processors were once being reused by a function that has since been YAGNI deleted from the API.
+        /// </remarks>
         private class SplitQuotedProcessor
         {
             public SplitQuotedProcessor(StringQuotedSignals signals)
@@ -81,20 +121,20 @@ namespace SoftwareBotany.Ivy
 
                 _delimiterTracker = new StringSignalTracker(_signals.Delimiter);
                 _quoteTracker = new StringSignalTracker(_signals.Quote);
-                _newlineTracker = new StringSignalTracker(_signals.NewLine);
+                _newRowTracker = new StringSignalTracker(_signals.NewRow);
             }
 
-            public IEnumerable<string[]> Process(IEnumerable<char> lines)
+            public IEnumerable<string[]> Process(IEnumerable<char> rows)
             {
                 List<string> results = new List<string>();
 
-                foreach (char c in lines)
+                foreach (char c in rows)
                 {
                     bool triggered = ProcessChar(c);
 
                     if (triggered)
                     {
-                        if (IsNewline && !InQuotes())
+                        if (IsNewRow && !InQuotes())
                             yield return ProduceLineResults();
 
                         ResetTrackers();
@@ -115,11 +155,11 @@ namespace SoftwareBotany.Ivy
 
                 _delimiterTracker.ProcessChar(c);
                 _quoteTracker.ProcessChar(c);
-                _newlineTracker.ProcessChar(c);
+                _newRowTracker.ProcessChar(c);
 
                 ReviseCategories();
 
-                return IsDelimiter || IsQuote || IsNewline;
+                return IsDelimiter || IsQuote || IsNewRow;
             }
 
             private void ReviseCategories()
@@ -143,16 +183,16 @@ namespace SoftwareBotany.Ivy
                         ReviseCategories(CharacterCategory.EscapedQuote, _signals.Quote.Length * 2);
                     }
                 }
-                else if (IsNewline)
+                else if (IsNewRow)
                 {
-                    ReviseCategories(CharacterCategory.Newline, _signals.NewLine.Length);
+                    ReviseCategories(CharacterCategory.NewRow, _signals.NewRow.Length);
                 }
             }
 
             private void ReviseCategories(CharacterCategory category, int length)
             {
                 for (int i = length; i > 0; i--)
-                    _categories[_categories.Count - i] = i == length ? category : CharacterCategory.Noop;
+                    _categories[_categories.Count - i] = i == length ? category : CharacterCategory.NoOp;
             }
 
             private bool InQuotes()
@@ -181,7 +221,9 @@ namespace SoftwareBotany.Ivy
 
                         case CharacterCategory.Delimiter:
                             if (inQuotes)
+                            {
                                 result.Append(_signals.Delimiter);
+                            }
                             else
                             {
                                 results.Add(result.ToString());
@@ -202,12 +244,12 @@ namespace SoftwareBotany.Ivy
                             result.Append(_signals.Quote);
                             break;
 
-                        case CharacterCategory.Newline:
+                        case CharacterCategory.NewRow:
                             if (inQuotes)
-                                result.Append(_signals.NewLine);
+                                result.Append(_signals.NewRow);
                             break;
 
-                        case CharacterCategory.Noop:
+                        case CharacterCategory.NoOp:
                             break;
 
                         default:
@@ -229,7 +271,7 @@ namespace SoftwareBotany.Ivy
             {
                 _delimiterTracker.Reset();
                 _quoteTracker.Reset();
-                _newlineTracker.Reset();
+                _newRowTracker.Reset();
             }
 
             private StringQuotedSignals _signals;
@@ -238,11 +280,11 @@ namespace SoftwareBotany.Ivy
 
             private StringSignalTracker _delimiterTracker;
             private StringSignalTracker _quoteTracker;
-            private StringSignalTracker _newlineTracker;
+            private StringSignalTracker _newRowTracker;
 
             private bool IsDelimiter { get { return _delimiterTracker.IsTriggered; } }
             private bool IsQuote { get { return _quoteTracker.IsTriggered; } }
-            private bool IsNewline { get { return _newlineTracker.IsTriggered; } }
+            private bool IsNewRow { get { return _newRowTracker.IsTriggered; } }
 
             private enum CharacterCategory : byte
             {
@@ -251,8 +293,8 @@ namespace SoftwareBotany.Ivy
                 StartQuote,
                 EndQuote,
                 EscapedQuote,
-                Newline,
-                Noop
+                NewRow,
+                NoOp
             }
         }
     }
