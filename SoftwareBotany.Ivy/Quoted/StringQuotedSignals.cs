@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
     /// <summary>
-    /// Represents the Signals that determine how columns of a delimited string are delimited, quoted to allow
-    /// themselves to contain an instance of the delimiter, put onto rows in the case of serialization, and how
-    /// newlines in a column are substituted in the case of serialization.
+    /// Represents the Signals that determine how columns of a row (sequence of chars) are delimited
+    /// (separated by Delimiter), quoted (surrounded by Quote) to allow themselves to contain an instance of Delimiter,
+    /// and put onto new rows (rows separated by NewRow) in the case of serialization.
     /// </summary>
     public sealed class StringQuotedSignals
     {
@@ -14,32 +15,28 @@ namespace SoftwareBotany.Ivy
         public static readonly StringQuotedSignals Tab = new StringQuotedSignals("\t", "\"", Environment.NewLine);
 
         /// <summary>
-        /// The only constructor available: delimiter is the only value required to be non-null, non-empty.
+        /// Constructor with params for all signal values.
         /// </summary>
-        /// <param name="quote">String used to surround (or quote) a column and allow it to contain an instance of the delimiter.</param>
-        /// <param name="newLine">Sequence of characters used to separate rows during serialization of multiple quoted strings.</param>
-        public StringQuotedSignals(string delimiter, string quote, string newLine)
+        /// <param name="delimiter">String used to separate columns of a row. It is the only param that cannot be null or empty.</param>
+        /// <param name="quote">String used to surround (or quote) a column and allow it to contain an instance of Delimiter.</param>
+        /// <param name="newRow">String used to separate rows during serialization.</param>
+        public StringQuotedSignals(string delimiter, string quote, string newRow)
         {
             _delimiter = delimiter.NullToEmpty();
             _quote = quote.NullToEmpty();
-            _newLine = newLine.NullToEmpty();
+            _newRow = newRow.NullToEmpty();
 
             if (!DelimiterIsSpecified)
-                throw new ArgumentException("Delimiter must not be null or empty.");
+                throw new ArgumentException("Delimiter must be non-null and non-empty.");
 
-            if (ContainsAny(_delimiter, _quote, _newLine) || ContainsAny(_quote, _newLine))
+            if (ContainsAny(_delimiter, _quote, _newRow) || ContainsAny(_quote, _newRow))
                 throw new ArgumentException("No parameter may be containable within any other.");
         }
 
         private static bool ContainsAny(string source, params string[] compares)
         {
-            if (source.Length > 0)
-                foreach (string compare in compares)
-                    if (compare.Length > 0)
-                        if (source.Contains(compare) || compare.Contains(source))
-                            return true;
-
-            return false;
+            return source.Length > 0
+                && compares.Where(compare => compare.Length > 0).Any(compare => source.Contains(compare) || compare.Contains(source));
         }
 
         public bool DelimiterIsSpecified { get { return !string.IsNullOrEmpty(_delimiter); } }
@@ -50,8 +47,8 @@ namespace SoftwareBotany.Ivy
         public string Quote { get { return _quote; } }
         private readonly string _quote;
 
-        public bool NewLineIsSpecified { get { return !string.IsNullOrEmpty(_newLine); } }
-        public string NewLine { get { return _newLine; } }
-        private readonly string _newLine;
+        public bool NewRowIsSpecified { get { return !string.IsNullOrEmpty(_newRow); } }
+        public string NewRow { get { return _newRow; } }
+        private readonly string _newRow;
     }
 }

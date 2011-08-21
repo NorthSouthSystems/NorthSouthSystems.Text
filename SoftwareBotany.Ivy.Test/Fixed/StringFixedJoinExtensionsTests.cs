@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SoftwareBotany.Ivy
 {
@@ -10,56 +8,39 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void Basic()
         {
-            string join = new [] { "A", "B", "C"}.JoinFixedLine(1, 1, 1);
+            string join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 });
             Assert.AreEqual("ABC", join);
 
-            join = new[] { "A", "B", "C" }.JoinFixedLine(2, 1, 1);
+            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', false);
+            Assert.AreEqual("ABC", join);
+
+            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 1, 1 });
             Assert.AreEqual("A BC", join);
 
-            join = new[] { "A", "B", "C" }.JoinFixedLine('1', 2, 1, 1);
-            Assert.AreEqual("A1BC", join);
+            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 1, 1 }, '-', false);
+            Assert.AreEqual("A-BC", join);
 
-            join = new[] { "A", "B", "C" }.JoinFixedLine(2, 2, 2);
+            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 2, 2 });
             Assert.AreEqual("A B C ", join);
 
-            join = new[] { "AB", "CD", "EF" }.JoinFixedLine(2, 2, 2);
+            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 2, 2, 2 });
             Assert.AreEqual("ABCDEF", join);
 
-            join = new[] { "AB", "CD", "EF" }.JoinFixedLine('1', 3, 2, 2);
-            Assert.AreEqual("AB1CDEF", join);
-        }
+            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 3, 2, 2 }, '-', false);
+            Assert.AreEqual("AB-CDEF", join);
 
-        #region Exceptions
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            string[] strings = null;
-            strings.JoinFixedLine(1, 1, 1);
+            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 4, 4, 4 }, '-', false);
+            Assert.AreEqual("AB--CD--EF--", join);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Argument1()
+        public void SubstringToFit()
         {
-            new[] { "A", "B" }.JoinFixedLine(1);
-        }
+            string join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', true);
+            Assert.AreEqual("ACE", join);
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Argument2()
-        {
-            new[] { "AB", "C" }.JoinFixedLine(1, 1);
+            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 3, 3, 1 }, '-', true);
+            Assert.AreEqual("AB-CD-E", join);
         }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void Argument3()
-        {
-            new[] { "A", "BC" }.JoinFixedLine(1, 1);
-        }
-
-        #endregion
     }
 }

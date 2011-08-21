@@ -8,7 +8,7 @@ namespace SoftwareBotany.Ivy
     public class StringQuotedSignalsTests
     {
         [TestMethod]
-        public void ConstructionAndGetters()
+        public void Basic()
         {
             var signals = new StringQuotedSignals(",", null, Environment.NewLine);
             Assert.IsTrue(signals.DelimiterIsSpecified);
@@ -17,15 +17,22 @@ namespace SoftwareBotany.Ivy
             Assert.IsFalse(signals.QuoteIsSpecified);
             Assert.AreEqual(string.Empty, signals.Quote);
 
-            Assert.IsTrue(signals.NewLineIsSpecified);
-            Assert.AreEqual(Environment.NewLine, signals.NewLine);
+            Assert.IsTrue(signals.NewRowIsSpecified);
+            Assert.AreEqual(Environment.NewLine, signals.NewRow);
         }
 
         #region Exceptions
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ContructionNoDelimiterArgument()
+        public void ContructionNoDelimiter1()
+        {
+            var signals = new StringQuotedSignals(null, "\"", Environment.NewLine);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ContructionNoDelimiter2()
         {
             var signals = new StringQuotedSignals(string.Empty, "\"", Environment.NewLine);
         }
@@ -41,14 +48,35 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentException))]
         public void ContructionOverlapArgument2()
         {
-            var signals = new StringQuotedSignals("AB", "A", null);
+            var signals = new StringQuotedSignals("A", null, "AB");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ContructionOverlapArgument3()
         {
-            var signals = new StringQuotedSignals(null, "A", "AB");
+            var signals = new StringQuotedSignals("AB", "A", null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ContructionOverlapArgument4()
+        {
+            var signals = new StringQuotedSignals("AB", null, "A");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ContructionOverlapArgument5()
+        {
+            var signals = new StringQuotedSignals(",", "A", "AB");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ContructionOverlapArgument6()
+        {
+            var signals = new StringQuotedSignals(",", "AB", "A");
         }
 
         #endregion

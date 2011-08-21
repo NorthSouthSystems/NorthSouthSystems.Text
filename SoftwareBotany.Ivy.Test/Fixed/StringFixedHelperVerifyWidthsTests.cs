@@ -19,56 +19,56 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentNull()
+        public void Null()
         {
             StringFixedExtensions.VerifyWidths(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ArgumentEmptyLengths()
+        public void Empty()
         {
             StringFixedExtensions.VerifyWidths(new int[0]);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentBadLength1()
+        public void WidthEqualToZero1()
         {
             StringFixedExtensions.VerifyWidths(new[] { 0 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentBadLength2()
-        {
-            StringFixedExtensions.VerifyWidths(new[] { -1 });
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentBadLength3()
+        public void WidthEqualToZero2()
         {
             StringFixedExtensions.VerifyWidths(new[] { 0, 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentBadLength4()
-        {
-            StringFixedExtensions.VerifyWidths(new[] { -1, 1 });
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentBadLength5()
+        public void WidthEqualToZero3()
         {
             StringFixedExtensions.VerifyWidths(new[] { 1, 0 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentBadLength6()
+        public void WidthLessThanZero1()
+        {
+            StringFixedExtensions.VerifyWidths(new[] { -1 });
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void WidthLessThanZero2()
+        {
+            StringFixedExtensions.VerifyWidths(new[] { -1, 1 });
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void WidthLessThanZero3()
         {
             StringFixedExtensions.VerifyWidths(new[] { 1, -1 });
         }

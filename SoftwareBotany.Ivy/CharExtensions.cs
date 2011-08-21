@@ -21,7 +21,20 @@ namespace SoftwareBotany.Ivy
         /// <summary>
         /// Determines whether or not a char can pass through a given set of CharFilters.
         /// </summary>
-        /// <param name="filters">Bitwise union of 1 or more CharFilters designating which characters to filter.</param>
+        /// <param name="filters">Bitwise union of one or more CharFilters designating which characters to filter.</param>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits));
+        /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveLetters));
+        /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits | RemoveLetters));
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// True
+        /// False
+        /// False
+        /// </code>
+        /// </example>
         public static bool PassesFilters(this char value, CharFilters filters)
         {
             if (filters == CharFilters.None)
