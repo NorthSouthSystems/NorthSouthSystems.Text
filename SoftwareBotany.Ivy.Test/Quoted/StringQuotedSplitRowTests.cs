@@ -10,54 +10,135 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void NonQuoted()
         {
-            string[] split = string.Empty.SplitQuotedRow(StringQuotedSignals.Csv);
+            NonQuotedBase(StringQuotedSignals.Csv);
+            NonQuotedBase(StringQuotedSignals.Pipe);
+            NonQuotedBase(StringQuotedSignals.Tab);
+        }
+
+        private void NonQuotedBase(StringQuotedSignals signals)
+        {
+            string[] split = string.Empty.SplitQuotedRow(signals);
             Assert.AreEqual(0, split.Length);
 
-            split = "a,b,c".SplitQuotedRow(StringQuotedSignals.Csv);
+            split = signals.Delimiter.SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { string.Empty, string.Empty }, split);
+
+            split = (signals.Delimiter + signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { string.Empty, string.Empty, string.Empty }, split);
+
+            split = string.Format("a{0}b{0}c", signals.Delimiter).SplitQuotedRow(signals);
             CollectionAssert.AreEqual(new[] { "a", "b", "c" }, split);
 
-            split = ("a,b,c" + StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
-            CollectionAssert.AreEqual(new[] { "a", "b", "c" }, split);
+            split = string.Format("a{0}{0}c", signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", string.Empty, "c" }, split);
+
+            if (signals.NewRowIsSpecified)
+            {
+                split = string.Format("a{0}b{0}c{1}", signals.Delimiter, signals.NewRow).SplitQuotedRow(signals);
+                CollectionAssert.AreEqual(new[] { "a", "b", "c" }, split);
+            }
         }
 
         [TestMethod]
         public void Quoted()
         {
-            StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine);
-            string[] split;
+            QuotedBase(StringQuotedSignals.Csv);
+            QuotedBase(StringQuotedSignals.Pipe);
+            QuotedBase(StringQuotedSignals.Tab);
+            QuotedBase(new StringQuotedSignals(",", "'", Environment.NewLine));
+        }
 
-            split = "'a,',b,c".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a,", "b", "c" }, split);
+        private void QuotedBase(StringQuotedSignals signals)
+        {
+            if (!signals.QuoteIsSpecified)
+                throw new NotSupportedException();
 
-            split = "'a,a',b,c".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a,a", "b", "c" }, split);
+            string[] split = string.Format("{0}a{1}{0}{1}b{1}c", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a" + signals.Delimiter, "b", "c" }, split);
 
-            split = "a,'b,',c".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a", "b,", "c" }, split);
+            split = string.Format("{0}a{1}a{0}{1}b{1}c", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a" + signals.Delimiter + "a", "b", "c" }, split);
 
-            split = "a,'b,b',c".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a", "b,b", "c" }, split);
+            split = string.Format("a{1}{0}b{1}{0}{1}c", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b" + signals.Delimiter, "c" }, split);
 
-            split = "a,b,'c,'".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a", "b", "c," }, split);
+            split = string.Format("a{1}{0}b{1}b{0}{1}c", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b" + signals.Delimiter + "b", "c" }, split);
 
-            split = "a,b,'c,c'".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a", "b", "c,c" }, split);
+            split = string.Format("a{1}b{1}{0}c{1}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", "c" + signals.Delimiter }, split);
 
-            split = "'a','b','c'".SplitQuotedRow(signals);
+            split = string.Format("a{1}b{1}{0}c{1}c{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", "c" + signals.Delimiter + "c" }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}c{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
             CollectionAssert.AreEqual(new[] { "a", "b", "c" }, split);
 
-            split = "'a,','b,','c,'".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a,", "b,", "c," }, split);
+            split = string.Format("{0}a{1}{0}{1}{0}b{1}{0}{1}{0}c{1}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a" + signals.Delimiter, "b" + signals.Delimiter, "c" + signals.Delimiter }, split);
 
-            split = "a,b,''c".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a", "b", "'c" }, split);
-
-            split = "a,b,'''c,'".SplitQuotedRow(signals);
-            CollectionAssert.AreEqual(new[] { "a", "b", "'c," }, split);
-
-            split = ("a,b,'c" + signals.NewRow + "d'").SplitQuotedRow(signals);
+            split = string.Format("a{1}b{1}{0}c{2}d{0}", signals.Quote, signals.Delimiter, signals.NewRow).SplitQuotedRow(signals);
             CollectionAssert.AreEqual(new[] { "a", "b", "c" + signals.NewRow + "d" }, split);
+        }
+
+        [TestMethod]
+        public void QuotedEscapedQuote()
+        {
+            QuotedEscapedQuoteBase(StringQuotedSignals.Csv);
+            QuotedEscapedQuoteBase(StringQuotedSignals.Pipe);
+            QuotedEscapedQuoteBase(StringQuotedSignals.Tab);
+            QuotedEscapedQuoteBase(new StringQuotedSignals(",", "'", Environment.NewLine));
+        }
+
+        private void QuotedEscapedQuoteBase(StringQuotedSignals signals)
+        {
+            string[] split = string.Format("a{1}b{1}{0}{0}c", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c" }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{0}c{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c" }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}c{1}d", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c", "d" }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{0}c{0}{1}{0}d{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c", "d" }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", string.Empty }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", string.Empty }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}{1}d", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", string.Empty, "d" }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{1}{0}d{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", string.Empty, "d" }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}{0}c{1}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c" + signals.Delimiter }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{0}c{1}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c" + signals.Delimiter }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}{0}c{1}{0}{1}d", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c" + signals.Delimiter, "d" }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{0}c{1}{0}{1}{0}d{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote + "c" + signals.Delimiter, "d" }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}{0}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{0}{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote }, split);
+
+            split = string.Format("a{1}b{1}{0}{0}{0}{0}{1}d", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote, "d" }, split);
+
+            split = string.Format("{0}a{0}{1}{0}b{0}{1}{0}{0}{0}{0}{1}{0}d{0}", signals.Quote, signals.Delimiter).SplitQuotedRow(signals);
+            CollectionAssert.AreEqual(new[] { "a", "b", signals.Quote, "d" }, split);
         }
 
         [TestMethod]
