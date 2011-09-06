@@ -135,14 +135,14 @@ namespace SoftwareBotany.Ivy
                     if (triggered)
                     {
                         if (IsNewRow && !InQuotes())
-                            yield return ProduceLineResults();
+                            yield return ProduceRowColumns().ToArray();
 
                         ResetTrackers();
                     }
                 }
 
                 if (_buffer.Length > 0)
-                    yield return ProduceLineResults();
+                    yield return ProduceRowColumns().ToArray();
 
                 // This will ensure the Processor is in a reusable state.
                 ResetTrackers();
@@ -154,21 +154,13 @@ namespace SoftwareBotany.Ivy
                 _categories.Add(CharacterCategory.Char);
 
                 _delimiterTracker.ProcessChar(c);
-                _quoteTracker.ProcessChar(c);
-                _newRowTracker.ProcessChar(c);
 
-                ReviseCategories();
-
-                return IsDelimiter || IsQuote || IsNewRow;
-            }
-
-            private void ReviseCategories()
-            {
                 if (IsDelimiter)
-                {
                     ReviseCategories(CharacterCategory.Delimiter, _signals.Delimiter.Length);
-                }
-                else if (IsQuote)
+
+                _quoteTracker.ProcessChar(c);
+
+                if (IsQuote)
                 {
                     bool isEndQuote = InQuotes();
 
@@ -183,10 +175,13 @@ namespace SoftwareBotany.Ivy
                         ReviseCategories(CharacterCategory.EscapedQuote, _signals.Quote.Length * 2);
                     }
                 }
-                else if (IsNewRow)
-                {
+
+                _newRowTracker.ProcessChar(c);
+
+                if (IsNewRow)
                     ReviseCategories(CharacterCategory.NewRow, _signals.NewRow.Length);
-                }
+
+                return IsDelimiter || IsQuote || IsNewRow;
             }
 
             private void ReviseCategories(CharacterCategory category, int length)
@@ -203,32 +198,32 @@ namespace SoftwareBotany.Ivy
                     .Any(category => category == CharacterCategory.StartQuote);
             }
 
-            private string[] ProduceLineResults()
+            private IEnumerable<string> ProduceRowColumns()
             {
-                List<string> results = new List<string>();
-                StringBuilder result = new StringBuilder();
+                List<char> columnCharacters = new List<char>();
+                List<CharacterCategory> columnCategories = new List<CharacterCategory>();
 
-                bool inQuotes = false;
                 int index = 0;
+                bool inQuotes = false;
 
                 foreach (CharacterCategory category in _categories)
                 {
+                    columnCharacters.Add(_buffer[index]);
+                    columnCategories.Add(category);
+
                     switch (category)
                     {
                         case CharacterCategory.Char:
-                            result.Append(_buffer[index]);
                             break;
 
                         case CharacterCategory.Delimiter:
-                            if (inQuotes)
+                            if (!inQuotes)
                             {
-                                result.Append(_signals.Delimiter);
-                            }
-                            else
-                            {
-                                results.Add(result.ToString());
-                                result.Clear();
-                                inQuotes = false;
+                                columnCategories.RemoveAt(columnCategories.Count - 1);
+                                columnCharacters.RemoveAt(columnCharacters.Count - 1);
+                                yield return ProduceRowColumn(columnCategories, columnCharacters);
+                                columnCategories = new List<CharacterCategory>();
+                                columnCharacters = new List<char>();
                             }
                             break;
 
@@ -241,12 +236,14 @@ namespace SoftwareBotany.Ivy
                             break;
 
                         case CharacterCategory.EscapedQuote:
-                            result.Append(_signals.Quote);
                             break;
 
                         case CharacterCategory.NewRow:
-                            if (inQuotes)
-                                result.Append(_signals.NewRow);
+                            if (!inQuotes)
+                            {
+                                columnCategories.RemoveAt(columnCategories.Count - 1);
+                                columnCharacters.RemoveAt(columnCharacters.Count - 1);
+                            }
                             break;
 
                         case CharacterCategory.NoOp:
@@ -259,12 +256,74 @@ namespace SoftwareBotany.Ivy
                     index++;
                 }
 
-                results.Add(result.ToString());
-
                 _buffer.Clear();
                 _categories.Clear();
 
-                return results.ToArray();
+                yield return ProduceRowColumn(columnCategories, columnCharacters);
+            }
+
+            private string ProduceRowColumn(List<CharacterCategory> categories, List<char> characters)
+            {
+                var operationalCategories = categories.Where(category => category != CharacterCategory.NoOp);
+
+                if (!operationalCategories.Any())
+                    return string.Empty;
+
+                // There are two special cases:
+                // 1. EscapedQuote by itself (originally Quote Quote) == string.Empty (think Join forceQuotes=true on string.Empty).
+                // 2. EscapedQuote EscapedQuote (originally Quote Quote Quote Quote) == EscapedQuote (think StartQuote EscapedQuote EndQuote).
+                // Everything else is straightforward.
+
+                if (operationalCategories.First() == CharacterCategory.EscapedQuote)
+                {
+                    int count = operationalCategories.Count();
+
+                    if (count == 1)
+                        return string.Empty;
+
+                    if (count == 2 && operationalCategories.Last() == CharacterCategory.EscapedQuote)
+                        return _signals.Quote;
+                }
+
+                StringBuilder column = new StringBuilder();
+
+                int index = 0;
+
+                foreach(CharacterCategory category in categories)
+                {
+                    switch (category)
+                    {
+                        case CharacterCategory.Char:
+                            column.Append(characters[index]);
+                            break;
+
+                        case CharacterCategory.Delimiter:
+                            column.Append(_signals.Delimiter);
+                            break;
+
+                        case CharacterCategory.StartQuote:
+                        case CharacterCategory.EndQuote:
+                            break;
+
+                        case CharacterCategory.EscapedQuote:
+                            column.Append(_signals.Quote);
+                            break;
+
+                        case CharacterCategory.NewRow:
+                            column.Append(_signals.NewRow);
+                            break;
+
+                        case CharacterCategory.NoOp:
+                            break;
+
+                        default:
+                            throw new NotImplementedException(category.ToString());
+                    }
+
+                    index++;
+                }
+
+                return column.ToString();
             }
 
             private void ResetTrackers()
