@@ -57,6 +57,7 @@
     <Compile Include="Fixed\StringFixedSplitRowTests.cs" />
     <Compile Include="Fixed\StringFixedHelperVerifyWidthsTests.cs" />
     <Compile Include="Fixed\StringFixedJoinExtensionsTests.cs" />
+    <Compile Include="Quoted\StringQuotedPerformanceTests.cs" />
     <Compile Include="Quoted\StringQuotedSplitRowTests.cs" />
     <Compile Include="Schema\StringSchemaEntryTests.cs" />
     <Compile Include="Schema\StringSchemaSplitExtensionsTests.cs" />

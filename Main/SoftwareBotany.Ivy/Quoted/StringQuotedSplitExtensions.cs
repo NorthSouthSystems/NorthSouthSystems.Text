@@ -11,6 +11,7 @@ namespace SoftwareBotany.Ivy
         /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
         /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
         /// A NewRow signal outside of Quotes will cause an exception because multiple rows are not allowed for this method.
+        /// Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
         /// </summary>
         /// <example>
         /// <code>
@@ -24,7 +25,7 @@ namespace SoftwareBotany.Ivy
         /// c
         /// </code>
         /// <code>
-        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine);
+        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
         /// 
         /// foreach(string column in "'a,a',b,c".SplitQuotedRow(signals);)
         ///     Console.WriteLine(column);
@@ -36,7 +37,7 @@ namespace SoftwareBotany.Ivy
         /// c
         /// </code>
         /// <code>
-        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine);
+        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
         /// 
         /// foreach(string column in "a''a,b,c".SplitQuotedRow(signals);)
         ///     Console.WriteLine(column);
@@ -69,6 +70,7 @@ namespace SoftwareBotany.Ivy
         /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
         /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
         /// A NewRow signal outside of Quotes is allowed and signals that a new row has begun.
+        /// Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
         /// </summary>
         /// <returns>A sets of string columns for each row in the stream as it is identified.</returns>
         /// <example>
@@ -122,191 +124,162 @@ namespace SoftwareBotany.Ivy
                 _delimiterTracker = new StringSignalTracker(_signals.Delimiter);
                 _quoteTracker = new StringSignalTracker(_signals.Quote);
                 _newRowTracker = new StringSignalTracker(_signals.NewRow);
+                _escapeTracker = new StringSignalTracker(_signals.Escape);
+            }
+
+            private StringQuotedSignals _signals;
+
+            private StringSignalTracker _delimiterTracker;
+            private StringSignalTracker _quoteTracker;
+            private StringSignalTracker _newRowTracker;
+            private StringSignalTracker _escapeTracker;
+
+            private bool _inRow = false;
+            private List<string> _columns = new List<string>();
+            private List<char> _columnBuffer = new List<char>();
+            private List<CharacterCategory> _columnCategories = new List<CharacterCategory>();
+
+            private int _consecutiveQuoteCount = 0;
+            private bool _inQuotes = false;
+            private bool _escaped = false;
+
+            private void Reset()
+            {
+                ResetTrackers();
+
+                _inRow = false;
+                _columns.Clear();
+                _columnBuffer.Clear();
+                _columnCategories.Clear();
+
+                _consecutiveQuoteCount = 0;
+                _inQuotes = false;
+                _escaped = false;
+            }
+
+            private void ResetTrackers()
+            {
+                _delimiterTracker.Reset();
+                _quoteTracker.Reset();
+                _newRowTracker.Reset();
+                _escapeTracker.Reset();
             }
 
             public IEnumerable<string[]> Process(IEnumerable<char> rows)
             {
-                List<string> results = new List<string>();
-
                 foreach (char c in rows)
                 {
-                    bool triggered = ProcessChar(c);
+                    _inRow = true;
+                    _columnBuffer.Add(c);
+                    _columnCategories.Add(CharacterCategory.Char);
 
-                    if (triggered)
+                    if (!_escaped)
                     {
-                        if (IsNewRow && !InQuotes())
-                            yield return ProduceRowColumns().ToArray();
+                        _delimiterTracker.ProcessChar(c);
+                        _quoteTracker.ProcessChar(c);
+                        _newRowTracker.ProcessChar(c);
+                        _escapeTracker.ProcessChar(c);
+                    }
+                    else
+                        _escaped = false;
 
+                    // Quote needs to be processed first because of it's potential need to rewind a character and FlushConsecutiveQuotes.
+                    if (_quoteTracker.IsTriggered)
+                    {
                         ResetTrackers();
+                        ReviseCategories(CharacterCategory.NoOp, _signals.Quote.Length);
+
+                        _consecutiveQuoteCount++;
                     }
-                }
-
-                if (_buffer.Length > 0)
-                    yield return ProduceRowColumns().ToArray();
-
-                // This will ensure the Processor is in a reusable state.
-                ResetTrackers();
-            }
-
-            private bool ProcessChar(char c)
-            {
-                _buffer.Append(c);
-                _categories.Add(CharacterCategory.Char);
-
-                _delimiterTracker.ProcessChar(c);
-
-                if (IsDelimiter)
-                    ReviseCategories(CharacterCategory.Delimiter, _signals.Delimiter.Length);
-
-                _quoteTracker.ProcessChar(c);
-
-                if (IsQuote)
-                {
-                    bool isEndQuote = InQuotes();
-
-                    ReviseCategories(isEndQuote ? CharacterCategory.EndQuote : CharacterCategory.StartQuote, _signals.Quote.Length);
-
-                    int potentialStartQuoteIndex = _categories.Count - (_signals.Quote.Length * 2);
-
-                    if (isEndQuote
-                        && potentialStartQuoteIndex >= 0
-                        && _categories[potentialStartQuoteIndex] == CharacterCategory.StartQuote)
+                    else if (!_quoteTracker.IsCounting && _consecutiveQuoteCount > 0)
                     {
-                        ReviseCategories(CharacterCategory.EscapedQuote, _signals.Quote.Length * 2);
+                        // Rewind a character so that our FlushConsecutiveQuotes is accurate.
+                        _columnBuffer.RemoveAt(_columnBuffer.Count - 1);
+                        _columnCategories.RemoveAt(_columnCategories.Count - 1);
+
+                        FlushConsecutiveQuotes();
+
+                        // Now place the character being processed back in the buffers.
+                        _columnBuffer.Add(c);
+                        _columnCategories.Add(CharacterCategory.Char);
+                    }
+
+                    if (_delimiterTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(_inQuotes ? CharacterCategory.Delimiter : CharacterCategory.NoOp, _signals.Delimiter.Length);
+
+                        if (!_inQuotes)
+                            FlushColumn();
+                    }
+
+                    if (_newRowTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(_inQuotes ? CharacterCategory.NewRow : CharacterCategory.NoOp, _signals.NewRow.Length);
+
+                        if (!_inQuotes)
+                        {
+                            FlushColumn();
+                            yield return _columns.ToArray();
+                            Reset();
+                        }
+                    }
+
+                    if (_escapeTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(CharacterCategory.NoOp, _signals.Escape.Length);
+
+                        _escaped = true;
                     }
                 }
 
-                _newRowTracker.ProcessChar(c);
+                FlushColumn();
 
-                if (IsNewRow)
-                    ReviseCategories(CharacterCategory.NewRow, _signals.NewRow.Length);
+                if (_columns.Count > 0)
+                    yield return _columns.ToArray();
 
-                return IsDelimiter || IsQuote || IsNewRow;
+                Reset();
             }
 
             private void ReviseCategories(CharacterCategory category, int length)
             {
                 for (int i = length; i > 0; i--)
-                    _categories[_categories.Count - i] = i == length ? category : CharacterCategory.NoOp;
+                    _columnCategories[_columnCategories.Count - i] = i == length ? category : CharacterCategory.NoOp;
             }
 
-            private bool InQuotes()
+            private void FlushColumn()
             {
-                return _categories.AsEnumerable()
-                    .Reverse()
-                    .TakeWhile(category => category != CharacterCategory.EndQuote)
-                    .Any(category => category == CharacterCategory.StartQuote);
-            }
+                if (!_inRow)
+                    return;
 
-            private IEnumerable<string> ProduceRowColumns()
-            {
-                List<char> columnCharacters = new List<char>();
-                List<CharacterCategory> columnCategories = new List<CharacterCategory>();
+                FlushConsecutiveQuotes();
 
-                int index = 0;
-                bool inQuotes = false;
-
-                foreach (CharacterCategory category in _categories)
-                {
-                    columnCharacters.Add(_buffer[index]);
-                    columnCategories.Add(category);
-
-                    switch (category)
-                    {
-                        case CharacterCategory.Char:
-                            break;
-
-                        case CharacterCategory.Delimiter:
-                            if (!inQuotes)
-                            {
-                                columnCategories.RemoveAt(columnCategories.Count - 1);
-                                columnCharacters.RemoveAt(columnCharacters.Count - 1);
-                                yield return ProduceRowColumn(columnCategories, columnCharacters);
-                                columnCategories = new List<CharacterCategory>();
-                                columnCharacters = new List<char>();
-                            }
-                            break;
-
-                        case CharacterCategory.StartQuote:
-                            inQuotes = true;
-                            break;
-
-                        case CharacterCategory.EndQuote:
-                            inQuotes = false;
-                            break;
-
-                        case CharacterCategory.EscapedQuote:
-                            break;
-
-                        case CharacterCategory.NewRow:
-                            if (!inQuotes)
-                            {
-                                columnCategories.RemoveAt(columnCategories.Count - 1);
-                                columnCharacters.RemoveAt(columnCharacters.Count - 1);
-                            }
-                            break;
-
-                        case CharacterCategory.NoOp:
-                            break;
-
-                        default:
-                            throw new NotImplementedException(category.ToString());
-                    }
-
-                    index++;
-                }
-
-                _buffer.Clear();
-                _categories.Clear();
-
-                yield return ProduceRowColumn(columnCategories, columnCharacters);
-            }
-
-            private string ProduceRowColumn(List<CharacterCategory> categories, List<char> characters)
-            {
-                var operationalCategories = categories.Where(category => category != CharacterCategory.NoOp);
-
-                if (!operationalCategories.Any())
-                    return string.Empty;
-
-                // There are two special cases:
-                // 1. EscapedQuote by itself (originally Quote Quote) == string.Empty (think Join forceQuotes=true on string.Empty).
-                // 2. EscapedQuote EscapedQuote (originally Quote Quote Quote Quote) == EscapedQuote (think StartQuote EscapedQuote EndQuote).
-                // Everything else is straightforward.
-
-                if (operationalCategories.First() == CharacterCategory.EscapedQuote)
-                {
-                    int count = operationalCategories.Count();
-
-                    if (count == 1)
-                        return string.Empty;
-
-                    if (count == 2 && operationalCategories.Last() == CharacterCategory.EscapedQuote)
-                        return _signals.Quote;
-                }
+                // An empty column that is Quoted or a Quoted column containing only Quotes will never properly detect that it is Quoted,
+                // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
+                bool skipAQuote = _columnCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
 
                 StringBuilder column = new StringBuilder();
+                int columBufferIndex = 0;
 
-                int index = 0;
-
-                foreach(CharacterCategory category in categories)
+                foreach (CharacterCategory category in _columnCategories)
                 {
                     switch (category)
                     {
                         case CharacterCategory.Char:
-                            column.Append(characters[index]);
+                            column.Append(_columnBuffer[columBufferIndex]);
                             break;
 
                         case CharacterCategory.Delimiter:
                             column.Append(_signals.Delimiter);
                             break;
 
-                        case CharacterCategory.StartQuote:
-                        case CharacterCategory.EndQuote:
-                            break;
-
-                        case CharacterCategory.EscapedQuote:
-                            column.Append(_signals.Quote);
+                        case CharacterCategory.Quote:
+                            if (skipAQuote)
+                                skipAQuote = false;
+                            else
+                                column.Append(_signals.Quote);
                             break;
 
                         case CharacterCategory.NewRow:
@@ -320,38 +293,33 @@ namespace SoftwareBotany.Ivy
                             throw new NotImplementedException(category.ToString());
                     }
 
-                    index++;
+                    columBufferIndex++;
                 }
 
-                return column.ToString();
+                _columns.Add(column.ToString());
+                _columnBuffer.Clear();
+                _columnCategories.Clear();
             }
 
-            private void ResetTrackers()
+            private void FlushConsecutiveQuotes()
             {
-                _delimiterTracker.Reset();
-                _quoteTracker.Reset();
-                _newRowTracker.Reset();
+                if (_consecutiveQuoteCount == 0)
+                    return;
+
+                if (_consecutiveQuoteCount % 2 == 1)
+                    _inQuotes = !_inQuotes;
+
+                for (int i = _consecutiveQuoteCount / 2; i > 0; i--)
+                    ReviseCategories(CharacterCategory.Quote, i * 2 * _signals.Quote.Length);
+
+                _consecutiveQuoteCount = 0;
             }
-
-            private StringQuotedSignals _signals;
-            private StringBuilder _buffer = new StringBuilder();
-            private List<CharacterCategory> _categories = new List<CharacterCategory>();
-
-            private StringSignalTracker _delimiterTracker;
-            private StringSignalTracker _quoteTracker;
-            private StringSignalTracker _newRowTracker;
-
-            private bool IsDelimiter { get { return _delimiterTracker.IsTriggered; } }
-            private bool IsQuote { get { return _quoteTracker.IsTriggered; } }
-            private bool IsNewRow { get { return _newRowTracker.IsTriggered; } }
 
             private enum CharacterCategory : byte
             {
                 Char,
                 Delimiter,
-                StartQuote,
-                EndQuote,
-                EscapedQuote,
+                Quote,
                 NewRow,
                 NoOp
             }
