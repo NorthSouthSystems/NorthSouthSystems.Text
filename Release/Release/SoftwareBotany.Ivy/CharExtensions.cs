@@ -2,6 +2,9 @@
 
 namespace SoftwareBotany.Ivy
 {
+    /// <summary>
+    /// Flags used to determine which characters to filter out of a sequence of chars.
+    /// </summary>
     [Flags]
     public enum CharFilters
     {
@@ -15,16 +18,33 @@ namespace SoftwareBotany.Ivy
 
     public static class CharExtensions
     {
-        public static bool PassesFilters(this char c, CharFilters filters)
+        /// <summary>
+        /// Determines whether or not a char can pass through a given set of CharFilters.
+        /// </summary>
+        /// <param name="filters">Bitwise union of one or more CharFilters designating which characters to filter.</param>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits));
+        /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveLetters));
+        /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits | RemoveLetters));
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// True
+        /// False
+        /// False
+        /// </code>
+        /// </example>
+        public static bool PassesFilters(this char value, CharFilters filters)
         {
             if (filters == CharFilters.None)
                 return true;
 
-            return (!filters.HasFlag(CharFilters.RemoveLetters) || !char.IsLetter(c))
-                && (!filters.HasFlag(CharFilters.RemoveDigits) || !char.IsDigit(c))
-                && (!filters.HasFlag(CharFilters.RemovePunctuation) || !char.IsPunctuation(c))
-                && (!filters.HasFlag(CharFilters.RemoveWhiteSpace) || !char.IsWhiteSpace(c))
-                && (!filters.HasFlag(CharFilters.RemoveOther) || char.IsLetter(c) || char.IsDigit(c) || char.IsPunctuation(c) || char.IsWhiteSpace(c));
+            return (!filters.HasFlag(CharFilters.RemoveLetters) || !char.IsLetter(value))
+                && (!filters.HasFlag(CharFilters.RemoveDigits) || !char.IsDigit(value))
+                && (!filters.HasFlag(CharFilters.RemovePunctuation) || !char.IsPunctuation(value))
+                && (!filters.HasFlag(CharFilters.RemoveWhiteSpace) || !char.IsWhiteSpace(value))
+                && (!filters.HasFlag(CharFilters.RemoveOther) || char.IsLetter(value) || char.IsDigit(value) || char.IsPunctuation(value) || char.IsWhiteSpace(value));
         }
     }
 }

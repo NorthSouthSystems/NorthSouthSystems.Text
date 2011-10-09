@@ -6,12 +6,22 @@ namespace SoftwareBotany.Ivy
 {
     public static class StringExtensions
     {
+        #region Construction
+
+        /// <summary>
+        /// Creates and returns a new string containing all of the characters in the provided enumeration.
+        /// </summary>
+        public static string ToNewString(this IEnumerable<char> chars) { return new string(chars.ToArray()); }
+
+        #endregion
+
         #region Empty / Null
 
         /// <summary>
         /// VIOLATES NULL REFERENCE SEMANTICS! Will return null if string.IsNullOrEmpty. This simplifies code that treats
         /// null string values the same as it treats Empty string values, and wants only to deal with null.
         /// </summary>
+        /// <returns>Returns null when value == string.Empty; else, returns the original string.</returns>
         public static string EmptyToNull(this string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -24,33 +34,51 @@ namespace SoftwareBotany.Ivy
         /// VIOLATES NULL REFERENCE SEMANTICS! Will return string.Empty if string.IsNullOrEmpty. This simplifies code that treats
         /// null string values the same as it treats Empty string values, and wants only to deal with string.Empty.
         /// </summary>
+        /// <returns>Returns string.Empty when value == null; else, returns the original string.</returns>
         public static string NullToEmpty(this string value) { return value ?? string.Empty; }
 
         #endregion
 
         #region Cleaning
 
+        /// <inheritdoc cref="NormalizeWhiteSpace(IEnumerable{char}, string)"/>
+        public static string NormalizeWhiteSpace(this string value) { return NormalizeWhiteSpace((IEnumerable<char>)value, Environment.NewLine).ToNewString(); }
+
+        /// <inheritdoc cref="NormalizeWhiteSpace(IEnumerable{char}, string)"/>
+        public static string NormalizeWhiteSpace(this string value, string respectNewLine) { return NormalizeWhiteSpace((IEnumerable<char>)value, respectNewLine).ToNewString(); }
+
+        /// <inheritdoc cref="NormalizeWhiteSpace(IEnumerable{char}, string)"/>
+        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars) { return NormalizeWhiteSpace(chars, Environment.NewLine); }
+
         /// <summary>
-        /// Trims the left and right sides of a string while replacing any repeating instances of whitespace with a
-        /// single instance of whitespace.
+        /// Trims the front and back sides of a sequence of chars while replacing any repeating instances of whitespace with a
+        /// single instance of whitespace.  Newlines consisting of more than one whitespace character (Windows Newlines = \r\n) are
+        /// treated as a single whitespace instance.
         /// </summary>
-        public static string NormalizeWhiteSpace(this string value) { return new string(NormalizeWhiteSpace((IEnumerable<char>)value, Environment.NewLine).ToArray()); }
-
-        public static string NormalizeWhiteSpace(this string value, string respectNewLine) { return new string(NormalizeWhiteSpace((IEnumerable<char>)value, respectNewLine).ToArray()); }
-
-        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> value) { return NormalizeWhiteSpace(value, Environment.NewLine); }
-
-        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> value, string respectNewLine)
+        /// <param name="respectNewLine">The Newline string to treat as a single whitespace instance. (default = Environment.NewLine)</param>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine(" A  B C   D   ".NormalizeWhiteSpace());
+        /// Console.WriteLine(("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// A B C D
+        /// Lots Of
+        /// Changes
+        /// </code>
+        /// </example>
+        public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars, string respectNewLine)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
             bool nonWhiteSpaceHit = false;
             bool bufferedSpace = false;
             bool bufferedNewLine = false;
             StringSignalTracker newLineTracker = new StringSignalTracker(respectNewLine);
 
-            foreach (char c in value)
+            foreach (char c in chars)
             {
                 if (char.IsWhiteSpace(c))
                 {
@@ -75,7 +103,7 @@ namespace SoftwareBotany.Ivy
 
                         bufferedSpace = false;
                     }
-                    
+
                     yield return c;
 
                     nonWhiteSpaceHit = true;
@@ -97,6 +125,23 @@ namespace SoftwareBotany.Ivy
         /// a certain maxLength. This is helpful for situations where data must fit into the database; however, truncation
         /// is not considered an error and is acceptable.
         /// </summary>
+        /// <param name="maxLength">The maximum length allowed for the return string. Additional chars from value are truncated.</param>
+        /// <returns>The original value truncated to maxLength if necessary.</returns>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("abc".SubstringToFit(1));
+        /// Console.WriteLine("abc".SubstringToFit(2));
+        /// Console.WriteLine("abc".SubstringToFit(3));
+        /// Console.WriteLine("abc".SubstringToFit(4));
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a
+        /// ab
+        /// abc
+        /// abc
+        /// </code>
+        /// </example>
         public static string SubstringToFit(this string value, int maxLength)
         {
             if (value == null)
@@ -115,23 +160,53 @@ namespace SoftwareBotany.Ivy
 
         #region Casing
 
-        public static string ToLowerCamelCase(this string value) { return new string(ToCamelCaseImplementation(value, true).ToArray()); }
+        /// <inheritdoc cref="ToLowerCamelCase(IEnumerable{char})"/>
+        public static string ToLowerCamelCase(this string value) { return ToCamelCaseImplementation(value, true).ToNewString(); }
 
-        public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> value) { return ToCamelCaseImplementation(value, true); }
+        /// <summary>
+        /// Process a sequence of characters and returns its lower camel case representation.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("FooBar".ToLowerCamelCase());
+        /// Console.WriteLine(" FooBar".ToLowerCamelCase());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// fooBar
+        ///  fooBar
+        /// </code>
+        /// </example>
+        public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, true); }
 
-        public static string ToUpperCamelCase(this string value) { return new string(ToCamelCaseImplementation(value, false).ToArray()); }
+        /// <inheritdoc cref="ToUpperCamelCase(IEnumerable{char})"/>
+        public static string ToUpperCamelCase(this string value) { return ToCamelCaseImplementation(value, false).ToNewString(); }
 
-        public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> value) { return ToCamelCaseImplementation(value, false); }
+        /// <summary>
+        /// Process a sequence of characters and returns its upper camel case representation.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("fooBar".ToUpperCamelCase());
+        /// Console.WriteLine(" fooBar".ToUpperCamelCase());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// FooBar
+        ///  FooBar
+        /// </code>
+        /// </example>
+        public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, false); }
 
-        private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> value, bool isLower)
+        private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> chars, bool isLower)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
             bool previousWhiteSpace = true;
             int outputIndex = 0;
 
-            foreach (char c in value)
+            foreach (char c in chars)
             {
                 if (!char.IsWhiteSpace(c))
                 {
@@ -154,14 +229,36 @@ namespace SoftwareBotany.Ivy
             }
         }
 
-        public static string SpaceCamelCase(this string value) { return new string(SpaceCamelCase((IEnumerable<char>)value).ToArray()); }
+        /// <inheritdoc cref="SpaceCamelCase(IEnumerable{char})"/>
+        public static string SpaceCamelCase(this string value) { return SpaceCamelCase((IEnumerable<char>)value).ToNewString(); }
 
-        public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> value)
+        /// <summary>
+        /// Process a sequence of characters and returns the same sequence of characters but with spaces inserted
+        /// whenever camel casing indicates the start of a new word.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("FooBarFoo FooBarFoo".SpaceCamelCase());
+        /// Console.WriteLine("123A".SpaceCamelCase());
+        /// Console.WriteLine("123a".SpaceCamelCase());
+        /// Console.WriteLine("A123".SpaceCamelCase());
+        /// Console.WriteLine("A123A".SpaceCamelCase());
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// Foo Bar Foo Foo Bar Foo
+        /// 123 A
+        /// 123 a
+        /// A 123
+        /// A 123 A
+        /// </code>
+        /// </example>
+        public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> chars)
         {
-            if (value == null)
-                throw new ArgumentNullException("value");
+            if (chars == null)
+                throw new ArgumentNullException("chars");
 
-            if (!value.Any())
+            if (!chars.Any())
                 yield break;
 
             bool first = true;
@@ -171,7 +268,7 @@ namespace SoftwareBotany.Ivy
             bool previousIsLower = false;
             bool previousIsUpper = false;
 
-            foreach (char c in value)
+            foreach (char c in chars)
             {
                 bool isDigit = char.IsDigit(c);
                 bool isLetter = char.IsLetter(c);
@@ -210,12 +307,37 @@ namespace SoftwareBotany.Ivy
 
         #region Filtering
 
-        public static string Filter(this string s, CharFilters filters)
-        {
-            if (s == null)
-                throw new ArgumentNullException("s");
+        /// <inheritdoc cref="Filter(IEnumerable{char}, CharFilters)"/>
+        public static string Filter(this string value, CharFilters filters) { return Filter((IEnumerable<char>)value, filters).ToNewString(); }
 
-            return filters == CharFilters.None ? s : new string(s.Where(c => c.PassesFilters(filters)).ToArray());
+        /// <summary>
+        /// Removes unwanted characters from a sequence of characters.
+        /// </summary>
+        /// <param name="filters">Bitwise union of 1 or more CharFilters designating which characters to filter.</param>
+        /// <returns>The original sequence of chars with unwanted chars omitted.</returns>
+        /// <example>
+        /// <code>
+        /// Console.WriteLine("a1b2c3d".Filter(CharFilters.None));
+        /// Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters));
+        /// Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+        /// Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemovePunctuation));
+        /// Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a1b2c3d
+        /// 123
+        /// 
+        /// a1b2c3d
+        /// -
+        /// </code>
+        /// </example>
+        public static IEnumerable<char> Filter(this IEnumerable<char> chars, CharFilters filters)
+        {
+            if (chars == null)
+                throw new ArgumentNullException("chars");
+
+            return filters == CharFilters.None ? chars : chars.Where(c => c.PassesFilters(filters));
         }
 
         #endregion

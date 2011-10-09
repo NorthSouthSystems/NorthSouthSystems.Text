@@ -5,72 +5,116 @@ using System.Text;
 
 namespace SoftwareBotany.Ivy
 {
-    public static class StringQuotedSplitExtensions
+    public static partial class StringQuotedExtensions
     {
         /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes will
-        /// cause an exception because multiple lines are not allowed.
+        /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
+        /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
+        /// A NewRow signal outside of Quotes will cause an exception because multiple rows are not allowed for this method.
+        /// Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
         /// </summary>
-        /// <param name="chars">The quoted delimited string to split.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>The string columns after the split.</returns>
-        public static string[] SplitQuoted(this IEnumerable<char> chars, StringQuotedSignals signals)
+        /// <example>
+        /// <code>
+        /// foreach(string column in "a,b,c".SplitQuotedRow(StringQuotedSignals.Csv);)
+        ///     Console.WriteLine(column);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a
+        /// b
+        /// c
+        /// </code>
+        /// <code>
+        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+        /// 
+        /// foreach(string column in "'a,a',b,c".SplitQuotedRow(signals);)
+        ///     Console.WriteLine(column);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a,a
+        /// b
+        /// c
+        /// </code>
+        /// <code>
+        /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+        /// 
+        /// foreach(string column in "a''a,b,c".SplitQuotedRow(signals);)
+        ///     Console.WriteLine(column);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a'a
+        /// b
+        /// c
+        /// </code>
+        /// </example>
+        public static string[] SplitQuotedRow(this IEnumerable<char> row, StringQuotedSignals signals)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (row == null)
+                throw new ArgumentNullException("row");
+
+            if (signals == null)
+                throw new ArgumentNullException("signals");
 
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            string[] split = processor.Process(chars).SingleOrDefault();
-            return split == null ? new string[0] : split;
+            string[][] splits = processor.Process(row).Take(2).ToArray();
+
+            if (splits.Length > 1)
+                throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", "row");
+
+            return splits.Length == 0 ? new string[0] : splits[0];
         }
 
         /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes are
-        /// allowed and signal a new split array to begin.
+        /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
+        /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
+        /// A NewRow signal outside of Quotes is allowed and signals that a new row has begun.
+        /// Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
         /// </summary>
-        /// <param name="chars">The quoted delimited string to split.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>An enumeration of sets of string columns after each line in the delimited string has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedMultiline(this IEnumerable<char> chars, StringQuotedSignals signals)
+        /// <returns>A sets of string columns for each row in the stream as it is identified.</returns>
+        /// <example>
+        /// <code>
+        /// foreach(string[] rowColumns in ("a,b,c" + Environment.NewLine + "d,e,f").SplitQuotedRows(StringQuotedSignals.Csv);)
+        /// {
+        ///     Console.WriteLine("Row");
+        ///     
+        ///     foreach(string column in rowColumns)
+        ///         Console.WriteLine(column);
+        /// }
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// Row
+        /// a
+        /// b
+        /// c
+        /// Row
+        /// d
+        /// e
+        /// f
+        /// </code>
+        /// </example>
+        public static IEnumerable<string[]> SplitQuotedRows(this IEnumerable<char> rows, StringQuotedSignals signals)
         {
-            if (chars == null)
-                throw new ArgumentNullException("chars");
+            if (rows == null)
+                throw new ArgumentNullException("rows");
+
+            if (signals == null)
+                throw new ArgumentNullException("signals");
 
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            return processor.Process(chars);
+            return processor.Process(rows);
         }
 
         /// <summary>
-        /// Splits a delimited string while allowing for instances of the delimiter to occur within individual
-        /// columns.  Such columns must be quoted to allow for this behavior. Newlines outside of quotes will
-        /// cause an exception because multiple lines are not allowed in an individual string; i.e. multiple
-        /// lines are determined by the strings parameter and not by each individual string.
+        /// Resuable logic for providing the SplitQuoted algorithm.
         /// </summary>
-        /// <param name="strings">The quoted delimited strings to split.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>An enumeration of sets of string columns after each line in the delimited string has been split.</returns>
-        public static IEnumerable<string[]> SplitQuotedMultiline(this IEnumerable<IEnumerable<char>> strings, StringQuotedSignals signals)
-        {
-            if (strings == null)
-                throw new ArgumentNullException("strings");
-
-            SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-
-            foreach (IEnumerable<char> str in strings)
-            {
-                if (str == null)
-                    throw new ArgumentException("strings");
-
-                string[] split = processor.Process(str).SingleOrDefault();
-                yield return split == null ? new string[0] : split;
-            }
-        }
-
-        /// <summary>
-        /// Resuable logic for processing the SplitQuoted functions.
-        /// </summary>
+        /// <remarks>
+        /// At the moment, processors are only used for Process'ing once; however, the code was trivial to allow
+        /// them to be reused. Very likely a premature optimization, but it cost 1 line of code, so we're going to leave it
+        /// in for now. (In my defense) Processors were once being reused by a function that has since been YAGNI deleted from the API.
+        /// </remarks>
         private class SplitQuotedProcessor
         {
             public SplitQuotedProcessor(StringQuotedSignals signals)
@@ -79,178 +123,205 @@ namespace SoftwareBotany.Ivy
 
                 _delimiterTracker = new StringSignalTracker(_signals.Delimiter);
                 _quoteTracker = new StringSignalTracker(_signals.Quote);
-                _newlineTracker = new StringSignalTracker(_signals.NewLine);
+                _newRowTracker = new StringSignalTracker(_signals.NewRow);
+                _escapeTracker = new StringSignalTracker(_signals.Escape);
             }
 
-            public IEnumerable<string[]> Process(IEnumerable<char> chars)
+            private StringQuotedSignals _signals;
+
+            private StringSignalTracker _delimiterTracker;
+            private StringSignalTracker _quoteTracker;
+            private StringSignalTracker _newRowTracker;
+            private StringSignalTracker _escapeTracker;
+
+            private bool _inRow = false;
+            private List<string> _columns = new List<string>();
+            private List<char> _columnBuffer = new List<char>();
+            private List<CharacterCategory> _columnCategories = new List<CharacterCategory>();
+
+            private int _consecutiveQuoteCount = 0;
+            private bool _inQuotes = false;
+            private bool _escaped = false;
+
+            private void Reset()
             {
-                List<string> results = new List<string>();
-
-                foreach (char c in chars)
-                {
-                    bool triggered = ProcessChar(c);
-
-                    if (triggered)
-                    {
-                        if (IsNewline && !InQuotes())
-                            yield return ProduceLineResults();
-
-                        ResetTrackers();
-                    }
-                }
-
-                if (_buffer.Length > 0)
-                    yield return ProduceLineResults();
-
-                // This will ensure the Processor is in a reusable state.
                 ResetTrackers();
-            }
 
-            private bool ProcessChar(char c)
-            {
-                _buffer.Append(c);
-                _categories.Add(CharacterCategory.Char);
+                _inRow = false;
+                _columns.Clear();
+                _columnBuffer.Clear();
+                _columnCategories.Clear();
 
-                _delimiterTracker.ProcessChar(c);
-                _quoteTracker.ProcessChar(c);
-                _newlineTracker.ProcessChar(c);
-
-                ReviseCategories();
-
-                return IsDelimiter || IsQuote || IsNewline;
-            }
-
-            private void ReviseCategories()
-            {
-                if (IsDelimiter)
-                {
-                    ReviseCategories(CharacterCategory.Delimiter, _signals.Delimiter.Length);
-                }
-                else if (IsQuote)
-                {
-                    bool isEndQuote = InQuotes();
-
-                    ReviseCategories(isEndQuote ? CharacterCategory.EndQuote : CharacterCategory.StartQuote, _signals.Quote.Length);
-
-                    int potentialStartQuoteIndex = _categories.Count - (_signals.Quote.Length * 2);
-
-                    if (isEndQuote
-                        && potentialStartQuoteIndex >= 0
-                        && _categories[potentialStartQuoteIndex] == CharacterCategory.StartQuote)
-                    {
-                        ReviseCategories(CharacterCategory.EscapedQuote, _signals.Quote.Length * 2);
-                    }
-                }
-                else if (IsNewline)
-                {
-                    ReviseCategories(CharacterCategory.Newline, _signals.NewLine.Length);
-                }
-            }
-
-            private void ReviseCategories(CharacterCategory category, int length)
-            {
-                for (int i = length; i > 0; i--)
-                    _categories[_categories.Count - i] = i == length ? category : CharacterCategory.Noop;
-            }
-
-            private bool InQuotes()
-            {
-                return _categories.AsEnumerable()
-                    .Reverse()
-                    .TakeWhile(category => category != CharacterCategory.EndQuote)
-                    .Any(category => category == CharacterCategory.StartQuote);
-            }
-
-            private string[] ProduceLineResults()
-            {
-                List<string> results = new List<string>();
-                StringBuilder result = new StringBuilder();
-
-                bool inQuotes = false;
-                int index = 0;
-
-                foreach (CharacterCategory category in _categories)
-                {
-                    switch (category)
-                    {
-                        case CharacterCategory.Char:
-                            result.Append(_buffer[index]);
-                            break;
-
-                        case CharacterCategory.Delimiter:
-                            if (inQuotes)
-                                result.Append(_signals.Delimiter);
-                            else
-                            {
-                                results.Add(result.ToString());
-                                result.Clear();
-                                inQuotes = false;
-                            }
-                            break;
-
-                        case CharacterCategory.StartQuote:
-                            inQuotes = true;
-                            break;
-
-                        case CharacterCategory.EndQuote:
-                            inQuotes = false;
-                            break;
-
-                        case CharacterCategory.EscapedQuote:
-                            result.Append(_signals.Quote);
-                            break;
-
-                        case CharacterCategory.Newline:
-                            if (inQuotes)
-                                result.Append(_signals.NewLine);
-                            break;
-
-                        case CharacterCategory.Noop:
-                            break;
-
-                        default:
-                            throw new NotSupportedException(category.ToString());
-                    }
-
-                    index++;
-                }
-
-                results.Add(result.ToString());
-
-                _buffer.Clear();
-                _categories.Clear();
-
-                return results.ToArray();
+                _consecutiveQuoteCount = 0;
+                _inQuotes = false;
+                _escaped = false;
             }
 
             private void ResetTrackers()
             {
                 _delimiterTracker.Reset();
                 _quoteTracker.Reset();
-                _newlineTracker.Reset();
+                _newRowTracker.Reset();
+                _escapeTracker.Reset();
             }
 
-            private StringQuotedSignals _signals;
-            private StringBuilder _buffer = new StringBuilder();
-            private List<CharacterCategory> _categories = new List<CharacterCategory>();
+            public IEnumerable<string[]> Process(IEnumerable<char> rows)
+            {
+                foreach (char c in rows)
+                {
+                    _inRow = true;
+                    _columnBuffer.Add(c);
+                    _columnCategories.Add(CharacterCategory.Char);
 
-            private StringSignalTracker _delimiterTracker;
-            private StringSignalTracker _quoteTracker;
-            private StringSignalTracker _newlineTracker;
+                    if (!_escaped)
+                    {
+                        _delimiterTracker.ProcessChar(c);
+                        _quoteTracker.ProcessChar(c);
+                        _newRowTracker.ProcessChar(c);
+                        _escapeTracker.ProcessChar(c);
+                    }
+                    else
+                        _escaped = false;
 
-            private bool IsDelimiter { get { return _delimiterTracker.IsTriggered; } }
-            private bool IsQuote { get { return _quoteTracker.IsTriggered; } }
-            private bool IsNewline { get { return _newlineTracker.IsTriggered; } }
+                    // Quote needs to be processed first because of it's potential need to rewind a character and FlushConsecutiveQuotes.
+                    if (_quoteTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(CharacterCategory.NoOp, _signals.Quote.Length);
+
+                        _consecutiveQuoteCount++;
+                    }
+                    else if (!_quoteTracker.IsCounting && _consecutiveQuoteCount > 0)
+                    {
+                        // Rewind a character so that our FlushConsecutiveQuotes is accurate.
+                        _columnBuffer.RemoveAt(_columnBuffer.Count - 1);
+                        _columnCategories.RemoveAt(_columnCategories.Count - 1);
+
+                        FlushConsecutiveQuotes();
+
+                        // Now place the character being processed back in the buffers.
+                        _columnBuffer.Add(c);
+                        _columnCategories.Add(CharacterCategory.Char);
+                    }
+
+                    if (_delimiterTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(_inQuotes ? CharacterCategory.Delimiter : CharacterCategory.NoOp, _signals.Delimiter.Length);
+
+                        if (!_inQuotes)
+                            FlushColumn();
+                    }
+
+                    if (_newRowTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(_inQuotes ? CharacterCategory.NewRow : CharacterCategory.NoOp, _signals.NewRow.Length);
+
+                        if (!_inQuotes)
+                        {
+                            FlushColumn();
+                            yield return _columns.ToArray();
+                            Reset();
+                        }
+                    }
+
+                    if (_escapeTracker.IsTriggered)
+                    {
+                        ResetTrackers();
+                        ReviseCategories(CharacterCategory.NoOp, _signals.Escape.Length);
+
+                        _escaped = true;
+                    }
+                }
+
+                FlushColumn();
+
+                if (_columns.Count > 0)
+                    yield return _columns.ToArray();
+
+                Reset();
+            }
+
+            private void ReviseCategories(CharacterCategory category, int length)
+            {
+                for (int i = length; i > 0; i--)
+                    _columnCategories[_columnCategories.Count - i] = i == length ? category : CharacterCategory.NoOp;
+            }
+
+            private void FlushColumn()
+            {
+                if (!_inRow)
+                    return;
+
+                FlushConsecutiveQuotes();
+
+                // An empty column that is Quoted or a Quoted column containing only Quotes will never properly detect that it is Quoted,
+                // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
+                bool skipAQuote = _columnCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
+
+                StringBuilder column = new StringBuilder();
+                int columBufferIndex = 0;
+
+                foreach (CharacterCategory category in _columnCategories)
+                {
+                    switch (category)
+                    {
+                        case CharacterCategory.Char:
+                            column.Append(_columnBuffer[columBufferIndex]);
+                            break;
+
+                        case CharacterCategory.Delimiter:
+                            column.Append(_signals.Delimiter);
+                            break;
+
+                        case CharacterCategory.Quote:
+                            if (skipAQuote)
+                                skipAQuote = false;
+                            else
+                                column.Append(_signals.Quote);
+                            break;
+
+                        case CharacterCategory.NewRow:
+                            column.Append(_signals.NewRow);
+                            break;
+
+                        case CharacterCategory.NoOp:
+                            break;
+
+                        default:
+                            throw new NotImplementedException(category.ToString());
+                    }
+
+                    columBufferIndex++;
+                }
+
+                _columns.Add(column.ToString());
+                _columnBuffer.Clear();
+                _columnCategories.Clear();
+            }
+
+            private void FlushConsecutiveQuotes()
+            {
+                if (_consecutiveQuoteCount == 0)
+                    return;
+
+                if (_consecutiveQuoteCount % 2 == 1)
+                    _inQuotes = !_inQuotes;
+
+                for (int i = _consecutiveQuoteCount / 2; i > 0; i--)
+                    ReviseCategories(CharacterCategory.Quote, i * 2 * _signals.Quote.Length);
+
+                _consecutiveQuoteCount = 0;
+            }
 
             private enum CharacterCategory : byte
             {
                 Char,
                 Delimiter,
-                StartQuote,
-                EndQuote,
-                EscapedQuote,
-                Newline,
-                Noop
+                Quote,
+                NewRow,
+                NoOp
             }
         }
     }

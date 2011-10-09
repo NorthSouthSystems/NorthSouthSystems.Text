@@ -1,70 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
+using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
-    public static class StringQuotedJoinExtensions
+    /// <summary>
+    /// Extensions for Splitting and Joining delimited sequences of characters (rows) that may possess quoted (surrounded by Quote)
+    /// columns in order for them to contain instances of Delimiter.
+    /// </summary>
+    public static partial class StringQuotedExtensions
     {
-        /// <summary>
-        /// Joins an enumeration of strings, separates them with a delimiter, all the while allowing for instances of the delimiter
-        /// to occur within individual strings (columns).  Such columns must be quoted to allow for this behavior.
-        /// </summary>
-        /// <param name="strings">The enumeration of strings to be joined with a delimiter placed between them.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
-        /// <returns>
-        /// The strings joined together, quoted when necessary (column contains an instance of the delimiter), and
-        /// separated by the delimiter.
-        /// </returns>
-        public static string JoinQuoted(this IEnumerable<string> strings, StringQuotedSignals signals)
-        {
-            return JoinQuoted(strings, signals, false);
-        }
+        /// <inheritdoc cref="JoinQuotedRow(IEnumerable{string}, StringQuotedSignals, bool)"/>
+        public static string JoinQuotedRow(this IEnumerable<string> columns, StringQuotedSignals signals) { return JoinQuotedRow(columns, signals, false); }
 
         /// <summary>
-        /// Joins an enumeration of strings, separates them with a delimiter, all the while allowing for instances of the delimiter
-        /// to occur within individual strings (columns).  Such columns must be quoted to allow for this behavior.
+        /// Joins a sequence of columns, separates them with Delimiter, and allows for instances of Delimiter (or the NewRow signal)
+        /// to occur within individual columns.  Such columns will be quoted (surrounded by Quote) to allow for this behavior. Instances
+        /// of the Quote signal within columns will be escaped by doubling (Quote + Quote).
         /// </summary>
-        /// <param name="strings">The enumeration of strings to be joined with a delimiter placed between them.</param>
-        /// <param name="signals">The signals that dictate the delimiter, the quote, the newline, etc.</param>
         /// <param name="forceQuotes">
-        /// Dictates whether to force every column (string) to be quoted regardless of whether or not the column contains an instance
-        /// of the delimiter. Microsoft Excel forces quotes (as far as I remember) when saving spreadsheets to the CSV format.
+        /// Dictates whether to force every column to be quoted regardless of whether or not the column contains an instance
+        /// of Delimiter or NewRow. (default = false)
         /// </param>
-        /// <returns>
-        /// The strings joined together, quoted when necessary (column contains an instance of the delimiter), and
-        /// separated by the delimiter.
-        /// </returns>
-        public static string JoinQuoted(this IEnumerable<string> strings, StringQuotedSignals signals, bool forceQuotes)
+        /// <example>
+        /// <code>
+        /// string[] columns = new string[] { "a", "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a,b,c
+        /// </code>
+        /// <code>
+        /// string[] columns = new string[] { "a,a", "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// "a,a",b,c
+        /// </code>
+        /// <code>
+        /// string[] columns = new string[] { "a", "b" + Environment.NewLine + "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv, true);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// "a","b
+        /// b","c"
+        /// </code>
+        /// <code>
+        /// string[] columns = new string[] { "a\"a", "b", "c" };
+        /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
+        /// Console.WriteLine(result);
+        /// </code>
+        /// Console Output:
+        /// <code>
+        /// a""a,b,c
+        /// </code>
+        /// </example>
+        public static string JoinQuotedRow(this IEnumerable<string> columns, StringQuotedSignals signals, bool forceQuotes)
         {
-            if (strings == null)
-                throw new ArgumentNullException("strings");
+            if (columns == null)
+                throw new ArgumentNullException("columns");
 
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
-            StringBuilder result = new StringBuilder();
+            if (forceQuotes && !signals.QuoteIsSpecified)
+                throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");
 
-            foreach (string s in strings)
+            return string.Join(signals.Delimiter, columns.Select(column => QuoteAndEscapeColumn(column, signals, forceQuotes)));
+        }
+
+        private static string QuoteAndEscapeColumn(string column, StringQuotedSignals signals, bool forceQuotes)
+        {
+            bool containsDelimiter = column.Contains(signals.Delimiter);
+            bool containsQuote = signals.QuoteIsSpecified && column.Contains(signals.Quote);
+            bool containsNewRow = signals.NewRowIsSpecified && column.Contains(signals.NewRow);
+            bool containsEscape = signals.EscapeIsSpecified && column.Contains(signals.Escape);
+
+            bool requiresQuotingOrEscaping = containsDelimiter || containsQuote || containsNewRow || containsEscape;
+
+            if (requiresQuotingOrEscaping && !signals.QuoteIsSpecified && !signals.EscapeIsSpecified)
+                throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");
+
+            bool useQuoting = forceQuotes || (requiresQuotingOrEscaping && signals.QuoteIsSpecified);
+            bool useEscaping = !useQuoting && requiresQuotingOrEscaping && signals.EscapeIsSpecified;
+
+            string escapedColumn = column;
+
+            if (containsEscape)
+                escapedColumn = escapedColumn.Replace(signals.Escape, signals.Escape + signals.Escape);
+
+            if (useQuoting)
             {
-                bool useQuotes = forceQuotes
-                    || s.Contains(signals.Delimiter)
-                    || (signals.NewLineIsSpecified && s.Contains(signals.NewLine));
+                if (containsQuote)
+                    escapedColumn = escapedColumn.Replace(signals.Quote, (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote);
 
-                if (useQuotes && !signals.QuoteIsSpecified)
-                    throw new ArgumentException("Quote'ing necessary; therefore, signals.Quote must not be null or empty.");
+                escapedColumn = string.Format(CultureInfo.InvariantCulture, "{0}{1}{0}", signals.Quote, escapedColumn);
+            }
+            else if (useEscaping)
+            {
+                if (containsDelimiter)
+                    escapedColumn = escapedColumn.Replace(signals.Delimiter, signals.Escape + signals.Delimiter);
 
-                result.AppendFormat("{0}{1}{0}{2}",
-                    useQuotes ? signals.Quote : null,
-                    signals.QuoteIsSpecified ? s.Replace(signals.Quote, signals.Quote + signals.Quote) : s,
-                    signals.Delimiter);
+                if (containsNewRow)
+                    escapedColumn = escapedColumn.Replace(signals.NewRow, signals.Escape + signals.NewRow);
             }
 
-            // If any output was generated, it will contain a trailing instance of Delimiter; so, remove it.
-            if (result.Length > 0)
-                result.Length -= signals.Delimiter.Length;
-
-            return result.ToString();
+            return escapedColumn;
         }
     }
 }

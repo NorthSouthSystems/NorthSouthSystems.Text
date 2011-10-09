@@ -39,8 +39,6 @@ namespace SoftwareBotany.Ivy
             tracker.ProcessChar('a');
             Assert.IsFalse(tracker.IsCounting);
             Assert.IsFalse(tracker.IsTriggered);
-
-            Assert.AreEqual(3, tracker.CharsProcessed);
         }
 
         [TestMethod]
@@ -66,8 +64,6 @@ namespace SoftwareBotany.Ivy
             tracker.ProcessChar('a');
             Assert.IsFalse(tracker.IsCounting);
             Assert.IsTrue(tracker.IsTriggered);
-
-            Assert.AreEqual(2, tracker.CharsProcessed);
         }
 
         [TestMethod]
@@ -105,8 +101,6 @@ namespace SoftwareBotany.Ivy
             tracker.ProcessChar('b');
             Assert.IsFalse(tracker.IsCounting);
             Assert.IsTrue(tracker.IsTriggered);
-
-            Assert.AreEqual(5, tracker.CharsProcessed);
         }
 
         [TestMethod]
@@ -160,15 +154,13 @@ namespace SoftwareBotany.Ivy
             tracker.ProcessChar('c');
             Assert.IsFalse(tracker.IsCounting);
             Assert.IsTrue(tracker.IsTriggered);
-
-            Assert.AreEqual(9, tracker.CharsProcessed);
         }
 
         #region Exceptions
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
-        public void ProcessCharTriggeredInvalidOperation()
+        public void ProcessCharAlreadyTriggered()
         {
             StringSignalTracker tracker = new StringSignalTracker("a");
             tracker.ProcessChar('a');
