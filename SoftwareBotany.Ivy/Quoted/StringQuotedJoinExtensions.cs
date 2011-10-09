@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
+using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
@@ -69,28 +70,49 @@ namespace SoftwareBotany.Ivy
             if (signals == null)
                 throw new ArgumentNullException("signals");
 
-            StringBuilder row = new StringBuilder();
+            if (forceQuotes && !signals.QuoteIsSpecified)
+                throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");
 
-            foreach (string column in columns)
+            return string.Join(signals.Delimiter, columns.Select(column => QuoteAndEscapeColumn(column, signals, forceQuotes)));
+        }
+
+        private static string QuoteAndEscapeColumn(string column, StringQuotedSignals signals, bool forceQuotes)
+        {
+            bool containsDelimiter = column.Contains(signals.Delimiter);
+            bool containsQuote = signals.QuoteIsSpecified && column.Contains(signals.Quote);
+            bool containsNewRow = signals.NewRowIsSpecified && column.Contains(signals.NewRow);
+            bool containsEscape = signals.EscapeIsSpecified && column.Contains(signals.Escape);
+
+            bool requiresQuotingOrEscaping = containsDelimiter || containsQuote || containsNewRow || containsEscape;
+
+            if (requiresQuotingOrEscaping && !signals.QuoteIsSpecified && !signals.EscapeIsSpecified)
+                throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");
+
+            bool useQuoting = forceQuotes || (requiresQuotingOrEscaping && signals.QuoteIsSpecified);
+            bool useEscaping = !useQuoting && requiresQuotingOrEscaping && signals.EscapeIsSpecified;
+
+            string escapedColumn = column;
+
+            if (containsEscape)
+                escapedColumn = escapedColumn.Replace(signals.Escape, signals.Escape + signals.Escape);
+
+            if (useQuoting)
             {
-                bool useQuotes = forceQuotes
-                    || column.Contains(signals.Delimiter)
-                    || (signals.NewRowIsSpecified && column.Contains(signals.NewRow));
+                if (containsQuote)
+                    escapedColumn = escapedColumn.Replace(signals.Quote, (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote);
 
-                if (useQuotes && !signals.QuoteIsSpecified)
-                    throw new ArgumentException("Quote'ing necessary; therefore, signals.Quote must not be null or empty.");
+                escapedColumn = string.Format(CultureInfo.InvariantCulture, "{0}{1}{0}", signals.Quote, escapedColumn);
+            }
+            else if (useEscaping)
+            {
+                if (containsDelimiter)
+                    escapedColumn = escapedColumn.Replace(signals.Delimiter, signals.Escape + signals.Delimiter);
 
-                row.AppendFormat("{0}{1}{0}{2}",
-                    useQuotes ? signals.Quote : null,
-                    signals.QuoteIsSpecified ? column.Replace(signals.Quote, signals.Quote + signals.Quote) : column,
-                    signals.Delimiter);
+                if (containsNewRow)
+                    escapedColumn = escapedColumn.Replace(signals.NewRow, signals.Escape + signals.NewRow);
             }
 
-            // If any output was generated, it will contain a trailing instance of Delimiter; so, remove it.
-            if (row.Length > 0)
-                row.Length -= signals.Delimiter.Length;
-
-            return row.ToString();
+            return escapedColumn;
         }
     }
 }
