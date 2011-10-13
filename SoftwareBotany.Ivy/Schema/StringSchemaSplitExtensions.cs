@@ -22,34 +22,35 @@ namespace SoftwareBotany.Ivy
         ///
         /// var split = "A123".SplitSchemaRow(schema);
         /// Console.WriteLine(split.Entry.Header);
+        /// 
         /// foreach(string column in split)
         ///     Console.WriteLine(column);
         ///
         /// split = "B123456".SplitSchemaRow(schema);
         /// Console.WriteLine(split.Entry.Header);
+        /// 
         /// foreach(string column in split)
         ///     Console.WriteLine(column);
         ///
         /// split = "CD123456789".SplitSchemaRow(schema);
         /// Console.WriteLine(split.Entry.Header);
+        /// 
         /// foreach(string column in split)
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A
-        /// 1
-        /// 2
-        /// 3
-        /// B
-        /// 12
-        /// 34
-        /// 56
-        /// CD
-        /// 123
-        /// 456
-        /// 789
-        /// </code>
+        /// Console Output:<br/>
+        /// A<br/>
+        /// 1<br/>
+        /// 2<br/>
+        /// 3<br/>
+        /// B<br/>
+        /// 12<br/>
+        /// 34<br/>
+        /// 56<br/>
+        /// CD<br/>
+        /// 123<br/>
+        /// 456<br/>
+        /// 789<br/>
         /// </example>
         public static StringSchemaEntryAndColumns SplitSchemaRow(this string row, StringSchema schema)
         {

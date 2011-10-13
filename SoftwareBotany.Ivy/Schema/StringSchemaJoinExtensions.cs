@@ -32,12 +32,10 @@ namespace SoftwareBotany.Ivy
         /// join = split.JoinSchemaRow();
         /// Console.WriteLine(join);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A123
-        /// B123456
-        /// C1-2-3-
-        /// </code>
+        /// Console Output:<br/>
+        /// A123<br/>
+        /// B123456<br/>
+        /// C1-2-3-<br/>
         /// </example>
         public static string JoinSchemaRow(this StringSchemaEntryAndColumns entryAndColumns)
         {

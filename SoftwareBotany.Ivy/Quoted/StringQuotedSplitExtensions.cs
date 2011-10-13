@@ -15,39 +15,40 @@ namespace SoftwareBotany.Ivy
         /// </summary>
         /// <example>
         /// <code>
-        /// foreach(string column in "a,b,c".SplitQuotedRow(StringQuotedSignals.Csv);)
+        /// string row = "a,b,c";
+        /// string[] columns = row.SplitQuotedRow(StringQuotedSignals.Csv);
+        /// 
+        /// foreach(string column in columns);
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a
-        /// b
-        /// c
-        /// </code>
+        /// Console Output:<br/>
+        /// a<br/>
+        /// b<br/>
+        /// c<br/>
         /// <code>
         /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+        /// string row = "'a,a',b,c";
+        /// string[] columns = row.SplitQuotedRow(signals);
         /// 
-        /// foreach(string column in "'a,a',b,c".SplitQuotedRow(signals);)
+        /// foreach(string column in columns);
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a,a
-        /// b
-        /// c
-        /// </code>
+        /// Console Output:<br/>
+        /// a,a<br/>
+        /// b<br/>
+        /// c<br/>
         /// <code>
         /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+        /// string row = "a''a,b,c";
+        /// string[] columns = row.SplitQuotedRow(signals);
         /// 
-        /// foreach(string column in "a''a,b,c".SplitQuotedRow(signals);)
+        /// foreach(string column in columns);
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a'a
-        /// b
-        /// c
-        /// </code>
+        /// Console Output:<br/>
+        /// a'a<br/>
+        /// b<br/>
+        /// c<br/>
         /// </example>
         public static string[] SplitQuotedRow(this IEnumerable<char> row, StringQuotedSignals signals)
         {
@@ -75,7 +76,10 @@ namespace SoftwareBotany.Ivy
         /// <returns>A sets of string columns for each row in the stream as it is identified.</returns>
         /// <example>
         /// <code>
-        /// foreach(string[] rowColumns in ("a,b,c" + Environment.NewLine + "d,e,f").SplitQuotedRows(StringQuotedSignals.Csv);)
+        /// string rows = "a,b,c" + Environment.NewLine + "d,e,f";
+        /// var rowsColumns = rows.SplitQuotedRows(StringQuotedSignals.Csv);
+        /// 
+        /// foreach(string[] rowColumns in rowsColumns)
         /// {
         ///     Console.WriteLine("Row");
         ///     
@@ -83,17 +87,15 @@ namespace SoftwareBotany.Ivy
         ///         Console.WriteLine(column);
         /// }
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// Row
-        /// a
-        /// b
-        /// c
-        /// Row
-        /// d
-        /// e
-        /// f
-        /// </code>
+        /// Console Output:<br/>
+        /// Row<br/>
+        /// a<br/>
+        /// b<br/>
+        /// c<br/>
+        /// Row<br/>
+        /// d<br/>
+        /// e<br/>
+        /// f<br/>
         /// </example>
         public static IEnumerable<string[]> SplitQuotedRows(this IEnumerable<char> rows, StringQuotedSignals signals)
         {

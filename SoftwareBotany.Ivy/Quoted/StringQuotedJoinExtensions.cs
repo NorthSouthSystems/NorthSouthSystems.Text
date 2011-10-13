@@ -29,38 +29,30 @@ namespace SoftwareBotany.Ivy
         /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
         /// Console.WriteLine(result);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a,b,c
-        /// </code>
+        /// Console Output:<br/>
+        /// a,b,c<br/>
         /// <code>
         /// string[] columns = new string[] { "a,a", "b", "c" };
         /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
         /// Console.WriteLine(result);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// "a,a",b,c
-        /// </code>
+        /// Console Output:<br/>
+        /// "a,a",b,c<br/>
         /// <code>
         /// string[] columns = new string[] { "a", "b" + Environment.NewLine + "b", "c" };
         /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv, true);
         /// Console.WriteLine(result);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// "a","b
-        /// b","c"
-        /// </code>
+        /// Console Output:<br/>
+        /// "a","b<br/>
+        /// b","c"<br/>
         /// <code>
         /// string[] columns = new string[] { "a\"a", "b", "c" };
         /// string result = columns.JoinQuotedRow(StringQuotedSignals.Csv);
         /// Console.WriteLine(result);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a""a,b,c
-        /// </code>
+        /// Console Output:<br/>
+        /// a""a,b,c<br/>
         /// </example>
         public static string JoinQuotedRow(this IEnumerable<string> columns, StringQuotedSignals signals, bool forceQuotes)
         {
