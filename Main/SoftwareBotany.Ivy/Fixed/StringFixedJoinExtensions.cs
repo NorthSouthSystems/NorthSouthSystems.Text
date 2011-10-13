@@ -21,47 +21,42 @@ namespace SoftwareBotany.Ivy
         /// string columns = new [] { "A", "B", "C" };
         /// string row = columns.JoinFixedRow(new [] { 1, 1, 1 });
         /// Console.WriteLine(row);
+        /// 
         /// row = columns.JoinFixedRow(new [] { 1, 1, 1 }, '-', false);
         /// Console.WriteLine(row);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// ABC
-        /// ABC
-        /// </code>
+        /// Console Output:<br/>
+        /// ABC<br/>
+        /// ABC<br/>
         /// <code>
         /// string columns = new [] { "A", "B", "C" };
         /// string row = columns.JoinFixedRow(new [] { 2, 1, 1 });
         /// Console.WriteLine(row);
+        /// 
         /// row = columns.JoinFixedRow(new [] { 2, 1, 1 }, '-', false);
         /// Console.WriteLine(row);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A BC
-        /// A-BC
-        /// </code>
+        /// Console Output:<br/>
+        /// A BC<br/>
+        /// A-BC<br/>
         /// <code>
         /// string columns = new [] { "A", "B", "C" };
         /// string row = columns.JoinFixedRow(new [] { 2, 2, 1 });
         /// Console.WriteLine(row);
+        /// 
         /// row = columns.JoinFixedRow(new [] { 2, 2, 1 }, '-', false);
         /// Console.WriteLine(row);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A B C
-        /// A-B-C
-        /// </code>
+        /// Console Output:<br/>
+        /// A B C<br/>
+        /// A-B-C<br/>
         /// <code>
         /// string columns = new [] { "ABC", "123" };
         /// string row = columns.JoinFixedRow(new [] { 2, 2 }, ' ', true);
         /// Console.WriteLine(row);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// AB12
-        /// </code>
+        /// Console Output:<br/>
+        /// AB12<br/>
         /// </example>
         public static string JoinFixedRow(this string[] columns, int[] widths, char fillCharacter, bool substringToFit)
         {

@@ -28,12 +28,10 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveLetters));
         /// Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits | RemoveLetters));
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// True
-        /// False
-        /// False
-        /// </code>
+        /// Console Output:<br/>
+        /// True<br/>
+        /// False<br/>
+        /// False<br/>
         /// </example>
         public static bool PassesFilters(this char value, CharFilters filters)
         {

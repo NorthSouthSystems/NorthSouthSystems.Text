@@ -19,60 +19,60 @@ namespace SoftwareBotany.Ivy
         /// <code>
         /// string row = "ABC";
         /// string[] columns = row.SplitFixedRow(new [] { 1, 1, 1 });
+        /// 
         /// foreach(string column in columns)
         ///     Console.WriteLine(column);
         /// 
         /// columns = row.SplitFixedRow(new [] { 1, 1, 1 }, '-');
+        /// 
         /// foreach(string column in columns)
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A
-        /// B
-        /// C
-        /// A
-        /// B
-        /// C
-        /// </code>
+        /// Console Output:<br/>
+        /// A<br/>
+        /// B<br/>
+        /// C<br/>
+        /// A<br/>
+        /// B<br/>
+        /// C<br/>
         /// <code>
         /// string row = "A-BC";
         /// string[] columns = row.SplitFixedRow(new [] { 2, 1, 1 });
+        /// 
         /// foreach(string column in columns)
         ///     Console.WriteLine(column);
         /// 
         /// columns = row.SplitFixedRow(new [] { 2, 1, 1 }, '-');
+        /// 
         /// foreach(string column in columns)
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A-
-        /// B
-        /// C
-        /// A
-        /// B
-        /// C
-        /// </code>
+        /// Console Output:<br/>
+        /// A-<br/>
+        /// B<br/>
+        /// C<br/>
+        /// A<br/>
+        /// B<br/>
+        /// C<br/>
         /// <code>
         /// string row = "A-B-C";
         /// string[] columns = row.SplitFixedRow(new [] { 2, 2, 1 });
+        /// 
         /// foreach(string column in columns)
         ///     Console.WriteLine(column);
         /// 
         /// columns = row.SplitFixedRow(new [] { 2, 2, 1 }, '-');
+        /// 
         /// foreach(string column in columns)
         ///     Console.WriteLine(column);
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A-
-        /// B-
-        /// C
-        /// A
-        /// B
-        /// C
-        /// </code>
+        /// Console Output:<br/>
+        /// A-<br/>
+        /// B-<br/>
+        /// C<br/>
+        /// A<br/>
+        /// B<br/>
+        /// C<br/>
         /// </example>
         public static string[] SplitFixedRow(this IEnumerable<char> row, int[] widths, char fillCharacter)
         {
@@ -107,48 +107,46 @@ namespace SoftwareBotany.Ivy
         /// <example>
         /// <code>
         /// string rows = "ABCDEF";
-        /// string[][] rowColumns = row.SplitFixedRepeating(new [] { 1, 1, 1 });
-        /// foreach(string[] columns in rowColumns)
+        /// string[][] rowsColumns = row.SplitFixedRepeating(new [] { 1, 1, 1 });
+        /// 
+        /// foreach(string[] rowColumns in rowsColumns)
         /// {
         ///     Console.WriteLine("Row");
         ///     
-        ///     foreach(string column in columns)
+        ///     foreach(string column in rowColumns)
         ///         Console.WriteLine(column);
         /// }
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// Row
-        /// A
-        /// B
-        /// C
-        /// Row
-        /// D
-        /// E
-        /// F
-        /// </code>
+        /// Console Output:<br/>
+        /// Row<br/>
+        /// A<br/>
+        /// B<br/>
+        /// C<br/>
+        /// Row<br/>
+        /// D<br/>
+        /// E<br/>
+        /// F<br/>
         /// <code>
         /// string rows = "A-BCD-EF";
-        /// string[][] rowColumns = row.SplitFixedRepeating(new [] { 2, 1, 1 }, '-');
-        /// foreach(string[] columns in rowColumns)
+        /// string[][] rowsColumns = row.SplitFixedRepeating(new [] { 2, 1, 1 }, '-');
+        /// 
+        /// foreach(string[] rowColumns in rowsColumns)
         /// {
         ///     Console.WriteLine("Row");
         ///     
-        ///     foreach(string column in columns)
+        ///     foreach(string column in rowColumns)
         ///         Console.WriteLine(column);
         /// }
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// Row
-        /// A
-        /// B
-        /// C
-        /// Row
-        /// D
-        /// E
-        /// F
-        /// </code>
+        /// Console Output:<br/>
+        /// Row<br/>
+        /// A<br/>
+        /// B<br/>
+        /// C<br/>
+        /// Row<br/>
+        /// D<br/>
+        /// E<br/>
+        /// F<br/>
         /// </example>
         public static IEnumerable<string[]> SplitFixedRepeating(this IEnumerable<char> rows, int[] widths, char fillCharacter)
         {

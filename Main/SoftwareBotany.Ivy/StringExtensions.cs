@@ -61,12 +61,10 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine(" A  B C   D   ".NormalizeWhiteSpace());
         /// Console.WriteLine(("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace());
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// A B C D
-        /// Lots Of
-        /// Changes
-        /// </code>
+        /// Console Output:<br/>
+        /// A B C D<br/>
+        /// Lots Of<br/>
+        /// Changes<br/>
         /// </example>
         public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars, string respectNewLine)
         {
@@ -134,13 +132,11 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine("abc".SubstringToFit(3));
         /// Console.WriteLine("abc".SubstringToFit(4));
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a
-        /// ab
-        /// abc
-        /// abc
-        /// </code>
+        /// Console Output:<br/>
+        /// a<br/>
+        /// ab<br/>
+        /// abc<br/>
+        /// abc<br/>
         /// </example>
         public static string SubstringToFit(this string value, int maxLength)
         {
@@ -171,11 +167,9 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine("FooBar".ToLowerCamelCase());
         /// Console.WriteLine(" FooBar".ToLowerCamelCase());
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// fooBar
-        ///  fooBar
-        /// </code>
+        /// Console Output:<br/>
+        /// fooBar<br/>
+        ///  fooBar<br/>
         /// </example>
         public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, true); }
 
@@ -190,11 +184,9 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine("fooBar".ToUpperCamelCase());
         /// Console.WriteLine(" fooBar".ToUpperCamelCase());
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// FooBar
-        ///  FooBar
-        /// </code>
+        /// Console Output:<br/>
+        /// FooBar<br/>
+        ///  FooBar<br/>
         /// </example>
         public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, false); }
 
@@ -244,14 +236,12 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine("A123".SpaceCamelCase());
         /// Console.WriteLine("A123A".SpaceCamelCase());
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// Foo Bar Foo Foo Bar Foo
-        /// 123 A
-        /// 123 a
-        /// A 123
-        /// A 123 A
-        /// </code>
+        /// Console Output:<br/>
+        /// Foo Bar Foo Foo Bar Foo<br/>
+        /// 123 A<br/>
+        /// 123 a<br/>
+        /// A 123<br/>
+        /// A 123 A<br/>
         /// </example>
         public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> chars)
         {
@@ -323,14 +313,12 @@ namespace SoftwareBotany.Ivy
         /// Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemovePunctuation));
         /// Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
         /// </code>
-        /// Console Output:
-        /// <code>
-        /// a1b2c3d
-        /// 123
-        /// 
-        /// a1b2c3d
-        /// -
-        /// </code>
+        /// Console Output:<br/>
+        /// a1b2c3d<br/>
+        /// 123<br/>
+        /// <br/>
+        /// a1b2c3d<br/>
+        /// -<br/>
         /// </example>
         public static IEnumerable<char> Filter(this IEnumerable<char> chars, CharFilters filters)
         {
