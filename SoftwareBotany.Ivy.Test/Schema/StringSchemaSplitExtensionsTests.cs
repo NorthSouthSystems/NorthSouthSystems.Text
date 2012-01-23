@@ -11,24 +11,23 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void Basic()
         {
-            var schema = new StringSchema(new StringSchemaEntry[]
-            {
-                new StringSchemaEntry("A", new[] { 1, 1, 1 }),
-                new StringSchemaEntry("B", new[] { 2, 2, 2 }),
-                new StringSchemaEntry("CD", new[] { 3, 3, 3 })
-            });
+            var schema = new StringSchema();
+            schema.AddEntry(new StringSchemaEntry("A", new[] { 1, 1, 1 }));
+            schema.AddEntry(new StringSchemaEntry("B", new[] { 2, 2, 2 }));
+            schema.AddEntry(new StringSchemaEntry("CD", new[] { 3, 3, 3 }));
+            
 
             var split = "A123".SplitSchemaRow(schema);
             Assert.AreEqual("A", split.Entry.Header);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, split.ToArray());
+            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, split.Result.Fields.Select(field => field.Value).ToArray());
 
             split = "B123456".SplitSchemaRow(schema);
             Assert.AreEqual("B", split.Entry.Header);
-            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, split.ToArray());
+            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, split.Result.Fields.Select(field => field.Value).ToArray());
 
             split = "CD123456789".SplitSchemaRow(schema);
             Assert.AreEqual("CD", split.Entry.Header);
-            CollectionAssert.AreEqual(new[] { "123", "456", "789" }, split.ToArray());
+            CollectionAssert.AreEqual(new[] { "123", "456", "789" }, split.Result.Fields.Select(field => field.Value).ToArray());
         }
 
         #region Exceptions

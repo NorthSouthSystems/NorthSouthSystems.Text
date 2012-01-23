@@ -8,18 +8,18 @@ namespace SoftwareBotany.Ivy
     public static partial class StringQuotedExtensions
     {
         /// <summary>
-        /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
-        /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
+        /// Splits a row (sequence of chars) representing delimited fields (separated by Delimiter) while allowing for instances of the
+        /// Delimiter to occur within individual fields.  Such fields must be quoted (surrounded by Quote) to allow for this behavior.
         /// A NewRow signal outside of Quotes will cause an exception because multiple rows are not allowed for this method.
         /// Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
         /// </summary>
         /// <example>
         /// <code>
         /// string row = "a,b,c";
-        /// string[] columns = row.SplitQuotedRow(StringQuotedSignals.Csv);
+        /// string[] fields = row.SplitQuotedRow(StringQuotedSignals.Csv);
         /// 
-        /// foreach(string column in columns);
-        ///     Console.WriteLine(column);
+        /// foreach(string field in fields);
+        ///     Console.WriteLine(field);
         /// </code>
         /// Console Output:<br/>
         /// a<br/>
@@ -28,10 +28,10 @@ namespace SoftwareBotany.Ivy
         /// <code>
         /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
         /// string row = "'a,a',b,c";
-        /// string[] columns = row.SplitQuotedRow(signals);
+        /// string[] fields = row.SplitQuotedRow(signals);
         /// 
-        /// foreach(string column in columns);
-        ///     Console.WriteLine(column);
+        /// foreach(string field in fields);
+        ///     Console.WriteLine(field);
         /// </code>
         /// Console Output:<br/>
         /// a,a<br/>
@@ -40,10 +40,10 @@ namespace SoftwareBotany.Ivy
         /// <code>
         /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
         /// string row = "a''a,b,c";
-        /// string[] columns = row.SplitQuotedRow(signals);
+        /// string[] fields = row.SplitQuotedRow(signals);
         /// 
-        /// foreach(string column in columns);
-        ///     Console.WriteLine(column);
+        /// foreach(string field in fields);
+        ///     Console.WriteLine(field);
         /// </code>
         /// Console Output:<br/>
         /// a'a<br/>
@@ -59,32 +59,32 @@ namespace SoftwareBotany.Ivy
                 throw new ArgumentNullException("signals");
 
             SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
-            string[][] splits = processor.Process(row).Take(2).ToArray();
+            string[][] rowsFields = processor.Process(row).Take(2).ToArray();
 
-            if (splits.Length > 1)
+            if (rowsFields.Length > 1)
                 throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", "row");
 
-            return splits.Length == 0 ? new string[0] : splits[0];
+            return rowsFields.Length == 0 ? new string[0] : rowsFields[0];
         }
 
         /// <summary>
-        /// Splits a row, a sequence of chars, representing delimited columns (separated by Delimiter) while allowing for instances of the
-        /// Delimiter to occur within individual columns.  Such columns must be quoted (surrounded by Quote) to allow for this behavior.
+        /// Splits a row (a sequence of chars) representing delimited fields (separated by Delimiter) while allowing for instances of the
+        /// Delimiter to occur within individual fields.  Such fields must be quoted (surrounded by Quote) to allow for this behavior.
         /// A NewRow signal outside of Quotes is allowed and signals that a new row has begun.
         /// Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
         /// </summary>
-        /// <returns>A sets of string columns for each row in the stream as it is identified.</returns>
+        /// <returns>A set of fields for each row in the stream as it is identified.</returns>
         /// <example>
         /// <code>
         /// string rows = "a,b,c" + Environment.NewLine + "d,e,f";
-        /// var rowsColumns = rows.SplitQuotedRows(StringQuotedSignals.Csv);
+        /// var rowsFields = rows.SplitQuotedRows(StringQuotedSignals.Csv);
         /// 
-        /// foreach(string[] rowColumns in rowsColumns)
+        /// foreach(string[] rowFields in rowsFields)
         /// {
         ///     Console.WriteLine("Row");
         ///     
-        ///     foreach(string column in rowColumns)
-        ///         Console.WriteLine(column);
+        ///     foreach(string field in rowFields)
+        ///         Console.WriteLine(field);
         /// }
         /// </code>
         /// Console Output:<br/>
@@ -137,9 +137,9 @@ namespace SoftwareBotany.Ivy
             private StringSignalTracker _escapeTracker;
 
             private bool _inRow = false;
-            private List<string> _columns = new List<string>();
-            private List<char> _columnBuffer = new List<char>();
-            private List<CharacterCategory> _columnCategories = new List<CharacterCategory>();
+            private List<string> _fields = new List<string>();
+            private List<char> _fieldBuffer = new List<char>();
+            private List<CharacterCategory> _fieldCategories = new List<CharacterCategory>();
 
             private int _consecutiveQuoteCount = 0;
             private bool _inQuotes = false;
@@ -150,9 +150,9 @@ namespace SoftwareBotany.Ivy
                 ResetTrackers();
 
                 _inRow = false;
-                _columns.Clear();
-                _columnBuffer.Clear();
-                _columnCategories.Clear();
+                _fields.Clear();
+                _fieldBuffer.Clear();
+                _fieldCategories.Clear();
 
                 _consecutiveQuoteCount = 0;
                 _inQuotes = false;
@@ -172,8 +172,8 @@ namespace SoftwareBotany.Ivy
                 foreach (char c in rows)
                 {
                     _inRow = true;
-                    _columnBuffer.Add(c);
-                    _columnCategories.Add(CharacterCategory.Char);
+                    _fieldBuffer.Add(c);
+                    _fieldCategories.Add(CharacterCategory.Char);
 
                     if (!_escaped)
                     {
@@ -196,14 +196,14 @@ namespace SoftwareBotany.Ivy
                     else if (!_quoteTracker.IsCounting && _consecutiveQuoteCount > 0)
                     {
                         // Rewind a character so that our FlushConsecutiveQuotes is accurate.
-                        _columnBuffer.RemoveAt(_columnBuffer.Count - 1);
-                        _columnCategories.RemoveAt(_columnCategories.Count - 1);
+                        _fieldBuffer.RemoveAt(_fieldBuffer.Count - 1);
+                        _fieldCategories.RemoveAt(_fieldCategories.Count - 1);
 
                         FlushConsecutiveQuotes();
 
                         // Now place the character being processed back in the buffers.
-                        _columnBuffer.Add(c);
-                        _columnCategories.Add(CharacterCategory.Char);
+                        _fieldBuffer.Add(c);
+                        _fieldCategories.Add(CharacterCategory.Char);
                     }
 
                     if (_delimiterTracker.IsTriggered)
@@ -223,7 +223,7 @@ namespace SoftwareBotany.Ivy
                         if (!_inQuotes)
                         {
                             FlushColumn();
-                            yield return _columns.ToArray();
+                            yield return _fields.ToArray();
                             Reset();
                         }
                     }
@@ -239,8 +239,8 @@ namespace SoftwareBotany.Ivy
 
                 FlushColumn();
 
-                if (_columns.Count > 0)
-                    yield return _columns.ToArray();
+                if (_fields.Count > 0)
+                    yield return _fields.ToArray();
 
                 Reset();
             }
@@ -248,7 +248,7 @@ namespace SoftwareBotany.Ivy
             private void ReviseCategories(CharacterCategory category, int length)
             {
                 for (int i = length; i > 0; i--)
-                    _columnCategories[_columnCategories.Count - i] = i == length ? category : CharacterCategory.NoOp;
+                    _fieldCategories[_fieldCategories.Count - i] = i == length ? category : CharacterCategory.NoOp;
             }
 
             private void FlushColumn()
@@ -258,34 +258,34 @@ namespace SoftwareBotany.Ivy
 
                 FlushConsecutiveQuotes();
 
-                // An empty column that is Quoted or a Quoted column containing only Quotes will never properly detect that it is Quoted,
+                // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that it is Quoted,
                 // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
-                bool skipAQuote = _columnCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
+                bool skipAQuote = _fieldCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
 
-                StringBuilder column = new StringBuilder();
-                int columBufferIndex = 0;
+                StringBuilder field = new StringBuilder();
+                int fieldBufferIndex = 0;
 
-                foreach (CharacterCategory category in _columnCategories)
+                foreach (CharacterCategory category in _fieldCategories)
                 {
                     switch (category)
                     {
                         case CharacterCategory.Char:
-                            column.Append(_columnBuffer[columBufferIndex]);
+                            field.Append(_fieldBuffer[fieldBufferIndex]);
                             break;
 
                         case CharacterCategory.Delimiter:
-                            column.Append(_signals.Delimiter);
+                            field.Append(_signals.Delimiter);
                             break;
 
                         case CharacterCategory.Quote:
                             if (skipAQuote)
                                 skipAQuote = false;
                             else
-                                column.Append(_signals.Quote);
+                                field.Append(_signals.Quote);
                             break;
 
                         case CharacterCategory.NewRow:
-                            column.Append(_signals.NewRow);
+                            field.Append(_signals.NewRow);
                             break;
 
                         case CharacterCategory.NoOp:
@@ -295,12 +295,12 @@ namespace SoftwareBotany.Ivy
                             throw new NotImplementedException(category.ToString());
                     }
 
-                    columBufferIndex++;
+                    fieldBufferIndex++;
                 }
 
-                _columns.Add(column.ToString());
-                _columnBuffer.Clear();
-                _columnCategories.Clear();
+                _fields.Add(field.ToString());
+                _fieldBuffer.Clear();
+                _fieldCategories.Clear();
             }
 
             private void FlushConsecutiveQuotes()

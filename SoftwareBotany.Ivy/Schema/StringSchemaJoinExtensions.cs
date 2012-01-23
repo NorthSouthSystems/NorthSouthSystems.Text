@@ -3,7 +3,7 @@
 namespace SoftwareBotany.Ivy
 {
     /// <summary>
-    /// Extension methods for Splitting and Joining rows, sequences of chars, arranged in fixed-width columns.
+    /// Extension methods for Splitting and Joining rows (sequences of chars) arranged in fixed-width columns.
     /// The number and size of columns is determined by a StringSchema and its StringSchemaEntrys. Rows must StartsWith
     /// the Header of exactly one Entry from a StringSchema. That Entry then contains the Widths
     /// to use when processing that row along with the designated FillCharacter.
@@ -11,39 +11,41 @@ namespace SoftwareBotany.Ivy
     public static partial class StringSchemaExtensions
     {
         /// <summary>
-        /// Joins the set of string Columns using the StringSchemaEntry for instructions.
-        /// Both are contained within the StringSchemaEntryAndColumns parameter.
+        /// Joins the set of string fields using the StringSchemaEntry for instructions.
         /// </summary>
+        /// <param name="substringToFit">Determines whether to substring a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
         /// <example>
         /// <code>
         /// var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
         /// var b = new StringSchemaEntry("B", new[] { 2, 2, 2 });
         /// var c = new StringSchemaEntry("C", new[] { 2, 2, 2 }, '-');
         ///
-        /// var split = new StringSchemaEntryAndColumns(a, new[] { "1", "2", "3" });
-        /// string join = split.JoinSchemaRow();
-        /// Console.WriteLine(join);
+        /// var fields = new[] { "1", "2", "3" };
+        /// string row = fields.JoinSchemaRow(a, false);
+        /// Console.WriteLine(row);
         ///
-        /// split = new StringSchemaEntryAndColumns(b, new[] { "12", "34", "56" });
-        /// join = split.JoinSchemaRow();
-        /// Console.WriteLine(join);
+        /// fields = new[] { "12", "34", "56" };
+        /// row = fields.JoinSchemaRow(b, false);
+        /// Console.WriteLine(row);
         ///
-        /// split = new StringSchemaEntryAndColumns(c, new[] { "1", "2", "3" });
-        /// join = split.JoinSchemaRow();
-        /// Console.WriteLine(join);
+        /// fields = new[] { "1", "2", "3" };
+        /// row = fields.JoinSchemaRow(c, false);
+        /// Console.WriteLine(row);
         /// </code>
         /// Console Output:<br/>
         /// A123<br/>
         /// B123456<br/>
         /// C1-2-3-<br/>
         /// </example>
-        public static string JoinSchemaRow(this StringSchemaEntryAndColumns entryAndColumns)
+        public static string JoinSchemaRow(this string[] fields, StringSchemaEntry entry, bool substringToFit = false)
         {
-            if (entryAndColumns == null)
-                throw new ArgumentNullException("entryAndColumns");
+            if (entry == null)
+                throw new ArgumentNullException("entry");
 
-            return entryAndColumns.Entry.Header
-                + StringFixedExtensions.JoinFixedImplementation(entryAndColumns.Columns, entryAndColumns.Entry.Widths, entryAndColumns.Entry.FillCharacter);
+            StringFixedExtensions.VerifyAndFitFields(fields, entry.Widths, substringToFit);
+
+            return entry.Header
+                + StringFixedExtensions.JoinFixedImplementation(fields, entry.Widths, entry.FillCharacter);
         }
     }
 }

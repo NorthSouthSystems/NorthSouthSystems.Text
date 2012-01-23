@@ -11,42 +11,42 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void Basic()
         {
-            string[][] rowColumns = "123".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
-            Assert.AreEqual(1, rowColumns.Length);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, rowColumns[0]);
+            string[][] rowsFields = "123".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
+            Assert.AreEqual(1, rowsFields.Length);
+            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, rowsFields[0]);
 
-            rowColumns = "123456".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
-            Assert.AreEqual(2, rowColumns.Length);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, rowColumns[0]);
-            CollectionAssert.AreEqual(new[] { "4", "5", "6" }, rowColumns[1]);
+            rowsFields = "123456".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
+            Assert.AreEqual(2, rowsFields.Length);
+            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, rowsFields[0]);
+            CollectionAssert.AreEqual(new[] { "4", "5", "6" }, rowsFields[1]);
 
-            rowColumns = "123456789".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
-            Assert.AreEqual(3, rowColumns.Length);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, rowColumns[0]);
-            CollectionAssert.AreEqual(new[] { "4", "5", "6" }, rowColumns[1]);
-            CollectionAssert.AreEqual(new[] { "7", "8", "9" }, rowColumns[2]);
+            rowsFields = "123456789".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
+            Assert.AreEqual(3, rowsFields.Length);
+            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, rowsFields[0]);
+            CollectionAssert.AreEqual(new[] { "4", "5", "6" }, rowsFields[1]);
+            CollectionAssert.AreEqual(new[] { "7", "8", "9" }, rowsFields[2]);
         }
 
         [TestMethod]
         public void FillTrim()
         {
-            string[][] rowColumns = "1 34 67 9".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
-            Assert.AreEqual(3, rowColumns.Length);
-            CollectionAssert.AreEqual(new[] { "1", "", "3" }, rowColumns[0]);
-            CollectionAssert.AreEqual(new[] { "4", "", "6" }, rowColumns[1]);
-            CollectionAssert.AreEqual(new[] { "7", "", "9" }, rowColumns[2]);
+            string[][] rowsFields = "1 34 67 9".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
+            Assert.AreEqual(3, rowsFields.Length);
+            CollectionAssert.AreEqual(new[] { "1", "", "3" }, rowsFields[0]);
+            CollectionAssert.AreEqual(new[] { "4", "", "6" }, rowsFields[1]);
+            CollectionAssert.AreEqual(new[] { "7", "", "9" }, rowsFields[2]);
 
-            rowColumns = "1-34-67-9".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
-            Assert.AreEqual(3, rowColumns.Length);
-            CollectionAssert.AreEqual(new[] { "1", "-", "3" }, rowColumns[0]);
-            CollectionAssert.AreEqual(new[] { "4", "-", "6" }, rowColumns[1]);
-            CollectionAssert.AreEqual(new[] { "7", "-", "9" }, rowColumns[2]);
+            rowsFields = "1-34-67-9".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
+            Assert.AreEqual(3, rowsFields.Length);
+            CollectionAssert.AreEqual(new[] { "1", "-", "3" }, rowsFields[0]);
+            CollectionAssert.AreEqual(new[] { "4", "-", "6" }, rowsFields[1]);
+            CollectionAssert.AreEqual(new[] { "7", "-", "9" }, rowsFields[2]);
 
-            rowColumns = "1-34-67-9".SplitFixedRepeating(new[] { 1, 1, 1 }, '-').ToArray();
-            Assert.AreEqual(3, rowColumns.Length);
-            CollectionAssert.AreEqual(new[] { "1", "", "3" }, rowColumns[0]);
-            CollectionAssert.AreEqual(new[] { "4", "", "6" }, rowColumns[1]);
-            CollectionAssert.AreEqual(new[] { "7", "", "9" }, rowColumns[2]);
+            rowsFields = "1-34-67-9".SplitFixedRepeating(new[] { 1, 1, 1 }, '-').ToArray();
+            Assert.AreEqual(3, rowsFields.Length);
+            CollectionAssert.AreEqual(new[] { "1", "", "3" }, rowsFields[0]);
+            CollectionAssert.AreEqual(new[] { "4", "", "6" }, rowsFields[1]);
+            CollectionAssert.AreEqual(new[] { "7", "", "9" }, rowsFields[2]);
         }
 
         #region Exceptions
@@ -61,49 +61,49 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch1()
+        public void LengthColumnWidthSumMismatch1()
         {
             "1".SplitFixedRepeating(new[] { 2 }).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch2()
+        public void LengthColumnWidthSumMismatch2()
         {
             "12".SplitFixedRepeating(new[] { 3 }).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch3()
+        public void LengthColumnWidthSumMismatch3()
         {
             "12".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch4()
+        public void LengthColumnWidthSumMismatch4()
         {
             "123".SplitFixedRepeating(new[] { 2 }).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch5()
+        public void LengthColumnWidthSumMismatch5()
         {
             "123".SplitFixedRepeating(new[] { 1, 1 }).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch6()
+        public void LengthColumnWidthSumMismatch6()
         {
             "12345".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch7()
+        public void LengthColumnWidthSumMismatch7()
         {
             "1234567".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
         }

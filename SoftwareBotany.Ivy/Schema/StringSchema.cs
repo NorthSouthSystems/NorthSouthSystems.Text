@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SoftwareBotany.Ivy
 {
@@ -15,18 +16,6 @@ namespace SoftwareBotany.Ivy
         /// </summary>
         public StringSchema() { }
 
-        /// <summary>
-        /// Creates a new StringSchema with the provided Entries after validation.
-        /// </summary>
-        public StringSchema(IEnumerable<StringSchemaEntry> entries)
-        {
-            if (entries == null)
-                throw new ArgumentNullException("entries");
-
-            foreach (StringSchemaEntry entry in entries)
-                AddEntry(entry);
-        }
-
         private readonly Dictionary<string, StringSchemaEntry> _entries = new Dictionary<string, StringSchemaEntry>();
 
         /// <summary>
@@ -40,6 +29,8 @@ namespace SoftwareBotany.Ivy
             VerifyEntry(entry);
             _entries.Add(entry.Header, entry);
         }
+
+        public StringSchemaEntry this[string header] { get { return _entries[header]; } }
 
         internal StringSchemaEntry GetEntryForRow(string row)
         {

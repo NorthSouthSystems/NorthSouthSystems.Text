@@ -60,28 +60,28 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch1()
+        public void LengthColumnWidthSumMismatch1()
         {
             "1".SplitFixedRow(new[] { 2 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch2()
+        public void LengthColumnWidthSumMismatch2()
         {
             "12".SplitFixedRow(new[] { 3 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch3()
+        public void LengthColumnWidthSumMismatch3()
         {
             "12".SplitFixedRow(new[] { 1, 2 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthWidthSumMismatch4()
+        public void LengthColumnWidthSumMismatch4()
         {
             "1234".SplitFixedRow(new[] { 1, 2 });
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,44 +10,54 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void Basic()
         {
-            var schema = new StringSchema(new StringSchemaEntry[]
-            {
-                new StringSchemaEntry("A", new[] { 3 }),
-                new StringSchemaEntry("B", new[] { 6 })
-            });
-
+            var schema = new StringSchema();
+            schema.AddEntry(new StringSchemaEntry("A", new[] { 3 }));
+            schema.AddEntry(new StringSchemaEntry("B", new[] { 6 }));
             schema.AddEntry(new StringSchemaEntry("C", new[] { 3, 3 }));
             schema.AddEntry(new StringSchemaEntry("DE", new[] { 4, 4 }));
 
             var entry = schema.GetEntryForRow("Afoo");
 
             Assert.AreEqual("A", entry.Header);
-            CollectionAssert.AreEqual(new[] { 3 }, entry.ToArray());
+            CollectionAssert.AreEqual(new[] { 3 }, entry.Widths);
+
+            entry = schema["A"];
+
+            Assert.AreEqual("A", entry.Header);
+            CollectionAssert.AreEqual(new[] { 3 }, entry.Widths);
 
             entry = schema.GetEntryForRow("Bfoobar");
 
             Assert.AreEqual("B", entry.Header);
-            CollectionAssert.AreEqual(new[] { 6 }, entry.ToArray());
+            CollectionAssert.AreEqual(new[] { 6 }, entry.Widths);
+
+            entry = schema["B"];
+
+            Assert.AreEqual("B", entry.Header);
+            CollectionAssert.AreEqual(new[] { 6 }, entry.Widths);
 
             entry = schema.GetEntryForRow("Cfoobar");
 
             Assert.AreEqual("C", entry.Header);
-            CollectionAssert.AreEqual(new[] { 3, 3 }, entry.ToArray());
+            CollectionAssert.AreEqual(new[] { 3, 3 }, entry.Widths);
+
+            entry = schema["C"];
+
+            Assert.AreEqual("C", entry.Header);
+            CollectionAssert.AreEqual(new[] { 3, 3 }, entry.Widths);
 
             entry = schema.GetEntryForRow("DEfoosbars");
 
             Assert.AreEqual("DE", entry.Header);
-            CollectionAssert.AreEqual(new[] { 4, 4 }, entry.ToArray());
+            CollectionAssert.AreEqual(new[] { 4, 4 }, entry.Widths);
+
+            entry = schema["DE"];
+
+            Assert.AreEqual("DE", entry.Header);
+            CollectionAssert.AreEqual(new[] { 4, 4 }, entry.Widths);
         }
 
         #region Exceptions
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ConstructorNullEntries()
-        {
-            var schema = new StringSchema(null);
-        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
