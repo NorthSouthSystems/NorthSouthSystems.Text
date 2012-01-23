@@ -27,34 +27,34 @@ namespace SoftwareBotany.Ivy
             if (!signals.QuoteIsSpecified)
                 throw new NotSupportedException();
 
-            string[] columns = new string[] { "a", "b", "c" };
-            string result = columns.JoinQuotedRow(signals);
+            string[] fields = new string[] { "a", "b", "c" };
+            string result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "a{0}b{0}c", result);
 
-            columns = new string[] { "aa", "bb", "cc" };
-            result = columns.JoinQuotedRow(signals);
+            fields = new string[] { "aa", "bb", "cc" };
+            result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "aa{0}bb{0}cc", result);
 
-            columns = new string[] { "a" + signals.Delimiter, "b", "c" };
-            result = columns.JoinQuotedRow(signals);
+            fields = new string[] { "a" + signals.Delimiter, "b", "c" };
+            result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "{1}a{0}{1}{0}b{0}c", result);
 
-            columns = new string[] { "a" + signals.Quote, "b", "c" };
-            result = columns.JoinQuotedRow(signals);
+            fields = new string[] { "a" + signals.Quote, "b", "c" };
+            result = fields.JoinQuotedRow(signals);
 
             if (signals.EscapeIsSpecified)
                 AssertAreEqual(signals, "{1}a{3}{1}{1}{0}b{0}c", result);
             else               
                 AssertAreEqual(signals, "{1}a{1}{1}{1}{0}b{0}c", result);
 
-            columns = new string[] { "aa", "bb", "cc" };
-            result = columns.JoinQuotedRow(signals, true);
+            fields = new string[] { "aa", "bb", "cc" };
+            result = fields.JoinQuotedRow(signals, true);
             AssertAreEqual(signals, "{1}aa{1}{0}{1}bb{1}{0}{1}cc{1}", result);
 
             if (signals.NewRowIsSpecified)
             {
-                columns = new string[] { "a" + signals.NewRow + "a", "b", "c" };
-                result = columns.JoinQuotedRow(signals);
+                fields = new string[] { "a" + signals.NewRow + "a", "b", "c" };
+                result = fields.JoinQuotedRow(signals);
                 AssertAreEqual(signals, "{1}a{2}a{1}{0}b{0}c", result);
             }
         }
@@ -73,22 +73,22 @@ namespace SoftwareBotany.Ivy
             if (!signals.EscapeIsSpecified || signals.QuoteIsSpecified)
                 throw new NotSupportedException();
 
-            string[] columns = null;
+            string[] fields = null;
             string result = null;
 
-            columns = new string[] { "a" + signals.Delimiter, "b", "c" };
-            result = columns.JoinQuotedRow(signals);
+            fields = new string[] { "a" + signals.Delimiter, "b", "c" };
+            result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "a{3}{0}{0}b{0}c", result);
 
             if (signals.NewRowIsSpecified)
             {
-                columns = new string[] { "a" + signals.NewRow, "b", "c" };
-                result = columns.JoinQuotedRow(signals);
+                fields = new string[] { "a" + signals.NewRow, "b", "c" };
+                result = fields.JoinQuotedRow(signals);
                 AssertAreEqual(signals, "a{3}{2}{0}b{0}c", result);
             }
 
-            columns = new string[] { "a" + signals.Escape, "b", "c" };
-            result = columns.JoinQuotedRow(signals);
+            fields = new string[] { "a" + signals.Escape, "b", "c" };
+            result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "a{3}{3}{0}b{0}c", result);
         }
 
@@ -96,42 +96,42 @@ namespace SoftwareBotany.Ivy
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ColumnsNull()
+        public void FieldsNull()
         {
-            string[] columns = null;
-            columns.JoinQuotedRow(StringQuotedSignals.Csv);
+            string[] fields = null;
+            fields.JoinQuotedRow(StringQuotedSignals.Csv);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void SignalsNull()
         {
-            string[] columns = new[] { "A" };
-            columns.JoinQuotedRow(null);
+            string[] fields = new[] { "A" };
+            fields.JoinQuotedRow(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void QuoteNotSpecified1()
         {
-            string[] columns = new[] { "A" };
-            columns.JoinQuotedRow(new StringQuotedSignals(",", null, null, null), true);
+            string[] fields = new[] { "A" };
+            fields.JoinQuotedRow(new StringQuotedSignals(",", null, null, null), true);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void QuoteNotSpecified2()
         {
-            string[] columns = new[] { "A," };
-            columns.JoinQuotedRow(new StringQuotedSignals(",", null, null, null));
+            string[] fields = new[] { "A," };
+            fields.JoinQuotedRow(new StringQuotedSignals(",", null, null, null));
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void QuoteNotSpecified3()
         {
-            string[] columns = new[] { "A" + Environment.NewLine };
-            columns.JoinQuotedRow(new StringQuotedSignals(",", null, Environment.NewLine, null));
+            string[] fields = new[] { "A" + Environment.NewLine };
+            fields.JoinQuotedRow(new StringQuotedSignals(",", null, Environment.NewLine, null));
         }
 
         #endregion

@@ -48,17 +48,20 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfoShared.cs">
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="CharExtensions.cs" />
+    <Compile Include="StringFieldWrapper.cs" />
+    <Compile Include="StringRowWrapper.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Schema\StringSchemaJoinExtensions.cs" />
     <Compile Include="Schema\StringSchemaSplitExtensions.cs" />
     <Compile Include="Schema\StringSchemaEntry.cs" />
-    <Compile Include="Schema\StringSchemaEntryAndColumns.cs" />
+    <Compile Include="Schema\StringSchemaSplitResult.cs" />
     <Compile Include="Fixed\StringFixedHelpers.cs" />
     <Compile Include="Fixed\StringFixedJoinExtensions.cs" />
     <Compile Include="Schema\StringSchema.cs" />
@@ -68,6 +71,7 @@
     <Compile Include="Quoted\StringQuotedSignals.cs" />
     <Compile Include="Quoted\StringQuotedSplitExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="StringRowWrapperFactory.cs" />
     <Compile Include="StringSignalTracker.cs" />
   </ItemGroup>
   <ItemGroup />

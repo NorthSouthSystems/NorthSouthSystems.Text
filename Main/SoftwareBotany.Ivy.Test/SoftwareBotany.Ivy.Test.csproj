@@ -53,16 +53,15 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="CharExtensionsTests.cs" />
-    <Compile Include="Fixed\StringFixedHelperVerifyAndFitColumnsTests.cs" />
+    <Compile Include="Fixed\StringFixedHelperVerifyAndFitFieldsTests.cs" />
     <Compile Include="Fixed\StringFixedSplitRowTests.cs" />
-    <Compile Include="Fixed\StringFixedHelperVerifyWidthsTests.cs" />
+    <Compile Include="Fixed\StringFixedHelperVerifyColumnWidthsTests.cs" />
     <Compile Include="Fixed\StringFixedJoinExtensionsTests.cs" />
     <Compile Include="Quoted\StringQuotedPerformanceTests.cs" />
     <Compile Include="Quoted\StringQuotedSplitRowTests.cs" />
     <Compile Include="Schema\StringSchemaEntryTests.cs" />
     <Compile Include="Schema\StringSchemaSplitExtensionsTests.cs" />
     <Compile Include="Schema\StringSchemaJoinExtensionsTests.cs" />
-    <Compile Include="Schema\StringSchemaEntryAndColumnsTests.cs" />
     <Compile Include="Schema\StringSchemaTests.cs" />
     <Compile Include="Fixed\StringFixedSplitRepeatingTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +69,9 @@
     <Compile Include="Quoted\StringQuotedSignalsTests.cs" />
     <Compile Include="Quoted\StringQuotedSplitRowsTests.cs" />
     <Compile Include="StringExtensionsTests.cs" />
+    <Compile Include="StringFieldWrapperTests.cs" />
+    <Compile Include="StringRowWrapperTests.cs" />
+    <Compile Include="StringRowWrapperFactoryTests.cs" />
     <Compile Include="StringSignalTrackerTests.cs" />
   </ItemGroup>
   <ItemGroup>
