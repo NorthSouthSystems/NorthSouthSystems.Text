@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Software Botany LLC.")]
 [assembly: AssemblyProduct("SoftwareBotany.Ivy")]
-[assembly: AssemblyCopyright("Copyright © Software Botany LLC. 2011")]
+[assembly: AssemblyCopyright("Copyright © Software Botany LLC. 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -15,4 +15,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyVersion("1.0.0.*")]
+[assembly: AssemblyVersion("2.0.0")]
