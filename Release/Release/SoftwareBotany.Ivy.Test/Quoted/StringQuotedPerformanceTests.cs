@@ -27,19 +27,19 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void SplitQuoted100MBLongRows() { SplitQuotedPerformanceBase(StringQuotedSignals.Csv, 100, 5000, 100); }
 
-        private static void SplitQuotedPerformanceBase(StringQuotedSignals signals, int columnCount, int rowCount, int columnLength)
+        private static void SplitQuotedPerformanceBase(StringQuotedSignals signals, int columnCount, int rowCount, int columnWidth)
         {
             if (!signals.QuoteIsSpecified)
                 throw new NotSupportedException();
 
-            foreach (string[] row in SplitQuotedPerformanceChars(signals, columnCount, rowCount, columnLength).SplitQuotedRows(signals))
-                Assert.AreEqual(columnCount, row.Length);
+            foreach (string[] fields in SplitQuotedPerformanceChars(signals, columnCount, rowCount, columnWidth).SplitQuotedRows(signals))
+                Assert.AreEqual(columnCount, fields.Length);
         }
 
-        private static IEnumerable<char> SplitQuotedPerformanceChars(StringQuotedSignals signals, int columnCount, int rowCount, int columnLength)
+        private static IEnumerable<char> SplitQuotedPerformanceChars(StringQuotedSignals signals, int columnCount, int rowCount, int columnWidth)
         {
-            string column = signals.Quote + signals.Delimiter + Enumerable.Repeat('c', columnLength).ToNewString() + signals.Delimiter + signals.Quote;
-            string row = string.Join(signals.Delimiter, Enumerable.Repeat(column, columnCount)) + signals.NewRow;
+            string field = signals.Quote + signals.Delimiter + Enumerable.Repeat('c', columnWidth).ToNewString() + signals.Delimiter + signals.Quote;
+            string row = string.Join(signals.Delimiter, Enumerable.Repeat(field, columnCount)) + signals.NewRow;
 
             return Enumerable.Repeat(row, rowCount)
                 .SelectMany(r => r);
@@ -63,22 +63,22 @@ namespace SoftwareBotany.Ivy
         [TestMethod]
         public void JoinQuoted100MBLongRows() { JoinQuotedPerformanceBase(StringQuotedSignals.Csv, 100, 5000, 100); }
 
-        private static void JoinQuotedPerformanceBase(StringQuotedSignals signals, int columnCount, int rowCount, int columnLength)
+        private static void JoinQuotedPerformanceBase(StringQuotedSignals signals, int columnCount, int rowCount, int columnWidth)
         {
             if (!signals.QuoteIsSpecified)
                 throw new NotSupportedException();
 
-            string[] columns = JoinQuotedPerformanceColumns(signals, columnCount, columnLength);
-            int joinedRowExpectedLength = (columnCount * (columns[0].Length + (signals.Quote.Length * 4) + signals.Delimiter.Length)) - signals.Delimiter.Length;
+            string[] fields = JoinQuotedPerformanceFields(signals, columnCount, columnWidth);
+            int joinedRowExpectedLength = (columnCount * (fields[0].Length + (signals.Quote.Length * 4) + signals.Delimiter.Length)) - signals.Delimiter.Length;
 
             for (int i = 0; i < rowCount; i++)
-                Assert.AreEqual(joinedRowExpectedLength, columns.JoinQuotedRow(signals, true).Length);
+                Assert.AreEqual(joinedRowExpectedLength, fields.JoinQuotedRow(signals, true).Length);
         }
 
-        private static string[] JoinQuotedPerformanceColumns(StringQuotedSignals signals, int columnCount, int columnLength)
+        private static string[] JoinQuotedPerformanceFields(StringQuotedSignals signals, int columnCount, int columnWidth)
         {
-            string column = signals.Quote + signals.Delimiter + Enumerable.Repeat('c', columnLength).ToNewString() + signals.Delimiter + signals.Quote;
-            return Enumerable.Repeat(column, columnCount).ToArray();
+            string field = signals.Quote + signals.Delimiter + Enumerable.Repeat('c', columnWidth).ToNewString() + signals.Delimiter + signals.Quote;
+            return Enumerable.Repeat(field, columnCount).ToArray();
         }
     }
 }

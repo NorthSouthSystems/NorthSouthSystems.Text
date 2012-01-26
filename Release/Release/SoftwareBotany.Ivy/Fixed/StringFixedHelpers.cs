@@ -7,38 +7,38 @@ namespace SoftwareBotany.Ivy
 {
     public static partial class StringFixedExtensions
     {
-        internal static void VerifyWidths(int[] widths)
+        internal static void VerifyColumnWidths(int[] columnWidths)
         {
-            if (widths == null)
-                throw new ArgumentNullException("widths");
+            if (columnWidths == null)
+                throw new ArgumentNullException("columnWidths");
 
-            if (widths.Length == 0)
-                throw new ArgumentException("widths.Length must be > 0", "widths");
+            if (columnWidths.Length == 0)
+                throw new ArgumentException("columnWidths.Length must be > 0", "columnWidths");
 
-            if (widths.Any(width => width <= 0))
-                throw new ArgumentOutOfRangeException("widths", "Each width must be > 0");
+            if (columnWidths.Any(width => width <= 0))
+                throw new ArgumentOutOfRangeException("columnWidths", "Each column width must be > 0");
         }
 
-        internal static void VerifyAndFitColumns(string[] columns, int[] widths, bool substringToFit)
+        internal static void VerifyAndFitFields(string[] fields, int[] columnWidths, bool substringToFit)
         {
-            if (columns == null)
-                throw new ArgumentNullException("columns");
+            if (fields == null)
+                throw new ArgumentNullException("fields");
 
-            if (columns.Length != widths.Length)
-                throw new ArgumentException("Number of columns must equal number of widths.");
+            if (fields.Length != columnWidths.Length)
+                throw new ArgumentException("Number of fields must equal number of column widths.");
 
             List<string> errors = new List<string>();
 
-            for (int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < fields.Length; i++)
             {
                 if (substringToFit)
-                    columns[i] = columns[i].SubstringToFit(widths[i]);
-                else if (columns[i].Length > widths[i])
-                    errors.Add(string.Format(CultureInfo.InvariantCulture, "Column index (0-based): {0}. Column length: {1}. Width: {2}.", i, columns[i].Length, widths[i]));
+                    fields[i] = fields[i].SubstringToFit(columnWidths[i]);
+                else if (fields[i].Length > columnWidths[i])
+                    errors.Add(string.Format(CultureInfo.InvariantCulture, "Column index (0-based): {0}. Column width: {1}. Field length: {2}.", i, columnWidths[i], fields[i].Length));
             }
 
             if (errors.Count > 0)
-                throw new ArgumentOutOfRangeException("columns", string.Format(CultureInfo.InvariantCulture, "Each column's length must be <= to its corresponding width (use substringToFit = true if truncation is allowed).{0}{1}", Environment.NewLine, string.Join(Environment.NewLine, errors)));
+                throw new ArgumentOutOfRangeException("fields", string.Format(CultureInfo.InvariantCulture, "Each field's length must be <= to its corresponding column's width (use substringToFit = true if truncation is allowed).{0}{1}", Environment.NewLine, string.Join(Environment.NewLine, errors)));
         }
     }
 }

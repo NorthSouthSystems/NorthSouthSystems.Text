@@ -14,20 +14,16 @@ namespace SoftwareBotany.Ivy
             var b = new StringSchemaEntry("B", new[] { 2, 2, 2 });
             var c = new StringSchemaEntry("C", new[] { 2, 2, 2 }, '-');
 
-            var split = new StringSchemaEntryAndColumns(a, new[] { "1", "2", "3" });
-            string join = split.JoinSchemaRow();
+            string join = new[] { "1", "2", "3" }.JoinSchemaRow(a);
             Assert.AreEqual("A123", join);
 
-            split = new StringSchemaEntryAndColumns(b, new[] { "12", "34", "56" });
-            join = split.JoinSchemaRow();
+            join = new[] { "12", "34", "56" }.JoinSchemaRow(b);
             Assert.AreEqual("B123456", join);
 
-            split = new StringSchemaEntryAndColumns(b, new[] { "1", "2", "3" });
-            join = split.JoinSchemaRow();
+            join = new[] { "1", "2", "3" }.JoinSchemaRow(b);
             Assert.AreEqual("B1 2 3 ", join);
 
-            split = new StringSchemaEntryAndColumns(c, new[] { "1", "2", "3" });
-            join = split.JoinSchemaRow();
+            join = new[] { "1", "2", "3" }.JoinSchemaRow(c);
             Assert.AreEqual("C1-2-3-", join);
         }
 
@@ -37,8 +33,18 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentNullException))]
         public void ThisNull()
         {
-            StringSchemaEntryAndColumns split = null;
-            split.JoinSchemaRow();
+            string[] split = null;
+            StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1, 1, 1 });
+
+            split.JoinSchemaRow(entry);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void EntryNull()
+        {
+            string[] split = new[] { "1" };
+            split.JoinSchemaRow(null);
         }
 
         #endregion

@@ -45,26 +45,24 @@ namespace SoftwareBotany.Ivy
     /// Console.WriteLine(tracker.IsCounting);
     /// Console.WriteLine(tracker.IsTriggered);
     /// </code>
-    /// Console Output:
-    /// <code>
-    /// False
-    /// False
-    /// 
-    /// True
-    /// False
-    /// 
-    /// False
-    /// False
-    /// 
-    /// True
-    /// False
-    /// 
-    /// True
-    /// False
-    /// 
-    /// False
-    /// True
-    /// </code>
+    /// Console Output:<br/>
+    /// False<br/>
+    /// False<br/>
+    /// <br/>
+    /// True<br/>
+    /// False<br/>
+    /// <br/>
+    /// False<br/>
+    /// False<br/>
+    /// <br/>
+    /// True<br/>
+    /// False<br/>
+    /// <br/>
+    /// True<br/>
+    /// False<br/>
+    /// <br/>
+    /// False<br/>
+    /// True<br/>
     /// </example>
     public sealed class StringSignalTracker
     {

@@ -4,7 +4,7 @@ using System.Linq;
 namespace SoftwareBotany.Ivy
 {
     /// <summary>
-    /// Represents the Signals that determine how columns of a row (sequence of chars) are delimited
+    /// Represents the Signals that determine how fields of a row (sequence of chars) are delimited
     /// (separated by Delimiter), quoted (surrounded by Quote) or escaped (contain signals preceeded by Escape)
     /// to allow themselves to contain an instance of Delimiter, and put onto new rows (rows separated by NewRow) in the
     /// case of serialization.
@@ -26,7 +26,7 @@ namespace SoftwareBotany.Ivy
     /// </item>
     /// <item>
     /// <description>
-    /// When Joining, an Escape within a column is always Escaped by a second Escape.
+    /// When Joining, an Escape within a field is always Escaped by a second Escape.
     /// </description>
     /// </item>
     /// </list>
@@ -41,8 +41,8 @@ namespace SoftwareBotany.Ivy
         /// <summary>
         /// Constructor with params for all signal values.
         /// </summary>
-        /// <param name="delimiter">String used to separate columns of a row. It is the only param that cannot be null or empty.</param>
-        /// <param name="quote">String used to surround (or quote) a column and allow it to contain an instance of Delimiter.</param>
+        /// <param name="delimiter">String used to separate fields of a row. It is the only param that cannot be null or empty.</param>
+        /// <param name="quote">String used to surround (or quote) a field and allow it to contain an instance of Delimiter.</param>
         /// <param name="newRow">String used to separate rows during serialization.</param>
         /// <param name="escape">String used to escape the meaning of the immediately following character.</param>
         public StringQuotedSignals(string delimiter, string quote, string newRow, string escape)

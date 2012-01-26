@@ -6,13 +6,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SoftwareBotany.Ivy
 {
     [TestClass]
-    public class StringFixedHelperVerifyWidthsTests
+    public class StringFixedHelperVerifyColumnWidthsTests
     {
         [TestMethod]
         public void Basic()
         {
             foreach (int count in Enumerable.Range(1, 10))
-                StringFixedExtensions.VerifyWidths(Enumerable.Range(1, count).ToArray());
+                StringFixedExtensions.VerifyColumnWidths(Enumerable.Range(1, count).ToArray());
         }
 
         #region Exceptions
@@ -21,56 +21,56 @@ namespace SoftwareBotany.Ivy
         [ExpectedException(typeof(ArgumentNullException))]
         public void Null()
         {
-            StringFixedExtensions.VerifyWidths(null);
+            StringFixedExtensions.VerifyColumnWidths(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Empty()
         {
-            StringFixedExtensions.VerifyWidths(new int[0]);
+            StringFixedExtensions.VerifyColumnWidths(new int[0]);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WidthEqualToZero1()
         {
-            StringFixedExtensions.VerifyWidths(new[] { 0 });
+            StringFixedExtensions.VerifyColumnWidths(new[] { 0 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WidthEqualToZero2()
         {
-            StringFixedExtensions.VerifyWidths(new[] { 0, 1 });
+            StringFixedExtensions.VerifyColumnWidths(new[] { 0, 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WidthEqualToZero3()
         {
-            StringFixedExtensions.VerifyWidths(new[] { 1, 0 });
+            StringFixedExtensions.VerifyColumnWidths(new[] { 1, 0 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WidthLessThanZero1()
         {
-            StringFixedExtensions.VerifyWidths(new[] { -1 });
+            StringFixedExtensions.VerifyColumnWidths(new[] { -1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WidthLessThanZero2()
         {
-            StringFixedExtensions.VerifyWidths(new[] { -1, 1 });
+            StringFixedExtensions.VerifyColumnWidths(new[] { -1, 1 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void WidthLessThanZero3()
         {
-            StringFixedExtensions.VerifyWidths(new[] { 1, -1 });
+            StringFixedExtensions.VerifyColumnWidths(new[] { 1, -1 });
         }
 
         #endregion

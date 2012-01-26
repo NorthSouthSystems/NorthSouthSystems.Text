@@ -3,84 +3,76 @@
 namespace SoftwareBotany.Ivy
 {
     /// <summary>
-    /// Extension methods for Splitting and Joining rows, sequences of chars, arranged in fixed-width columns.
+    /// Extension methods for Splitting and Joining rows (sequences of chars), arranged in fixed-width columns.
     /// </summary>
     public static partial class StringFixedExtensions
     {
-        /// <inheritdoc cref="JoinFixedRow(string[], int[], char, bool)"/>
-        public static string JoinFixedRow(this string[] columns, int[] widths) { return JoinFixedRow(columns, widths, ' ', false); }
-
         /// <summary>
-        /// Joins an array of strings together so that each string is "filled" to occupy a column with an exact width.
+        /// Joins an array of fields (strings) together so that each field is "filled" to occupy a column with an exact width.
         /// </summary>
-        /// <param name="widths">The width of each column. E.g. The first string in columns will be place into a column the size of the first width in widths.</param>
-        /// <param name="fillCharacter">When a string is less than its column's width, fillCharacter is added until the width is reached. (default = ' ')</param>
-        /// <param name="substringToFit">Determines whether to substring a string to fit its column's width or throw an exception when a column exceeds the allowable width. (default = false)</param>
+        /// <param name="columnWidths">The width of each column. E.g. The first field in fields will be place into a column the size of the first width in columnWidths.</param>
+        /// <param name="fillCharacter">When a field is less than its column's width, fillCharacter is added until the columnWidth is reached. (default = ' ')</param>
+        /// <param name="substringToFit">Determines whether to substring a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
         /// <example>
         /// <code>
-        /// string columns = new [] { "A", "B", "C" };
-        /// string row = columns.JoinFixedRow(new [] { 1, 1, 1 });
+        /// string fields = new [] { "A", "B", "C" };
+        /// string row = fields.JoinFixedRow(new [] { 1, 1, 1 }, ' ', false);
         /// Console.WriteLine(row);
-        /// row = columns.JoinFixedRow(new [] { 1, 1, 1 }, '-', false);
-        /// Console.WriteLine(row);
-        /// </code>
-        /// Console Output:
-        /// <code>
-        /// ABC
-        /// ABC
-        /// </code>
-        /// <code>
-        /// string columns = new [] { "A", "B", "C" };
-        /// string row = columns.JoinFixedRow(new [] { 2, 1, 1 });
-        /// Console.WriteLine(row);
-        /// row = columns.JoinFixedRow(new [] { 2, 1, 1 }, '-', false);
+        /// 
+        /// row = fields.JoinFixedRow(new [] { 1, 1, 1 }, '-', false);
         /// Console.WriteLine(row);
         /// </code>
-        /// Console Output:
+        /// Console Output:<br/>
+        /// ABC<br/>
+        /// ABC<br/>
         /// <code>
-        /// A BC
-        /// A-BC
-        /// </code>
-        /// <code>
-        /// string columns = new [] { "A", "B", "C" };
-        /// string row = columns.JoinFixedRow(new [] { 2, 2, 1 });
+        /// string fields = new [] { "A", "B", "C" };
+        /// string row = fields.JoinFixedRow(new [] { 2, 1, 1 }, ' ', false);
         /// Console.WriteLine(row);
-        /// row = columns.JoinFixedRow(new [] { 2, 2, 1 }, '-', false);
-        /// Console.WriteLine(row);
-        /// </code>
-        /// Console Output:
-        /// <code>
-        /// A B C
-        /// A-B-C
-        /// </code>
-        /// <code>
-        /// string columns = new [] { "ABC", "123" };
-        /// string row = columns.JoinFixedRow(new [] { 2, 2 }, ' ', true);
+        /// 
+        /// row = fields.JoinFixedRow(new [] { 2, 1, 1 }, '-', false);
         /// Console.WriteLine(row);
         /// </code>
-        /// Console Output:
+        /// Console Output:<br/>
+        /// A BC<br/>
+        /// A-BC<br/>
         /// <code>
-        /// AB12
+        /// string fields = new [] { "A", "B", "C" };
+        /// string row = fields.JoinFixedRow(new [] { 2, 2, 1 }, ' ', false);
+        /// Console.WriteLine(row);
+        /// 
+        /// row = fields.JoinFixedRow(new [] { 2, 2, 1 }, '-', false);
+        /// Console.WriteLine(row);
         /// </code>
+        /// Console Output:<br/>
+        /// A B C<br/>
+        /// A-B-C<br/>
+        /// <code>
+        /// string fields = new [] { "ABC", "123" };
+        /// string row = fields.JoinFixedRow(new [] { 2, 2 }, ' ', true);
+        /// Console.WriteLine(row);
+        /// </code>
+        /// Console Output:<br/>
+        /// AB12<br/>
         /// </example>
-        public static string JoinFixedRow(this string[] columns, int[] widths, char fillCharacter, bool substringToFit)
+        public static string JoinFixedRow(this string[] fields, int[] columnWidths, char fillCharacter = ' ', bool substringToFit = false)
         {
-            VerifyWidths(widths);
-            VerifyAndFitColumns(columns, widths, substringToFit);
+            VerifyColumnWidths(columnWidths);
+            VerifyAndFitFields(fields, columnWidths, substringToFit);
 
-            return JoinFixedImplementation(columns, widths, fillCharacter);
+            return JoinFixedImplementation(fields, columnWidths, fillCharacter);
         }
 
-        internal static string JoinFixedImplementation(string[] columns, int[] widths, char fillCharacter)
+        internal static string JoinFixedImplementation(string[] fields, int[] columnWidths, char fillCharacter)
         {
             StringBuilder row = new StringBuilder();
 
-            for (int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < fields.Length; i++)
             {
-                string column = columns[i];
-                row.Append(column);
+                string field = fields[i];
+                row.Append(field);
 
-                int fillCount = widths[i] - column.Length;
+                int fillCount = columnWidths[i] - field.Length;
 
                 if (fillCount > 0)
                     row.Append(fillCharacter, fillCount);

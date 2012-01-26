@@ -1,0 +1,760 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SoftwareBotany.Ivy</name>
+    </assembly>
+    <members>
+        <member name="T:SoftwareBotany.Ivy.StringSchemaExtensions">
+            <summary>
+            Extension methods for Splitting and Joining rows (sequences of chars) arranged in fixed-width columns.
+            The number and size of columns is determined by a StringSchema and its StringSchemaEntrys. Rows must StartsWith
+            the Header of exactly one Entry from a StringSchema. That Entry then contains the Widths
+            to use when processing that row along with the designated FillCharacter.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSchemaExtensions.SplitSchemaRow(System.String,SoftwareBotany.Ivy.StringSchema)">
+             <summary>
+             Splits a row (string) using the provided StringSchema. Exactly one Entry must be found in the Schema
+             for which the row StartsWith the Entry's Header. This Entry then provides Width and FillCharacter
+             parameters needed to perform the Split.
+             </summary>
+             <param name="row">The row (string) to Split after finding its StringSchemaEntry.</param>
+             <param name="schema">The StringSchema containing exactly one Entry for whom this row StartsWith the Entry's Header.</param>
+             <example>
+             <code>
+             var schema = new StringSchema();
+             schema.AddEntry(new StringSchemaEntry("A", new[] { 1, 1, 1 }));
+             schema.AddEntry(new StringSchemaEntry("B", new[] { 2, 2, 2 }));
+             schema.AddEntry(new StringSchemaEntry("CD", new[] { 3, 3, 3 }));
+            
+             var split = "A123".SplitSchemaRow(schema);
+             Console.WriteLine(split.Entry.Header);
+             
+             foreach(StringFieldWrapper field in split.Result.Fields)
+                 Console.WriteLine(field);
+            
+             split = "B123456".SplitSchemaRow(schema);
+             Console.WriteLine(split.Entry.Header);
+             
+             foreach(StringFieldWrapper field in split.Result.Fields)
+                 Console.WriteLine(field);
+            
+             split = "CD123456789".SplitSchemaRow(schema);
+             Console.WriteLine(split.Entry.Header);
+             
+             foreach(StringFieldWrapper field in split.Result.Fields)
+                 Console.WriteLine(field);
+             </code>
+             Console Output:<br/>
+             A<br/>
+             1<br/>
+             2<br/>
+             3<br/>
+             B<br/>
+             12<br/>
+             34<br/>
+             56<br/>
+             CD<br/>
+             123<br/>
+             456<br/>
+             789<br/>
+             </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSchemaExtensions.JoinSchemaRow(System.String[],SoftwareBotany.Ivy.StringSchemaEntry,System.Boolean)">
+             <summary>
+             Joins the set of string fields using the StringSchemaEntry for instructions.
+             </summary>
+             <param name="substringToFit">Determines whether to substring a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
+             <example>
+             <code>
+             var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
+             var b = new StringSchemaEntry("B", new[] { 2, 2, 2 });
+             var c = new StringSchemaEntry("C", new[] { 2, 2, 2 }, '-');
+            
+             var fields = new[] { "1", "2", "3" };
+             string row = fields.JoinSchemaRow(a, false);
+             Console.WriteLine(row);
+            
+             fields = new[] { "12", "34", "56" };
+             row = fields.JoinSchemaRow(b, false);
+             Console.WriteLine(row);
+            
+             fields = new[] { "1", "2", "3" };
+             row = fields.JoinSchemaRow(c, false);
+             Console.WriteLine(row);
+             </code>
+             Console Output:<br/>
+             A123<br/>
+             B123456<br/>
+             C1-2-3-<br/>
+             </example>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringFixedExtensions">
+            <summary>
+            Extension methods for Splitting and Joining rows (sequences of chars), arranged in fixed-width columns.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringFixedExtensions.SplitFixedRow(System.Collections.Generic.IEnumerable{System.Char},System.Int32[],System.Char)">
+            <summary>
+            Splits a row (sequence of chars) into fields arranged in columns of fixed widths. The fillCharacter used to pad
+            fields to fill their column's width are trimmed from the split results.
+            </summary>
+            <param name="columnWidths">The width of each column. E.g. The first field in the result will be found in a column the size of the first width in columnWidths.</param>
+            <param name="fillCharacter">The character used to pad a field so that its width reaches its column's width. Trimmed from the split results. (default = ' ')</param>
+            <example>
+            <code>
+            string row = "ABC";
+            string[] fields = row.SplitFixedRow(new [] { 1, 1, 1 }, ' ');
+            
+            foreach(string field in fields)
+                Console.WriteLine(field);
+            
+            fields = row.SplitFixedRow(new [] { 1, 1, 1 }, '-');
+            
+            foreach(string field in fields)
+                Console.WriteLine(field);
+            </code>
+            Console Output:<br/>
+            A<br/>
+            B<br/>
+            C<br/>
+            A<br/>
+            B<br/>
+            C<br/>
+            <code>
+            string row = "A-BC";
+            string[] fields = row.SplitFixedRow(new [] { 2, 1, 1 }, ' ');
+            
+            foreach(string field in fields)
+                Console.WriteLine(field);
+            
+            fields = row.SplitFixedRow(new [] { 2, 1, 1 }, '-');
+            
+            foreach(string field in fields)
+                Console.WriteLine(field);
+            </code>
+            Console Output:<br/>
+            A-<br/>
+            B<br/>
+            C<br/>
+            A<br/>
+            B<br/>
+            C<br/>
+            <code>
+            string row = "A-B-C";
+            string[] fields = row.SplitFixedRow(new [] { 2, 2, 1 }, ' ');
+            
+            foreach(string field in fields)
+                Console.WriteLine(field);
+            
+            fields = row.SplitFixedRow(new [] { 2, 2, 1 }, '-');
+            
+            foreach(string field in fields)
+                Console.WriteLine(field);
+            </code>
+            Console Output:<br/>
+            A-<br/>
+            B-<br/>
+            C<br/>
+            A<br/>
+            B<br/>
+            C<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringFixedExtensions.SplitFixedRepeating(System.Collections.Generic.IEnumerable{System.Char},System.Int32[],System.Char)">
+            <summary>
+            See <see cref="M:SoftwareBotany.Ivy.StringFixedExtensions.SplitFixedRow(System.Collections.Generic.IEnumerable{System.Char},System.Int32[],System.Char)"/>.  This method is identical, except that it allow rows to repeat one after another.
+            As soon as the numbers of characters taken reaches the sum of all column widths, a new row is started.
+            </summary>
+            <example>
+            <code>
+            string rows = "ABCDEF";
+            string[][] rowsFields = row.SplitFixedRepeating(new [] { 1, 1, 1 }, ' ');
+            
+            foreach(string[] rowFields in rowsFields)
+            {
+                Console.WriteLine("Row");
+                
+                foreach(string field in rowFields)
+                    Console.WriteLine(field);
+            }
+            </code>
+            Console Output:<br/>
+            Row<br/>
+            A<br/>
+            B<br/>
+            C<br/>
+            Row<br/>
+            D<br/>
+            E<br/>
+            F<br/>
+            <code>
+            string rows = "A-BCD-EF";
+            string[][] rowsFields = row.SplitFixedRepeating(new [] { 2, 1, 1 }, '-');
+            
+            foreach(string[] rowFields in rowsFields)
+            {
+                Console.WriteLine("Row");
+                
+                foreach(string field in rowFields)
+                    Console.WriteLine(field);
+            }
+            </code>
+            Console Output:<br/>
+            Row<br/>
+            A<br/>
+            B<br/>
+            C<br/>
+            Row<br/>
+            D<br/>
+            E<br/>
+            F<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringFixedExtensions.JoinFixedRow(System.String[],System.Int32[],System.Char,System.Boolean)">
+            <summary>
+            Joins an array of fields (strings) together so that each field is "filled" to occupy a column with an exact width.
+            </summary>
+            <param name="columnWidths">The width of each column. E.g. The first field in fields will be place into a column the size of the first width in columnWidths.</param>
+            <param name="fillCharacter">When a field is less than its column's width, fillCharacter is added until the columnWidth is reached. (default = ' ')</param>
+            <param name="substringToFit">Determines whether to substring a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
+            <example>
+            <code>
+            string fields = new [] { "A", "B", "C" };
+            string row = fields.JoinFixedRow(new [] { 1, 1, 1 }, ' ', false);
+            Console.WriteLine(row);
+            
+            row = fields.JoinFixedRow(new [] { 1, 1, 1 }, '-', false);
+            Console.WriteLine(row);
+            </code>
+            Console Output:<br/>
+            ABC<br/>
+            ABC<br/>
+            <code>
+            string fields = new [] { "A", "B", "C" };
+            string row = fields.JoinFixedRow(new [] { 2, 1, 1 }, ' ', false);
+            Console.WriteLine(row);
+            
+            row = fields.JoinFixedRow(new [] { 2, 1, 1 }, '-', false);
+            Console.WriteLine(row);
+            </code>
+            Console Output:<br/>
+            A BC<br/>
+            A-BC<br/>
+            <code>
+            string fields = new [] { "A", "B", "C" };
+            string row = fields.JoinFixedRow(new [] { 2, 2, 1 }, ' ', false);
+            Console.WriteLine(row);
+            
+            row = fields.JoinFixedRow(new [] { 2, 2, 1 }, '-', false);
+            Console.WriteLine(row);
+            </code>
+            Console Output:<br/>
+            A B C<br/>
+            A-B-C<br/>
+            <code>
+            string fields = new [] { "ABC", "123" };
+            string row = fields.JoinFixedRow(new [] { 2, 2 }, ' ', true);
+            Console.WriteLine(row);
+            </code>
+            Console Output:<br/>
+            AB12<br/>
+            </example>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringSchema">
+            <summary>
+            StringSchema is a class to manage a Schema's StringSchemaEntries while validating that they are logically correct.
+            A valid StringSchema has no Entry with a Header that StartWiths any other Entry's Header.
+            <see cref="T:SoftwareBotany.Ivy.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSchema.#ctor">
+            <summary>
+            Creates a new StringSchema without any Entries.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSchema.AddEntry(SoftwareBotany.Ivy.StringSchemaEntry)">
+            <summary>
+            Validates and adds a new StringSchemaEntry to the Schema.
+            </summary>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringSchemaEntry">
+            <summary>
+            StringSchemaEntry is a class to hold the immutable data for a single Entry in a StringSchema.
+            <see cref="T:SoftwareBotany.Ivy.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSchemaEntry.#ctor(System.String,System.Int32[],System.Char,System.String[])">
+            <param name="header">
+            The text used in determining if a row is of this Entry's "type". A row that StartsWith this Header will
+            be processed using the columnWidths and fillCharacter found in this StringSchemaEntry.
+            </param>
+            <param name="columnWidths">The width of each column in the fixed-width column row.</param>
+            <param name="fillCharacter">The character used to pad a field so that its width reaches its column's width. Trimmed from the split results. (default = ' ')</param>
+            <param name="columnNames">
+            The names of all of the columns in the schema if available. Split results will be wrapped in StringRowWrappers which allow
+            indexed and columnName based access to fields. (default = null)
+            </param>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.CharFilters">
+            <summary>
+            Flags used to determine which characters to filter out of a sequence of chars.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.CharExtensions.PassesFilters(System.Char,SoftwareBotany.Ivy.CharFilters)">
+            <summary>
+            Determines whether or not a char can pass through a given set of CharFilters.
+            </summary>
+            <param name="filters">Bitwise union of one or more CharFilters designating which characters to filter.</param>
+            <example>
+            <code>
+            Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits));
+            Console.WriteLine('a'.PassesFilters(CharFilters.RemoveLetters));
+            Console.WriteLine('a'.PassesFilters(CharFilters.RemoveDigits | RemoveLetters));
+            </code>
+            Console Output:<br/>
+            True<br/>
+            False<br/>
+            False<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.ToNewString(System.Collections.Generic.IEnumerable{System.Char})">
+            <summary>
+            Creates and returns a new string containing all of the characters in the provided enumeration.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.EmptyToNull(System.String)">
+            <summary>
+            VIOLATES NULL REFERENCE SEMANTICS! Will return null if string.IsNullOrEmpty. This simplifies code that treats
+            null string values the same as it treats Empty string values, and wants only to deal with null.
+            </summary>
+            <returns>Returns null when value == string.Empty; else, returns the original string.</returns>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.NullToEmpty(System.String)">
+            <summary>
+            VIOLATES NULL REFERENCE SEMANTICS! Will return string.Empty if string.IsNullOrEmpty. This simplifies code that treats
+            null string values the same as it treats Empty string values, and wants only to deal with string.Empty.
+            </summary>
+            <returns>Returns string.Empty when value == null; else, returns the original string.</returns>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.String)">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.Collections.Generic.IEnumerable{System.Char},System.String)"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.String,System.String)">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.Collections.Generic.IEnumerable{System.Char},System.String)"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.Collections.Generic.IEnumerable{System.Char})">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.Collections.Generic.IEnumerable{System.Char},System.String)"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.NormalizeWhiteSpace(System.Collections.Generic.IEnumerable{System.Char},System.String)">
+            <summary>
+            Trims the front and back sides of a sequence of chars while replacing any repeating instances of whitespace with a
+            single instance of whitespace.  Newlines consisting of more than one whitespace character (Windows Newlines = \r\n) are
+            treated as a single whitespace instance.
+            </summary>
+            <param name="respectNewLine">The Newline string to treat as a single whitespace instance. (default = Environment.NewLine)</param>
+            <example>
+            <code>
+            Console.WriteLine(" A  B C   D   ".NormalizeWhiteSpace());
+            Console.WriteLine(("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace());
+            </code>
+            Console Output:<br/>
+            A B C D<br/>
+            Lots Of<br/>
+            Changes<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.SubstringToFit(System.String,System.Int32)">
+            <summary>
+            Provides an adapter for string.Substring to conditionally call Substring only if the value's length exceeds
+            a certain maxLength. This is helpful for situations where data must fit into the database; however, truncation
+            is not considered an error and is acceptable.
+            </summary>
+            <param name="maxLength">The maximum length allowed for the return string. Additional chars from value are truncated.</param>
+            <returns>The original value truncated to maxLength if necessary.</returns>
+            <example>
+            <code>
+            Console.WriteLine("abc".SubstringToFit(1));
+            Console.WriteLine("abc".SubstringToFit(2));
+            Console.WriteLine("abc".SubstringToFit(3));
+            Console.WriteLine("abc".SubstringToFit(4));
+            </code>
+            Console Output:<br/>
+            a<br/>
+            ab<br/>
+            abc<br/>
+            abc<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.ToLowerCamelCase(System.String)">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.ToLowerCamelCase(System.Collections.Generic.IEnumerable{System.Char})"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.ToLowerCamelCase(System.Collections.Generic.IEnumerable{System.Char})">
+            <summary>
+            Process a sequence of characters and returns its lower camel case representation.
+            </summary>
+            <example>
+            <code>
+            Console.WriteLine("FooBar".ToLowerCamelCase());
+            Console.WriteLine(" FooBar".ToLowerCamelCase());
+            </code>
+            Console Output:<br/>
+            fooBar<br/>
+             fooBar<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.ToUpperCamelCase(System.String)">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.ToUpperCamelCase(System.Collections.Generic.IEnumerable{System.Char})"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.ToUpperCamelCase(System.Collections.Generic.IEnumerable{System.Char})">
+            <summary>
+            Process a sequence of characters and returns its upper camel case representation.
+            </summary>
+            <example>
+            <code>
+            Console.WriteLine("fooBar".ToUpperCamelCase());
+            Console.WriteLine(" fooBar".ToUpperCamelCase());
+            </code>
+            Console Output:<br/>
+            FooBar<br/>
+             FooBar<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.SpaceCamelCase(System.String)">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.SpaceCamelCase(System.Collections.Generic.IEnumerable{System.Char})"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.SpaceCamelCase(System.Collections.Generic.IEnumerable{System.Char})">
+            <summary>
+            Process a sequence of characters and returns the same sequence of characters but with spaces inserted
+            whenever camel casing indicates the start of a new word.
+            </summary>
+            <example>
+            <code>
+            Console.WriteLine("FooBarFoo FooBarFoo".SpaceCamelCase());
+            Console.WriteLine("123A".SpaceCamelCase());
+            Console.WriteLine("123a".SpaceCamelCase());
+            Console.WriteLine("A123".SpaceCamelCase());
+            Console.WriteLine("A123A".SpaceCamelCase());
+            </code>
+            Console Output:<br/>
+            Foo Bar Foo Foo Bar Foo<br/>
+            123 A<br/>
+            123 a<br/>
+            A 123<br/>
+            A 123 A<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.Filter(System.String,SoftwareBotany.Ivy.CharFilters)">
+            <inheritdoc cref="M:SoftwareBotany.Ivy.StringExtensions.Filter(System.Collections.Generic.IEnumerable{System.Char},SoftwareBotany.Ivy.CharFilters)"/>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringExtensions.Filter(System.Collections.Generic.IEnumerable{System.Char},SoftwareBotany.Ivy.CharFilters)">
+            <summary>
+            Removes unwanted characters from a sequence of characters.
+            </summary>
+            <param name="filters">Bitwise union of 1 or more CharFilters designating which characters to filter.</param>
+            <returns>The original sequence of chars with unwanted chars omitted.</returns>
+            <example>
+            <code>
+            Console.WriteLine("a1b2c3d".Filter(CharFilters.None));
+            Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters));
+            Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+            Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemovePunctuation));
+            Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
+            </code>
+            Console Output:<br/>
+            a1b2c3d<br/>
+            123<br/>
+            <br/>
+            a1b2c3d<br/>
+            -<br/>
+            </example>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringQuotedSignals">
+            <summary>
+            Represents the Signals that determine how fields of a row (sequence of chars) are delimited
+            (separated by Delimiter), quoted (surrounded by Quote) or escaped (contain signals preceeded by Escape)
+            to allow themselves to contain an instance of Delimiter, and put onto new rows (rows separated by NewRow) in the
+            case of serialization.
+            </summary>
+            <remarks>
+            Although the functionality is referred to as StringQuoted, a Quote signal is not required; a Delimiter is the
+            only required signal. Escaping is not a feature that is mutally exclusive to Quoting; however, it can entirely
+            obsolete Quoting if the Escape and Delimiter are both single character signals. Combining Escaping and Quoting
+            can result in unexpected behavior; however, there are several rules of thumb.
+            <list type="bullet">
+            <item>
+            <description>When Splitting, Escape behaves identically both outside of and inside of Quotes.</description>   
+            </item>
+            <item>
+            <description>
+            When Joining, a Quote signal will be Escaped while inside of Quotes. If the Escape signal
+            is specified, it will be used. If not, a preceeding Quote will be used as Escape.
+            </description>
+            </item>
+            <item>
+            <description>
+            When Joining, an Escape within a field is always Escaped by a second Escape.
+            </description>
+            </item>
+            </list>
+            One other important thing to note is that Escaping multiple character signals can have unexpected results.
+            </remarks>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringQuotedSignals.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Constructor with params for all signal values.
+            </summary>
+            <param name="delimiter">String used to separate fields of a row. It is the only param that cannot be null or empty.</param>
+            <param name="quote">String used to surround (or quote) a field and allow it to contain an instance of Delimiter.</param>
+            <param name="newRow">String used to separate rows during serialization.</param>
+            <param name="escape">String used to escape the meaning of the immediately following character.</param>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringFieldWrapper">
+            <summary>
+            Wraps an individual field of a string row and allows for XElement style explicit type conversion
+            of the contained field.
+            </summary>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringSignalTracker">
+            <summary>
+            Tracks an individual signal. It maintains a List of counts of chars it has processed that have matched a signal
+            for a specific number of sequential characters.  Any count equal to the signal's length means the signal
+            has been triggered (matched).
+            </summary>
+            <remarks>
+            Performance of _activeCounters.Remove may suffer for larger signals. We may want to look into a LinkedList backing
+            structure to avoid this penalty.
+            </remarks>
+            <example>
+            <code>
+            var tracker = new StringSignalTracker("abc");
+            
+            tracker.Process('d');
+            Console.WriteLine(tracker.IsCounting);
+            Console.WriteLine(tracker.IsTriggered);
+            Console.WriteLine();
+            
+            tracker.Process('a');
+            Console.WriteLine(tracker.IsCounting);
+            Console.WriteLine(tracker.IsTriggered);
+            Console.WriteLine();
+            
+            tracker.Process('d');
+            Console.WriteLine(tracker.IsCounting);
+            Console.WriteLine(tracker.IsTriggered);
+            Console.WriteLine();
+            
+            tracker.Process('a');
+            Console.WriteLine(tracker.IsCounting);
+            Console.WriteLine(tracker.IsTriggered);
+            Console.WriteLine();
+            
+            tracker.Process('b');
+            Console.WriteLine(tracker.IsCounting);
+            Console.WriteLine(tracker.IsTriggered);
+            Console.WriteLine();
+            
+            tracker.Process('c');
+            Console.WriteLine(tracker.IsCounting);
+            Console.WriteLine(tracker.IsTriggered);
+            </code>
+            Console Output:<br/>
+            False<br/>
+            False<br/>
+            <br/>
+            True<br/>
+            False<br/>
+            <br/>
+            False<br/>
+            False<br/>
+            <br/>
+            True<br/>
+            False<br/>
+            <br/>
+            True<br/>
+            False<br/>
+            <br/>
+            False<br/>
+            True<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSignalTracker.#ctor(System.String)">
+            <summary>
+            Create a StringSignalTracker for Signal.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSignalTracker.Reset">
+            <summary>
+            Puts the Tracker in a newly created state.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringSignalTracker.ProcessChar(System.Char)">
+            <summary>
+            Update all state based on the character to Process.
+            </summary>
+        </member>
+        <member name="P:SoftwareBotany.Ivy.StringSignalTracker.IsCounting">
+            <summary>
+            IsCounting will be true when the Tracker's state represents a partially matched Signal.
+            </summary>
+        </member>
+        <member name="P:SoftwareBotany.Ivy.StringSignalTracker.IsTriggered">
+            <summary>
+            IsTriggered will be true when the Signal has been matched. No further processing can take place until
+            the Tracker has been Reset.
+            </summary>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringQuotedExtensions">
+            <summary>
+            Extensions for Splitting and Joining delimited sequences of characters (rows) that may possess quoted (surrounded by Quote)
+            fields in order for them to contain instances of Delimiter.
+            </summary>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringQuotedExtensions.JoinQuotedRow(System.Collections.Generic.IEnumerable{System.String},SoftwareBotany.Ivy.StringQuotedSignals,System.Boolean)">
+            <summary>
+            Joins a sequence of fields, separates them with Delimiter, and allows for instances of Delimiter (or the NewRow signal)
+            to occur within individual fields.  Such fields will be quoted (surrounded by Quote) to allow for this behavior. Instances
+            of the Quote signal within fields will be escaped by doubling (Quote + Quote).
+            </summary>
+            <param name="forceQuotes">
+            Dictates whether to force every field to be quoted regardless of whether or not the field contains an instance
+            of Delimiter or NewRow. (default = false)
+            </param>
+            <example>
+            <code>
+            string[] fields = new string[] { "a", "b", "c" };
+            string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, false);
+            Console.WriteLine(result);
+            </code>
+            Console Output:<br/>
+            a,b,c<br/>
+            <code>
+            string[] fields = new string[] { "a,a", "b", "c" };
+            string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, false);
+            Console.WriteLine(result);
+            </code>
+            Console Output:<br/>
+            "a,a",b,c<br/>
+            <code>
+            string[] fields = new string[] { "a", "b" + Environment.NewLine + "b", "c" };
+            string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, true);
+            Console.WriteLine(result);
+            </code>
+            Console Output:<br/>
+            "a","b<br/>
+            b","c"<br/>
+            <code>
+            string[] fields = new string[] { "a\"a", "b", "c" };
+            string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, false);
+            Console.WriteLine(result);
+            </code>
+            Console Output:<br/>
+            a""a,b,c<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringQuotedExtensions.SplitQuotedRow(System.Collections.Generic.IEnumerable{System.Char},SoftwareBotany.Ivy.StringQuotedSignals)">
+            <summary>
+            Splits a row (sequence of chars) representing delimited fields (separated by Delimiter) while allowing for instances of the
+            Delimiter to occur within individual fields.  Such fields must be quoted (surrounded by Quote) to allow for this behavior.
+            A NewRow signal outside of Quotes will cause an exception because multiple rows are not allowed for this method.
+            Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
+            </summary>
+            <example>
+            <code>
+            string row = "a,b,c";
+            string[] fields = row.SplitQuotedRow(StringQuotedSignals.Csv);
+            
+            foreach(string field in fields);
+                Console.WriteLine(field);
+            </code>
+            Console Output:<br/>
+            a<br/>
+            b<br/>
+            c<br/>
+            <code>
+            StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+            string row = "'a,a',b,c";
+            string[] fields = row.SplitQuotedRow(signals);
+            
+            foreach(string field in fields);
+                Console.WriteLine(field);
+            </code>
+            Console Output:<br/>
+            a,a<br/>
+            b<br/>
+            c<br/>
+            <code>
+            StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+            string row = "a''a,b,c";
+            string[] fields = row.SplitQuotedRow(signals);
+            
+            foreach(string field in fields);
+                Console.WriteLine(field);
+            </code>
+            Console Output:<br/>
+            a'a<br/>
+            b<br/>
+            c<br/>
+            </example>
+        </member>
+        <member name="M:SoftwareBotany.Ivy.StringQuotedExtensions.SplitQuotedRows(System.Collections.Generic.IEnumerable{System.Char},SoftwareBotany.Ivy.StringQuotedSignals)">
+            <summary>
+            Splits a row (a sequence of chars) representing delimited fields (separated by Delimiter) while allowing for instances of the
+            Delimiter to occur within individual fields.  Such fields must be quoted (surrounded by Quote) to allow for this behavior.
+            A NewRow signal outside of Quotes is allowed and signals that a new row has begun.
+            Escaping takes precedence over all other evaluation logic. Only individual characters can be Escaped.
+            </summary>
+            <returns>A set of fields for each row in the stream as it is identified.</returns>
+            <example>
+            <code>
+            string rows = "a,b,c" + Environment.NewLine + "d,e,f";
+            var rowsFields = rows.SplitQuotedRows(StringQuotedSignals.Csv);
+            
+            foreach(string[] rowFields in rowsFields)
+            {
+                Console.WriteLine("Row");
+                
+                foreach(string field in rowFields)
+                    Console.WriteLine(field);
+            }
+            </code>
+            Console Output:<br/>
+            Row<br/>
+            a<br/>
+            b<br/>
+            c<br/>
+            Row<br/>
+            d<br/>
+            e<br/>
+            f<br/>
+            </example>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringQuotedExtensions.SplitQuotedProcessor">
+            <summary>
+            Resuable logic for providing the SplitQuoted algorithm.
+            </summary>
+            <remarks>
+            At the moment, processors are only used for Process'ing once; however, the code was trivial to allow
+            them to be reused. Very likely a premature optimization, but it cost 1 line of code, so we're going to leave it
+            in for now. (In my defense) Processors were once being reused by a function that has since been YAGNI deleted from the API.
+            </remarks>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringSchemaSplitResult">
+            <summary>
+            StringSchemaSplitResult holds both Schema data and Split result data.
+            </summary>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringRowWrapper">
+            <summary>
+            Wraps the fields in a row and then allows for index or column name based access to them.
+            </summary>
+        </member>
+        <member name="T:SoftwareBotany.Ivy.StringRowWrapperFactory">
+            <summary>
+            StringRowWrapperFactory is the only path for creating StringRowWrappers. Given columnNames, it can then be used
+            to wrap the fields of a row in a StringRowWrapper. StringRowWrappers then allow for index or column name based
+            access to the fields of a row.
+            </summary>
+        </member>
+    </members>
+</doc>
