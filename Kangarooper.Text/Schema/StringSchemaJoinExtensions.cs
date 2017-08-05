@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// Extension methods for Splitting and Joining rows (sequences of chars) arranged in fixed-width columns.

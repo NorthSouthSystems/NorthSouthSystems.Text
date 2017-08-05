@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// Flags used to determine which characters to filter out of a sequence of chars.

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// StringRowWrapperFactory is the only path for creating StringRowWrappers. Given columnNames, it can then be used

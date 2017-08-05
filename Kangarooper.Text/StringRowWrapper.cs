@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// Wraps the fields in a row and then allows for index or column name based access to them.

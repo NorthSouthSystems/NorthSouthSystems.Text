@@ -1,4 +1,4 @@
-﻿namespace SoftwareBotany.Ivy
+﻿namespace Kangarooper.Text
 {
     /// <summary>
     /// StringSchemaSplitResult holds both Schema data and Split result data.

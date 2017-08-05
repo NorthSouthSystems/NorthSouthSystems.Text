@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Xml;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// Wraps an individual field of a string row and allows for XElement style explicit type conversion

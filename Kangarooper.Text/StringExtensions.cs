@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     public static class StringExtensions
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     public static partial class StringQuotedExtensions
     {

@@ -2,11 +2,11 @@
 using System.Globalization;
 using System.Linq;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// StringSchemaEntry is a class to hold the immutable data for a single Entry in a StringSchema.
-    /// <see cref="SoftwareBotany.Ivy.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
+    /// <see cref="Kangarooper.Text.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
     /// </summary>
     public sealed class StringSchemaEntry
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// Represents the Signals that determine how fields of a row (sequence of chars) are delimited

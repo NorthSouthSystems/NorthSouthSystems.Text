@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     /// <summary>
     /// StringSchema is a class to manage a Schema's StringSchemaEntries while validating that they are logically correct.
     /// A valid StringSchema has no Entry with a Header that StartWiths any other Entry's Header.
-    /// <see cref="SoftwareBotany.Ivy.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
+    /// <see cref="Kangarooper.Text.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
     /// </summary>
     public sealed class StringSchema
     {

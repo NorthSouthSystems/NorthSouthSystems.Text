@@ -4,7 +4,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SoftwareBotany.Ivy
+namespace Kangarooper.Text
 {
     [TestClass]
     public class StringQuotedPerformanceTests
