@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Ivy", "SoftwareBotany.Ivy\SoftwareBotany.Ivy.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Ivy.Test", "SoftwareBotany.Ivy.Test\SoftwareBotany.Ivy.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
@@ -8,27 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F796CC56-52B2-4B99-83B8-79990399FD71}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfoShared.cs = AssemblyInfoShared.cs
-		local.testsettings = local.testsettings
-		SoftwareBotany.Ivy.Help\SoftwareBotany.Ivy.Help.shfbproj = SoftwareBotany.Ivy.Help\SoftwareBotany.Ivy.Help.shfbproj
-		SoftwareBotany.Ivy1.vsmdi = SoftwareBotany.Ivy1.vsmdi
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs24
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = SoftwareBotany.Ivy\\SoftwareBotany.Ivy.csproj
-		SccProjectName1 = SoftwareBotany.Ivy
-		SccLocalPath1 = SoftwareBotany.Ivy
-		SccProjectUniqueName2 = SoftwareBotany.Ivy.Test\\SoftwareBotany.Ivy.Test.csproj
-		SccProjectName2 = SoftwareBotany.Ivy.Test
-		SccLocalPath2 = SoftwareBotany.Ivy.Test
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = SoftwareBotany.Ivy1.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -45,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = SoftwareBotany.Ivy1.vsmdi
 	EndGlobalSection
 EndGlobal
