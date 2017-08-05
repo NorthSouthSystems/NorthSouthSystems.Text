@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+    using System.Globalization;
+    using System.Linq;
+
     /// <summary>
     /// StringSchemaEntry is a class to hold the immutable data for a single Entry in a StringSchema.
     /// <see cref="Kangarooper.Text.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.

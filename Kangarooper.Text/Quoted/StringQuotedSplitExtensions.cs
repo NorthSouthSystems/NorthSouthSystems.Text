@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     public static partial class StringQuotedExtensions
     {
         /// <summary>

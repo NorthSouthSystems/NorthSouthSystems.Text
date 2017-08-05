@@ -1,9 +1,8 @@
-﻿using System;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+
     [TestClass]
     public class StringQuotedSplitRowTests
     {
@@ -32,7 +31,7 @@ namespace Kangarooper.Text
             CollectionAssert.AreEqual(new[] { string.Empty, string.Empty, string.Empty }, split);
 
             split = Split(signals, "a");
-            CollectionAssert.AreEqual(new[] { "a"}, split);
+            CollectionAssert.AreEqual(new[] { "a" }, split);
 
             split = Split(signals, "a{0}b");
             CollectionAssert.AreEqual(new[] { "a", "b" }, split);
@@ -116,7 +115,7 @@ namespace Kangarooper.Text
             CollectionAssert.AreEqual(new[] { signals.Quote }, split);
 
             split = Split(signals, "{1}a{0}{1}");
-            CollectionAssert.AreEqual(new[] { "a" + signals.Delimiter}, split);
+            CollectionAssert.AreEqual(new[] { "a" + signals.Delimiter }, split);
 
             split = Split(signals, "{1}a{0}a{1}");
             CollectionAssert.AreEqual(new[] { "a" + signals.Delimiter + "a" }, split);

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class StringExtensions
     {
         #region Construction

@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+
     /// <summary>
     /// Flags used to determine which characters to filter out of a sequence of chars.
     /// </summary>

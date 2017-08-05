@@ -1,9 +1,8 @@
-﻿using System;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+
     [TestClass]
     public class StringFieldWrapperTests
     {

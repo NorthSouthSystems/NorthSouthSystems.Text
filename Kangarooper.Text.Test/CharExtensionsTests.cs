@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class CharExtensionsTest
     {

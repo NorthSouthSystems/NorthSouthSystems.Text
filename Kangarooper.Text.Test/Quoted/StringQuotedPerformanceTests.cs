@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     [TestClass]
     public class StringQuotedPerformanceTests
     {

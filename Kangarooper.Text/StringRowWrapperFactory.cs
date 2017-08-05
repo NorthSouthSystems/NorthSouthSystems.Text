@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+
     /// <summary>
     /// StringRowWrapperFactory is the only path for creating StringRowWrappers. Given columnNames, it can then be used
     /// to wrap the fields of a row in a StringRowWrapper. StringRowWrappers then allow for index or column name based

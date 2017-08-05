@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Tracks an individual signal. It maintains a List of counts of chars it has processed that have matched a signal
     /// for a specific number of sequential characters.  Any count equal to the signal's length means the signal
@@ -81,7 +81,7 @@ namespace Kangarooper.Text
 
         public string Signal { get { return _signal; } }
         private readonly string _signal;
-        
+
         // These values could easily be computed; however, their precomputation is a PERF optimization noticed
         // (in DEBUG mode albeit... might have been compiled out) when profiling, and they do make the code slightly
         // more readable.
@@ -90,7 +90,7 @@ namespace Kangarooper.Text
 
         private bool _triggered;
         private readonly List<int> _activeCounters;
-        
+
         /// <summary>
         /// IsCounting will be true when the Tracker's state represents a partially matched Signal.
         /// </summary>
@@ -109,7 +109,7 @@ namespace Kangarooper.Text
         {
             _triggered = false;
 
-            if (_signalIsMultiChar)           
+            if (_signalIsMultiChar)
                 _activeCounters.Clear();
         }
 

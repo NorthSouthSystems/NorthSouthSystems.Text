@@ -1,9 +1,8 @@
-﻿using System;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+
     [TestClass]
     public class StringQuotedJoinExtensionsTests
     {
@@ -44,7 +43,7 @@ namespace Kangarooper.Text
 
             if (signals.EscapeIsSpecified)
                 AssertAreEqual(signals, "{1}a{3}{1}{1}{0}b{0}c", result);
-            else               
+            else
                 AssertAreEqual(signals, "{1}a{1}{1}{1}{0}b{0}c", result);
 
             fields = new string[] { "aa", "bb", "cc" };

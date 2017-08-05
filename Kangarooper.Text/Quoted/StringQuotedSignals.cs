@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System;
+    using System.Linq;
+
     /// <summary>
     /// Represents the Signals that determine how fields of a row (sequence of chars) are delimited
     /// (separated by Delimiter), quoted (surrounded by Quote) or escaped (contain signals preceeded by Escape)

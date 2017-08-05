@@ -1,7 +1,7 @@
-﻿using System.Text;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using System.Text;
+
     /// <summary>
     /// Extension methods for Splitting and Joining rows (sequences of chars), arranged in fixed-width columns.
     /// </summary>

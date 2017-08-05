@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace Kangarooper.Text
+﻿namespace Kangarooper.Text
 {
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.Linq;
+
     [TestClass]
     public class StringSchemaSplitExtensionsTests
     {
@@ -15,7 +14,7 @@ namespace Kangarooper.Text
             schema.AddEntry(new StringSchemaEntry("A", new[] { 1, 1, 1 }));
             schema.AddEntry(new StringSchemaEntry("B", new[] { 2, 2, 2 }));
             schema.AddEntry(new StringSchemaEntry("CD", new[] { 3, 3, 3 }));
-            
+
 
             var split = "A123".SplitSchemaRow(schema);
             Assert.AreEqual("A", split.Entry.Header);
