@@ -3,14 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Ivy", "SoftwareBotany.Ivy\SoftwareBotany.Ivy.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftwareBotany.Ivy.Test", "SoftwareBotany.Ivy.Test\SoftwareBotany.Ivy.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F796CC56-52B2-4B99-83B8-79990399FD71}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfoShared.cs = AssemblyInfoShared.cs
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kangarooper.Text", "Kangarooper.Text\Kangarooper.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kangarooper.Text.Test", "Kangarooper.Text.Test\Kangarooper.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

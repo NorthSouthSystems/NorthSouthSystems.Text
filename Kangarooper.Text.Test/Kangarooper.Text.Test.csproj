@@ -75,7 +75,7 @@
     <Compile Include="StringSignalTrackerTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SoftwareBotany.Ivy\SoftwareBotany.Ivy.csproj">
+    <ProjectReference Include="..\Kangarooper.Text\Kangarooper.Text.csproj">
       <Project>{33E427CF-A022-4053-BD21-D195F0E49FBD}</Project>
       <Name>SoftwareBotany.Ivy</Name>
     </ProjectReference>
