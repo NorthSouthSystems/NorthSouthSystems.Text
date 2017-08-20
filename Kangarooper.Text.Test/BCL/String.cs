@@ -10,7 +10,7 @@
         /// Join methods should allow the same.
         /// </summary>
         [TestMethod]
-        public void StringJoinWithANullValue() =>
+        public void JoinWithANullValue() =>
             Assert.AreEqual("a,,b", string.Join(",", new[] { "a", null, "b" }));
     }
 }
