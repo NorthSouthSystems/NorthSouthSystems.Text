@@ -58,8 +58,9 @@
     <Compile Include="..\AssemblyInfoShared.cs">
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
+    <Compile Include="BCL\StringTests.cs" />
     <Compile Include="CharExtensionsTests.cs" />
-    <Compile Include="Fixed\StringFixedHelperVerifyAndFitFieldsTests.cs" />
+    <Compile Include="Fixed\StringFixedHelperVerifyCoalesceAndFitFieldsTests.cs" />
     <Compile Include="Fixed\StringFixedSplitRowTests.cs" />
     <Compile Include="Fixed\StringFixedHelperVerifyColumnWidthsTests.cs" />
     <Compile Include="Fixed\StringFixedJoinExtensionsTests.cs" />

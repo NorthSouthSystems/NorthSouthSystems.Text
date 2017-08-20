@@ -42,7 +42,7 @@
             if (entry == null)
                 throw new ArgumentNullException("entry");
 
-            StringFixedExtensions.VerifyAndFitFields(fields, entry.Widths, substringToFit);
+            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, entry.Widths, substringToFit);
 
             return entry.Header
                 + StringFixedExtensions.JoinFixedImplementation(fields, entry.Widths, entry.FillCharacter);

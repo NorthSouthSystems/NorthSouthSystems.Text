@@ -19,7 +19,7 @@
                 throw new ArgumentOutOfRangeException("columnWidths", "Each column width must be > 0");
         }
 
-        internal static void VerifyAndFitFields(string[] fields, int[] columnWidths, bool substringToFit)
+        internal static void VerifyCoalesceAndFitFields(string[] fields, int[] columnWidths, bool substringToFit)
         {
             if (fields == null)
                 throw new ArgumentNullException("fields");
@@ -31,6 +31,8 @@
 
             for (int i = 0; i < fields.Length; i++)
             {
+                fields[i] = fields[i] ?? string.Empty;
+
                 if (substringToFit)
                     fields[i] = fields[i].SubstringToFit(columnWidths[i]);
                 else if (fields[i].Length > columnWidths[i])

@@ -34,6 +34,24 @@
         }
 
         [TestMethod]
+        public void NullsAndEmptys()
+        {
+            string join;
+
+            join = new[] { null, "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 });
+            Assert.AreEqual(" BC", join);
+
+            join = new[] { null, "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 }, '-');
+            Assert.AreEqual("-BC", join);
+
+            join = new[] { "A", "B", string.Empty }.JoinFixedRow(new[] { 1, 1, 1 });
+            Assert.AreEqual("AB ", join);
+
+            join = new[] { "A", "B", string.Empty }.JoinFixedRow(new[] { 1, 1, 1 }, '-');
+            Assert.AreEqual("AB-", join);
+        }
+
+        [TestMethod]
         public void SubstringToFit()
         {
             string join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', true);

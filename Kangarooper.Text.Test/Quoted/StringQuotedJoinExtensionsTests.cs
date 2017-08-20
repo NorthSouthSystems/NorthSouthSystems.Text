@@ -30,6 +30,14 @@
             string result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "a{0}b{0}c", result);
 
+            fields = new string[] { null, "b", "c" };
+            result = fields.JoinQuotedRow(signals);
+            AssertAreEqual(signals, "{0}b{0}c", result);
+
+            fields = new string[] { "a", "b", string.Empty };
+            result = fields.JoinQuotedRow(signals);
+            AssertAreEqual(signals, "a{0}b{0}", result);
+
             fields = new string[] { "aa", "bb", "cc" };
             result = fields.JoinQuotedRow(signals);
             AssertAreEqual(signals, "aa{0}bb{0}cc", result);

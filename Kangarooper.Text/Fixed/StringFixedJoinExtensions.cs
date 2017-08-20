@@ -58,7 +58,7 @@
         public static string JoinFixedRow(this string[] fields, int[] columnWidths, char fillCharacter = ' ', bool substringToFit = false)
         {
             VerifyColumnWidths(columnWidths);
-            VerifyAndFitFields(fields, columnWidths, substringToFit);
+            VerifyCoalesceAndFitFields(fields, columnWidths, substringToFit);
 
             return JoinFixedImplementation(fields, columnWidths, fillCharacter);
         }

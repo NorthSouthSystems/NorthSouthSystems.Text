@@ -62,7 +62,7 @@
             if (forceQuotes && !signals.QuoteIsSpecified)
                 throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");
 
-            return string.Join(signals.Delimiter, fields.Select(field => QuoteAndEscapeField(field, signals, forceQuotes)));
+            return string.Join(signals.Delimiter, fields.Select(field => QuoteAndEscapeField(field ?? string.Empty, signals, forceQuotes)));
         }
 
         private static string QuoteAndEscapeField(string field, StringQuotedSignals signals, bool forceQuotes)

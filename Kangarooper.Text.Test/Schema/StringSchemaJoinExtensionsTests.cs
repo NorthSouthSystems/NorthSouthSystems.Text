@@ -26,6 +26,20 @@
             Assert.AreEqual("C1-2-3-", join);
         }
 
+        [TestMethod]
+        public void NullsAndEmptys()
+        {
+            var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
+
+            string join;
+
+            join = new[] { null, "2", "3" }.JoinSchemaRow(a);
+            Assert.AreEqual("A 23", join);
+
+            join = new[] { "1", "2", string.Empty }.JoinSchemaRow(a);
+            Assert.AreEqual("A12 ", join);
+        }
+
         #region Exceptions
 
         [TestMethod]
