@@ -58,13 +58,18 @@
         public static string JoinFixedRow(this string[] fields, int[] columnWidths, char fillCharacter = ' ', bool substringToFit = false)
         {
             VerifyColumnWidths(columnWidths);
-            VerifyCoalesceAndFitFields(fields, columnWidths, substringToFit);
 
-            return JoinFixedImplementation(fields, columnWidths, fillCharacter);
+            return JoinFixedRowNoVerifyColumnWidths(fields, columnWidths, fillCharacter, substringToFit);
         }
 
-        internal static string JoinFixedImplementation(string[] fields, int[] columnWidths, char fillCharacter)
+        /// <summary>
+        /// This method exists solely as a performance optimization for StringSchemaExtensions.JoinSchemaRow. SchemaEntry ctor calls VerifyColumnWidths;
+        /// therefore, JoinSchemaRow can call this method and bypass redundant calls to VerifyColumnWidths.
+        /// </summary>
+        internal static string JoinFixedRowNoVerifyColumnWidths(string[] fields, int[] columnWidths, char fillCharacter, bool substringToFit)
         {
+            VerifyCoalesceAndFitFields(fields, columnWidths, substringToFit);
+
             StringBuilder row = new StringBuilder();
 
             for (int i = 0; i < fields.Length; i++)

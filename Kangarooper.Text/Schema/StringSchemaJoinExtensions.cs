@@ -42,10 +42,8 @@
             if (entry == null)
                 throw new ArgumentNullException("entry");
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, entry.Widths, substringToFit);
-
             return entry.Header
-                + StringFixedExtensions.JoinFixedImplementation(fields, entry.Widths, entry.FillCharacter);
+                + StringFixedExtensions.JoinFixedRowNoVerifyColumnWidths(fields, entry.Widths, entry.FillCharacter, substringToFit);
         }
     }
 }
