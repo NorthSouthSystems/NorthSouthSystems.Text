@@ -80,6 +80,7 @@
     <Compile Include="StringRowWrapperTests.cs" />
     <Compile Include="StringRowWrapperFactoryTests.cs" />
     <Compile Include="StringSignalTrackerTests.cs" />
+    <Compile Include="TestCategories.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kangarooper.Text\Kangarooper.Text.csproj">
