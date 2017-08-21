@@ -16,7 +16,7 @@
         RemoveOther = 16,
     }
 
-    public static class CharExtensions
+    public static partial class CharExtensions
     {
         /// <summary>
         /// Determines whether or not a char can pass through a given set of CharFilters.

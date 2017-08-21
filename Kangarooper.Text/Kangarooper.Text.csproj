@@ -58,6 +58,7 @@
       <Link>Properties\AssemblyInfoShared.cs</Link>
     </Compile>
     <Compile Include="Char\Extensions\PassesFilters.cs" />
+    <Compile Include="Char\Extensions\ToNewString.cs" />
     <Compile Include="String\Columnar\StringFieldWrapper.cs" />
     <Compile Include="String\Columnar\StringRowWrapper.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -73,7 +74,11 @@
     <Compile Include="String\Columnar\Quoted\Extensions\Join.cs" />
     <Compile Include="String\Columnar\Quoted\StringQuotedSignals.cs" />
     <Compile Include="String\Columnar\Quoted\Extensions\Split.cs" />
-    <Compile Include="String\Primitive\Extensions\StringExtensions.cs" />
+    <Compile Include="String\Primitive\Extensions\Coalesce.cs" />
+    <Compile Include="String\Primitive\Extensions\NormalizeWhiteSpace.cs" />
+    <Compile Include="String\Primitive\Extensions\SubstringToFit.cs" />
+    <Compile Include="String\Primitive\Extensions\CamelCase.cs" />
+    <Compile Include="String\Primitive\Extensions\Filter.cs" />
     <Compile Include="String\Columnar\StringRowWrapperFactory.cs" />
     <Compile Include="String\Primitive\StringSignalTracker.cs" />
   </ItemGroup>
