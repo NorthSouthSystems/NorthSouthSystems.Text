@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProductVersion>
+        </ProductVersion>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>FreeAndWithBeer.Text</RootNamespace>
+        <AssemblyName>FreeAndWithBeer.Text.Test</AssemblyName>
+        <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+        <SccProjectName>SAK</SccProjectName>
+        <SccLocalPath>SAK</SccLocalPath>
+        <SccAuxPath>SAK</SccAuxPath>
+        <SccProvider>SAK</SccProvider>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+        <RunCodeAnalysis>true</RunCodeAnalysis>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+        <RunCodeAnalysis>true</RunCodeAnalysis>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+        <Reference Include="System" />
+        <Reference Include="System.Core">
+            <RequiredTargetFramework>3.5</RequiredTargetFramework>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+            <Visible>False</Visible>
+        </CodeAnalysisDependentAssemblyPaths>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\AssemblyInfoShared.cs">
+            <Link>Properties\AssemblyInfoShared.cs</Link>
+        </Compile>
+        <Compile Include="BCL\String.cs" />
+        <Compile Include="Char\Extensions\PassesFilters.cs" />
+        <Compile Include="Char\Extensions\ToNewString.cs" />
+        <Compile Include="String\Columnar\Fixed\Extensions\HelpersVerifyCoalesceAndFitFields.cs" />
+        <Compile Include="String\Columnar\Fixed\Extensions\SplitRow.cs" />
+        <Compile Include="String\Columnar\Fixed\Extensions\HelpersVerifyColumnWidths.cs" />
+        <Compile Include="String\Columnar\Fixed\Extensions\Join.cs" />
+        <Compile Include="String\Columnar\Quoted\Extensions\Performance.cs" />
+        <Compile Include="String\Columnar\Quoted\Extensions\SplitRow.cs" />
+        <Compile Include="String\Columnar\Schema\StringSchemaEntry.cs" />
+        <Compile Include="String\Columnar\Schema\Extensions\Split.cs" />
+        <Compile Include="String\Columnar\Schema\Extensions\Join.cs" />
+        <Compile Include="String\Columnar\Schema\StringSchema.cs" />
+        <Compile Include="String\Columnar\Fixed\Extensions\SplitRepeating.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="String\Columnar\Quoted\Extensions\Join.cs" />
+        <Compile Include="String\Columnar\Quoted\StringQuotedSignals.cs" />
+        <Compile Include="String\Columnar\Quoted\Extensions\SplitRows.cs" />
+        <Compile Include="String\Primitive\Extensions\CamelCase.cs" />
+        <Compile Include="String\Primitive\Extensions\Coalesce.cs" />
+        <Compile Include="String\Primitive\Extensions\Filter.cs" />
+        <Compile Include="String\Primitive\Extensions\NormalizeWhiteSpace.cs" />
+        <Compile Include="String\Primitive\Extensions\SubstringToFit.cs" />
+        <Compile Include="String\Columnar\StringFieldWrapper.cs" />
+        <Compile Include="String\Columnar\StringRowWrapper.cs" />
+        <Compile Include="String\Columnar\StringRowWrapperFactory.cs" />
+        <Compile Include="String\Primitive\StringSignalTracker.cs" />
+        <Compile Include="TestCategories.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\FreeAndWithBeer.Text\FreeAndWithBeer.Text.csproj">
+            <Project>{33E427CF-A022-4053-BD21-D195F0E49FBD}</Project>
+            <Name>FreeAndWithBeer.Text</Name>
+        </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+        <CodeAnalysisDictionary Include="..\CodeAnalysis.CustomDictionary.xml">
+            <Link>CodeAnalysis.CustomDictionary.xml</Link>
+        </CodeAnalysisDictionary>
+    </ItemGroup>
+    <ItemGroup />
+    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
