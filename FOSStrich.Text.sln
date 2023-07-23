@@ -9,9 +9,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeAndWithBeer.Text", "FreeAndWithBeer.Text\FreeAndWithBeer.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Text", "FOSStrich.Text\FOSStrich.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FreeAndWithBeer.Text.Test", "FreeAndWithBeer.Text.Test\FreeAndWithBeer.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOSStrich.Text.Test", "FOSStrich.Text.Test\FOSStrich.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,8 +30,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = SoftwareBotany.Ivy1.vsmdi
 	EndGlobalSection
 EndGlobal
