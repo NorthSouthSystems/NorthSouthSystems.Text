@@ -57,9 +57,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfoShared.cs">
-      <Link>Properties\AssemblyInfoShared.cs</Link>
-    </Compile>
     <Compile Include="Char\Extensions\PassesFilters.cs" />
     <Compile Include="Char\Extensions\ToNewString.cs" />
     <Compile Include="String\Columnar\StringFieldWrapper.cs" />
