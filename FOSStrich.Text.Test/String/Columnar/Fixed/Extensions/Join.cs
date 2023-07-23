@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Text
+﻿namespace FOSStrich.Text
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 

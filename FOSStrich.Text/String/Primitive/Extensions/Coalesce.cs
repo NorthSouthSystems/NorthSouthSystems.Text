@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Text
+﻿namespace FOSStrich.Text
 {
     public static partial class StringExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Text
+﻿namespace FOSStrich.Text
 {
     using System;
     using System.Globalization;
@@ -6,7 +6,7 @@
 
     /// <summary>
     /// StringSchemaEntry is a class to hold the immutable data for a single Entry in a StringSchema.
-    /// <see cref="FreeAndWithBeer.Text.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
+    /// <see cref="FOSStrich.Text.StringSchemaExtensions">StringSchemaExtensions</see> explains a "schema'd" sequence of characters.
     /// </summary>
     public sealed class StringSchemaEntry
     {

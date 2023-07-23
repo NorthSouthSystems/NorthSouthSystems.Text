@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Text
+﻿namespace FOSStrich.Text
 {
     internal static class TestCategories
     {

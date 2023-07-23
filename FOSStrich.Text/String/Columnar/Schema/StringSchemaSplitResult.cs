@@ -1,4 +1,4 @@
-﻿namespace FreeAndWithBeer.Text
+﻿namespace FOSStrich.Text
 {
     /// <summary>
     /// StringSchemaSplitResult holds both Schema data and Split result data.
