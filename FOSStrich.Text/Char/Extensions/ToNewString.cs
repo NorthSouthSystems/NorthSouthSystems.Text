@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System.Collections.Generic;
-using System.Linq;
-
 public static partial class CharExtensions
 {
     /// <summary>

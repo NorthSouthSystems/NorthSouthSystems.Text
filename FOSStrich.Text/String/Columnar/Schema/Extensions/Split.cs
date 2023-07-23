@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
-
 public static partial class StringSchemaExtensions
 {
     /// <summary>

@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
-using System.Collections.Generic;
-
 public static partial class StringExtensions
 {
     /// <inheritdoc cref="NormalizeWhiteSpace(IEnumerable{char}, string)"/>

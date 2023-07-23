@@ -33,6 +33,7 @@
         <Using Include="System" />
         <Using Include="System.Collections.Generic" />
         <Using Include="System.Linq" />
+        <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
         <Using Include="FluentAssertions" />
         <!--<Using Include="Xunit" />-->
     </ItemGroup>

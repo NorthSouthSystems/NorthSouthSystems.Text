@@ -1,9 +1,6 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 /// <summary>
 /// Extensions for Splitting and Joining delimited sequences of characters (rows) that may possess quoted (surrounded by Quote)

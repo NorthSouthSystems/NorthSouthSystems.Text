@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
-using System.Collections.Generic;
-
 /// <summary>
 /// StringSchema is a class to manage a Schema's StringSchemaEntries while validating that they are logically correct.
 /// A valid StringSchema has no Entry with a Header that StartWiths any other Entry's Header.

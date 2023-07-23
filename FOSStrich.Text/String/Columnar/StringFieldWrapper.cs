@@ -1,6 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
 using System.Globalization;
 using System.Xml;
 
@@ -40,7 +39,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToBoolean(field._value.ToLower(CultureInfo.InvariantCulture));
     }
 
-    public static explicit operator bool? (StringFieldWrapper field)
+    public static explicit operator bool?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (bool?)null;
@@ -56,7 +55,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToInt32(field._value);
     }
 
-    public static explicit operator int? (StringFieldWrapper field)
+    public static explicit operator int?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (int?)null;
@@ -74,7 +73,7 @@ public sealed class StringFieldWrapper
     }
 
     [CLSCompliant(false)]
-    public static explicit operator uint? (StringFieldWrapper field)
+    public static explicit operator uint?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (uint?)null;
@@ -90,7 +89,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToInt64(field._value);
     }
 
-    public static explicit operator long? (StringFieldWrapper field)
+    public static explicit operator long?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (long?)null;
@@ -108,7 +107,7 @@ public sealed class StringFieldWrapper
     }
 
     [CLSCompliant(false)]
-    public static explicit operator ulong? (StringFieldWrapper field)
+    public static explicit operator ulong?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (ulong?)null;
@@ -124,7 +123,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToSingle(field._value);
     }
 
-    public static explicit operator float? (StringFieldWrapper field)
+    public static explicit operator float?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (float?)null;
@@ -140,7 +139,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToDouble(field._value);
     }
 
-    public static explicit operator double? (StringFieldWrapper field)
+    public static explicit operator double?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (double?)null;
@@ -156,7 +155,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToDecimal(field._value);
     }
 
-    public static explicit operator decimal? (StringFieldWrapper field)
+    public static explicit operator decimal?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (decimal?)null;
@@ -172,7 +171,7 @@ public sealed class StringFieldWrapper
         return DateTime.Parse(field._value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
     }
 
-    public static explicit operator DateTime? (StringFieldWrapper field)
+    public static explicit operator DateTime?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (DateTime?)null;
@@ -188,7 +187,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToDateTimeOffset(field._value);
     }
 
-    public static explicit operator DateTimeOffset? (StringFieldWrapper field)
+    public static explicit operator DateTimeOffset?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (DateTimeOffset?)null;
@@ -204,7 +203,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToTimeSpan(field._value);
     }
 
-    public static explicit operator TimeSpan? (StringFieldWrapper field)
+    public static explicit operator TimeSpan?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (TimeSpan?)null;
@@ -220,7 +219,7 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToGuid(field._value);
     }
 
-    public static explicit operator Guid? (StringFieldWrapper field)
+    public static explicit operator Guid?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field._value))
             return (Guid?)null;

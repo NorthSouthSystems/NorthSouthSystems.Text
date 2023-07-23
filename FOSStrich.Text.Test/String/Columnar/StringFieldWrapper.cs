@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
 [TestClass]
 public class StringFieldWrapperTests
 {

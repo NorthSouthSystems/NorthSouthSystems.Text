@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
 public static partial class CharExtensionsTests
 {
     [TestClass]

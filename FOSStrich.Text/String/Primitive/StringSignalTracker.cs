@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
-using System.Collections.Generic;
-
 /// <summary>
 /// Tracks an individual signal. It maintains a List of counts of chars it has processed that have matched a signal
 /// for a specific number of sequential characters.  Any count equal to the signal's length means the signal

@@ -1,7 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
-
 /// <summary>
 /// Extension methods for Splitting and Joining rows (sequences of chars) arranged in fixed-width columns.
 /// The number and size of columns is determined by a StringSchema and its StringSchemaEntrys. Rows must StartsWith

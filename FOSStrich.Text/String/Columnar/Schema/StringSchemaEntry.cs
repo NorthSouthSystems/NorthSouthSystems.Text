@@ -1,8 +1,6 @@
 ﻿namespace FOSStrich.Text;
 
-using System;
 using System.Globalization;
-using System.Linq;
 
 /// <summary>
 /// StringSchemaEntry is a class to hold the immutable data for a single Entry in a StringSchema.

@@ -1,8 +1,5 @@
 ﻿namespace FOSStrich.Text;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
 public static partial class StringQuotedExtensionsTests
 {
     [TestClass]
