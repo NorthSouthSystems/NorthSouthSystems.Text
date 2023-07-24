@@ -25,10 +25,10 @@ public static partial class StringExtensions
     public static string SubstringToFit(this string value, int maxLength)
     {
         if (value == null)
-            throw new ArgumentNullException("value");
+            throw new ArgumentNullException(nameof(value));
 
         if (maxLength < 0)
-            throw new ArgumentOutOfRangeException("maxLength");
+            throw new ArgumentOutOfRangeException(nameof(maxLength));
 
         if (value.Length <= maxLength)
             return value;

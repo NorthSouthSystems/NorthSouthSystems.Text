@@ -23,10 +23,10 @@ public sealed class StringRowWrapper
         get
         {
             if (index < 0)
-                throw new ArgumentOutOfRangeException("index", "index must be >= 0.");
+                throw new ArgumentOutOfRangeException(nameof(index), "index must be >= 0.");
 
             if (index >= _factory.ColumnNames.Length)
-                throw new ArgumentOutOfRangeException("index", "index must be < the number of columns in the StringRowWrapperFactory.");
+                throw new ArgumentOutOfRangeException(nameof(index), "index must be < the number of columns in the StringRowWrapperFactory.");
 
             return new StringFieldWrapper(_factory.ColumnNames[index], index < _fields.Length ? _fields[index] : null);
         }
@@ -39,7 +39,7 @@ public sealed class StringRowWrapper
             int index;
 
             if (!_factory.TryGetIndex(columnName, out index))
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Column not found: {0}.", columnName), "columnName");
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Column not found: {0}.", columnName), nameof(columnName));
 
             return new StringFieldWrapper(_factory.ColumnNames[index], index < _fields.Length ? _fields[index] : null);
         }

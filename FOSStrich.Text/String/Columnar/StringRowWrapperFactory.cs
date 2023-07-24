@@ -12,7 +12,7 @@ public sealed class StringRowWrapperFactory
     public StringRowWrapperFactory(string[] columnNames)
     {
         if (columnNames == null)
-            throw new ArgumentNullException("columnNames");
+            throw new ArgumentNullException(nameof(columnNames));
 
         string[] duplicateColumnNames = columnNames.GroupBy(columnName => columnName)
             .Where(group => group.Count() > 1)
@@ -37,7 +37,7 @@ public sealed class StringRowWrapperFactory
     public StringRowWrapper Wrap(string[] fields)
     {
         if (fields == null)
-            throw new ArgumentNullException("fields");
+            throw new ArgumentNullException(nameof(fields));
 
         if (fields.Length > _columnNames.Length)
             throw new ArgumentException("The number of fields must be <= the number of columns.");

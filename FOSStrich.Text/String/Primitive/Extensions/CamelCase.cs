@@ -39,7 +39,7 @@ public static partial class StringExtensions
     private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> chars, bool isLower)
     {
         if (chars == null)
-            throw new ArgumentNullException("chars");
+            throw new ArgumentNullException(nameof(chars));
 
         bool previousWhiteSpace = true;
         int outputIndex = 0;
@@ -92,7 +92,7 @@ public static partial class StringExtensions
     public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> chars)
     {
         if (chars == null)
-            throw new ArgumentNullException("chars");
+            throw new ArgumentNullException(nameof(chars));
 
         if (!chars.Any())
             yield break;

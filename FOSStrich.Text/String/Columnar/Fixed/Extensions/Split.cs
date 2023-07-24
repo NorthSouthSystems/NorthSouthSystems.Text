@@ -70,7 +70,7 @@ public static partial class StringFixedExtensions
     public static string[] SplitFixedRow(this IEnumerable<char> row, int[] columnWidths, char fillCharacter = ' ')
     {
         if (row == null)
-            throw new ArgumentNullException("row");
+            throw new ArgumentNullException(nameof(row));
 
         VerifyColumnWidths(columnWidths);
 
@@ -81,10 +81,10 @@ public static partial class StringFixedExtensions
             fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
 
             if (fields == null)
-                throw new ArgumentException("Empty row.", "row");
+                throw new ArgumentException("Empty row.", nameof(row));
 
             if (charEnumerator.MoveNext())
-                throw new ArgumentOutOfRangeException("row", "row length must equal the sum of all column widths.");
+                throw new ArgumentOutOfRangeException(nameof(row), "row length must equal the sum of all column widths.");
         }
 
         return fields;
@@ -141,7 +141,7 @@ public static partial class StringFixedExtensions
     public static IEnumerable<string[]> SplitFixedRepeating(this IEnumerable<char> rows, int[] columnWidths, char fillCharacter = ' ')
     {
         if (rows == null)
-            throw new ArgumentNullException("rows");
+            throw new ArgumentNullException(nameof(rows));
 
         VerifyColumnWidths(columnWidths);
 
@@ -179,7 +179,7 @@ public static partial class StringFixedExtensions
                 else if (i == 0 && charsToTake == columnWidths[0]) // Empty enumerator
                     return null;
                 else
-                    throw new ArgumentOutOfRangeException("charEnumerator", "row length must equal the sum of all column widths.");
+                    throw new ArgumentOutOfRangeException(nameof(charEnumerator), "row length must equal the sum of all column widths.");
             }
 
             int charsToKeep = columnWidths[i];

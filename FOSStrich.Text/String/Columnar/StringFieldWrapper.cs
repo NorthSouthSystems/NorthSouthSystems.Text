@@ -34,7 +34,7 @@ public sealed class StringFieldWrapper
     public static explicit operator bool(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToBoolean(field._value.ToLower(CultureInfo.InvariantCulture));
     }
@@ -50,7 +50,7 @@ public sealed class StringFieldWrapper
     public static explicit operator int(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToInt32(field._value);
     }
@@ -67,7 +67,7 @@ public sealed class StringFieldWrapper
     public static explicit operator uint(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToUInt32(field._value);
     }
@@ -84,7 +84,7 @@ public sealed class StringFieldWrapper
     public static explicit operator long(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToInt64(field._value);
     }
@@ -101,7 +101,7 @@ public sealed class StringFieldWrapper
     public static explicit operator ulong(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToUInt64(field._value);
     }
@@ -118,7 +118,7 @@ public sealed class StringFieldWrapper
     public static explicit operator float(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToSingle(field._value);
     }
@@ -134,7 +134,7 @@ public sealed class StringFieldWrapper
     public static explicit operator double(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToDouble(field._value);
     }
@@ -150,7 +150,7 @@ public sealed class StringFieldWrapper
     public static explicit operator decimal(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToDecimal(field._value);
     }
@@ -166,7 +166,7 @@ public sealed class StringFieldWrapper
     public static explicit operator DateTime(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return DateTime.Parse(field._value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
     }
@@ -182,7 +182,7 @@ public sealed class StringFieldWrapper
     public static explicit operator DateTimeOffset(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToDateTimeOffset(field._value);
     }
@@ -198,7 +198,7 @@ public sealed class StringFieldWrapper
     public static explicit operator TimeSpan(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToTimeSpan(field._value);
     }
@@ -214,7 +214,7 @@ public sealed class StringFieldWrapper
     public static explicit operator Guid(StringFieldWrapper field)
     {
         if (field == null || field._value == null)
-            throw new ArgumentNullException("field");
+            throw new ArgumentNullException(nameof(field));
 
         return XmlConvert.ToGuid(field._value);
     }

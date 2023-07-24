@@ -28,7 +28,7 @@ public static partial class StringExtensions
     public static IEnumerable<char> Filter(this IEnumerable<char> chars, CharFilters filters)
     {
         if (chars == null)
-            throw new ArgumentNullException("chars");
+            throw new ArgumentNullException(nameof(chars));
 
         return filters == CharFilters.None ? chars : chars.Where(c => c.PassesFilters(filters));
     }

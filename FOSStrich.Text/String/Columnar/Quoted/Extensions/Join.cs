@@ -51,10 +51,10 @@ public static partial class StringQuotedExtensions
     public static string JoinQuotedRow(this IEnumerable<string> fields, StringQuotedSignals signals, bool forceQuotes = false)
     {
         if (fields == null)
-            throw new ArgumentNullException("fields");
+            throw new ArgumentNullException(nameof(fields));
 
         if (signals == null)
-            throw new ArgumentNullException("signals");
+            throw new ArgumentNullException(nameof(signals));
 
         if (forceQuotes && !signals.QuoteIsSpecified)
             throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");

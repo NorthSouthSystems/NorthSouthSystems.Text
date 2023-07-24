@@ -30,7 +30,7 @@ public static partial class StringExtensions
     public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars, string respectNewLine)
     {
         if (chars == null)
-            throw new ArgumentNullException("chars");
+            throw new ArgumentNullException(nameof(chars));
 
         bool nonWhiteSpaceHit = false;
         bool bufferedSpace = false;

@@ -7,19 +7,19 @@ public static partial class StringFixedExtensions
     internal static void VerifyColumnWidths(int[] columnWidths)
     {
         if (columnWidths == null)
-            throw new ArgumentNullException("columnWidths");
+            throw new ArgumentNullException(nameof(columnWidths));
 
         if (columnWidths.Length == 0)
-            throw new ArgumentException("columnWidths.Length must be > 0", "columnWidths");
+            throw new ArgumentException("columnWidths.Length must be > 0", nameof(columnWidths));
 
         if (columnWidths.Any(width => width <= 0))
-            throw new ArgumentOutOfRangeException("columnWidths", "Each column width must be > 0");
+            throw new ArgumentOutOfRangeException(nameof(columnWidths), "Each column width must be > 0");
     }
 
     internal static void VerifyCoalesceAndFitFields(string[] fields, int[] columnWidths, bool substringToFit)
     {
         if (fields == null)
-            throw new ArgumentNullException("fields");
+            throw new ArgumentNullException(nameof(fields));
 
         if (fields.Length != columnWidths.Length)
             throw new ArgumentException("Number of fields must equal number of column widths.");
@@ -37,6 +37,6 @@ public static partial class StringFixedExtensions
         }
 
         if (errors.Count > 0)
-            throw new ArgumentOutOfRangeException("fields", string.Format(CultureInfo.InvariantCulture, "Each field's length must be <= to its corresponding column's width (use substringToFit = true if truncation is allowed).{0}{1}", Environment.NewLine, string.Join(Environment.NewLine, errors)));
+            throw new ArgumentOutOfRangeException(nameof(fields), string.Format(CultureInfo.InvariantCulture, "Each field's length must be <= to its corresponding column's width (use substringToFit = true if truncation is allowed).{0}{1}", Environment.NewLine, string.Join(Environment.NewLine, errors)));
     }
 }

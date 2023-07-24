@@ -21,12 +21,12 @@ public sealed class StringSchemaEntry
     public StringSchemaEntry(string header, int[] columnWidths, char fillCharacter = ' ', string[] columnNames = null)
     {
         if (string.IsNullOrEmpty(header))
-            throw new ArgumentException("Must be non-null non-empty.", "header");
+            throw new ArgumentException("Must be non-null non-empty.", nameof(header));
 
         StringFixedExtensions.VerifyColumnWidths(columnWidths);
 
         if (columnNames != null && columnNames.Length > 0 && columnNames.Length != columnWidths.Length)
-            throw new ArgumentException("columnNames, if provided, must be the same length as columnWidths.", "columnNames");
+            throw new ArgumentException("columnNames, if provided, must be the same length as columnWidths.", nameof(columnNames));
 
         _header = header;
         _widths = columnWidths;

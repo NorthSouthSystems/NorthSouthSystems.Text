@@ -50,16 +50,16 @@ public static partial class StringQuotedExtensions
     public static string[] SplitQuotedRow(this IEnumerable<char> row, StringQuotedSignals signals)
     {
         if (row == null)
-            throw new ArgumentNullException("row");
+            throw new ArgumentNullException(nameof(row));
 
         if (signals == null)
-            throw new ArgumentNullException("signals");
+            throw new ArgumentNullException(nameof(signals));
 
         SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
         string[][] rowsFields = processor.Process(row).Take(2).ToArray();
 
         if (rowsFields.Length > 1)
-            throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", "row");
+            throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", nameof(row));
 
         return rowsFields.Length == 0 ? new string[0] : rowsFields[0];
     }
@@ -97,10 +97,10 @@ public static partial class StringQuotedExtensions
     public static IEnumerable<string[]> SplitQuotedRows(this IEnumerable<char> rows, StringQuotedSignals signals)
     {
         if (rows == null)
-            throw new ArgumentNullException("rows");
+            throw new ArgumentNullException(nameof(rows));
 
         if (signals == null)
-            throw new ArgumentNullException("signals");
+            throw new ArgumentNullException(nameof(signals));
 
         SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
         return processor.Process(rows);

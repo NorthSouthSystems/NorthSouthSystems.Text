@@ -20,7 +20,7 @@ public sealed class StringSchema
     public void AddEntry(StringSchemaEntry entry)
     {
         if (entry == null)
-            throw new ArgumentNullException("entry");
+            throw new ArgumentNullException(nameof(entry));
 
         VerifyEntry(entry);
         _entries.Add(entry.Header, entry);
@@ -34,13 +34,13 @@ public sealed class StringSchema
             if (row.StartsWith(entry.Header, StringComparison.Ordinal))
                 return entry;
 
-        throw new ArgumentOutOfRangeException("row", row, "No matching schema definition.");
+        throw new ArgumentOutOfRangeException(nameof(row), row, "No matching schema definition.");
     }
 
     private void VerifyEntry(StringSchemaEntry entry)
     {
         foreach (StringSchemaEntry existingEntry in _entries.Values)
             if (existingEntry.Header.StartsWith(entry.Header, StringComparison.Ordinal) || entry.Header.StartsWith(existingEntry.Header, StringComparison.Ordinal))
-                throw new ArgumentOutOfRangeException("entry", entry.Header, "No entry.Header may StartWith any other existing entry.Header.");
+                throw new ArgumentOutOfRangeException(nameof(entry), entry.Header, "No entry.Header may StartWith any other existing entry.Header.");
     }
 }

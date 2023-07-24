@@ -51,10 +51,10 @@ public static partial class StringSchemaExtensions
     public static StringSchemaSplitResult SplitSchemaRow(this string row, StringSchema schema)
     {
         if (row == null)
-            throw new ArgumentNullException("row");
+            throw new ArgumentNullException(nameof(row));
 
         if (schema == null)
-            throw new ArgumentNullException("schema");
+            throw new ArgumentNullException(nameof(schema));
 
         StringSchemaEntry entry = schema.GetEntryForRow(row);
 
