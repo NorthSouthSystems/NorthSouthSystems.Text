@@ -58,52 +58,31 @@ public static partial class StringFixedExtensionsTests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch1()
-        {
-            "1".SplitFixedRepeating(new[] { 2 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch1() => "1".SplitFixedRepeating(new[] { 2 }).ToArray();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch2()
-        {
-            "12".SplitFixedRepeating(new[] { 3 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch2() => "12".SplitFixedRepeating(new[] { 3 }).ToArray();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch3()
-        {
-            "12".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch3() => "12".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch4()
-        {
-            "123".SplitFixedRepeating(new[] { 2 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch4() => "123".SplitFixedRepeating(new[] { 2 }).ToArray();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch5()
-        {
-            "123".SplitFixedRepeating(new[] { 1, 1 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch5() => "123".SplitFixedRepeating(new[] { 1, 1 }).ToArray();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch6()
-        {
-            "12345".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch6() => "12345".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch7()
-        {
-            "1234567".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
-        }
+        public void LengthColumnWidthSumMismatch7() => "1234567".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
 
         #endregion
     }

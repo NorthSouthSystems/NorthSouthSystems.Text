@@ -20,5 +20,5 @@ public static partial class StringExtensions
     /// null string values the same as it treats Empty string values, and wants only to deal with string.Empty.
     /// </summary>
     /// <returns>Returns string.Empty when value == null; else, returns the original string.</returns>
-    public static string NullToEmpty(this string value) { return value ?? string.Empty; }
+    public static string NullToEmpty(this string value) => value ?? string.Empty;
 }

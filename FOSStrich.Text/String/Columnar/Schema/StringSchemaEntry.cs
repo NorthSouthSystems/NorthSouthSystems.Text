@@ -39,15 +39,15 @@ public sealed class StringSchemaEntry
         _rowWrapperFactory = new StringRowWrapperFactory(columnNames);
     }
 
-    public string Header { get { return _header; } }
+    public string Header => _header;
     private readonly string _header;
 
-    internal int[] Widths { get { return _widths; } }
+    internal int[] Widths => _widths;
     private readonly int[] _widths;
 
-    public char FillCharacter { get { return _fillCharacter; } }
+    public char FillCharacter => _fillCharacter;
     private readonly char _fillCharacter;
 
-    internal StringRowWrapperFactory RowWrapperFactory { get { return _rowWrapperFactory; } }
+    internal StringRowWrapperFactory RowWrapperFactory => _rowWrapperFactory;
     private readonly StringRowWrapperFactory _rowWrapperFactory;
 }

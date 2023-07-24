@@ -5,10 +5,8 @@ public static partial class StringQuotedExtensionsTests
     [TestClass]
     public class Join
     {
-        private static void AssertAreEqual(StringQuotedSignals signals, string format, string result)
-        {
+        private static void AssertAreEqual(StringQuotedSignals signals, string format, string result) =>
             Assert.AreEqual(string.Format(format, signals.Delimiter, signals.Quote, signals.NewRow, signals.Escape), result);
-        }
 
         [TestMethod]
         public void Quoting()

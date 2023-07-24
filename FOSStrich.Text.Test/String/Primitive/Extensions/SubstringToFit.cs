@@ -50,10 +50,7 @@ public static partial class StringExtensionsTests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void MaxLengthLessThanZero()
-        {
-            "a".SubstringToFit(-1);
-        }
+        public void MaxLengthLessThanZero() => "a".SubstringToFit(-1);
 
         #endregion
     }

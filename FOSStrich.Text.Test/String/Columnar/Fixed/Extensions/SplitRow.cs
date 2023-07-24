@@ -51,38 +51,23 @@ public static partial class StringFixedExtensionsTests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ThisEmpty()
-        {
-            string.Empty.SplitFixedRow(new[] { 1 });
-        }
+        public void ThisEmpty() => string.Empty.SplitFixedRow(new[] { 1 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch1()
-        {
-            "1".SplitFixedRow(new[] { 2 });
-        }
+        public void LengthColumnWidthSumMismatch1() => "1".SplitFixedRow(new[] { 2 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch2()
-        {
-            "12".SplitFixedRow(new[] { 3 });
-        }
+        public void LengthColumnWidthSumMismatch2() => "12".SplitFixedRow(new[] { 3 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch3()
-        {
-            "12".SplitFixedRow(new[] { 1, 2 });
-        }
+        public void LengthColumnWidthSumMismatch3() => "12".SplitFixedRow(new[] { 1, 2 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch4()
-        {
-            "1234".SplitFixedRow(new[] { 1, 2 });
-        }
+        public void LengthColumnWidthSumMismatch4() => "1234".SplitFixedRow(new[] { 1, 2 });
 
         #endregion
     }

@@ -12,7 +12,7 @@ public sealed class StringSchema
     /// </summary>
     public StringSchema() { }
 
-    private readonly Dictionary<string, StringSchemaEntry> _entries = new Dictionary<string, StringSchemaEntry>();
+    private readonly Dictionary<string, StringSchemaEntry> _entries = new();
 
     /// <summary>
     /// Validates and adds a new StringSchemaEntry to the Schema.
@@ -26,7 +26,7 @@ public sealed class StringSchema
         _entries.Add(entry.Header, entry);
     }
 
-    public StringSchemaEntry this[string header] { get { return _entries[header]; } }
+    public StringSchemaEntry this[string header] => _entries[header];
 
     internal StringSchemaEntry GetEntryForRow(string row)
     {

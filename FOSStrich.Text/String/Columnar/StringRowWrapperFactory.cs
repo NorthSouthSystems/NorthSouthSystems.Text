@@ -29,7 +29,7 @@ public sealed class StringRowWrapperFactory
         _columnNameIndices = _columnNames.ToDictionary(columnName => columnName, columnName => index++);
     }
 
-    internal string[] ColumnNames { get { return _columnNames; } }
+    internal string[] ColumnNames => _columnNames;
     private readonly string[] _columnNames;
 
     private readonly Dictionary<string, int> _columnNameIndices;
@@ -45,5 +45,5 @@ public sealed class StringRowWrapperFactory
         return new StringRowWrapper(this, fields);
     }
 
-    internal bool TryGetIndex(string columnName, out int index) { return _columnNameIndices.TryGetValue(columnName, out index); }
+    internal bool TryGetIndex(string columnName, out int index) => _columnNameIndices.TryGetValue(columnName, out index);
 }

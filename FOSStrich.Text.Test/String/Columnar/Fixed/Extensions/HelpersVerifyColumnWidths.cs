@@ -16,59 +16,35 @@ public static partial class StringFixedExtensionsTests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void Null()
-        {
-            StringFixedExtensions.VerifyColumnWidths(null);
-        }
+        public void Null() => StringFixedExtensions.VerifyColumnWidths(null);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void Empty()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new int[0]);
-        }
+        public void Empty() => StringFixedExtensions.VerifyColumnWidths(new int[0]);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void WidthEqualToZero1()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new[] { 0 });
-        }
+        public void WidthEqualToZero1() => StringFixedExtensions.VerifyColumnWidths(new[] { 0 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void WidthEqualToZero2()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new[] { 0, 1 });
-        }
+        public void WidthEqualToZero2() => StringFixedExtensions.VerifyColumnWidths(new[] { 0, 1 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void WidthEqualToZero3()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new[] { 1, 0 });
-        }
+        public void WidthEqualToZero3() => StringFixedExtensions.VerifyColumnWidths(new[] { 1, 0 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void WidthLessThanZero1()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new[] { -1 });
-        }
+        public void WidthLessThanZero1() => StringFixedExtensions.VerifyColumnWidths(new[] { -1 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void WidthLessThanZero2()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new[] { -1, 1 });
-        }
+        public void WidthLessThanZero2() => StringFixedExtensions.VerifyColumnWidths(new[] { -1, 1 });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void WidthLessThanZero3()
-        {
-            StringFixedExtensions.VerifyColumnWidths(new[] { 1, -1 });
-        }
+        public void WidthLessThanZero3() => StringFixedExtensions.VerifyColumnWidths(new[] { 1, -1 });
 
         #endregion
     }

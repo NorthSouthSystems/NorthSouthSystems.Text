@@ -5,10 +5,8 @@ public static partial class StringQuotedExtensionsTests
     [TestClass]
     public class SplitRow
     {
-        private static string[] Split(StringQuotedSignals signals, string format)
-        {
-            return string.Format(format, signals.Delimiter, signals.Quote, signals.NewRow, signals.Escape).SplitQuotedRow(signals);
-        }
+        private static string[] Split(StringQuotedSignals signals, string format) =>
+            string.Format(format, signals.Delimiter, signals.Quote, signals.NewRow, signals.Escape).SplitQuotedRow(signals);
 
         [TestMethod]
         public void NonQuoted()

@@ -3,7 +3,7 @@
 public static partial class StringExtensions
 {
     /// <inheritdoc cref="ToLowerCamelCase(IEnumerable{char})"/>
-    public static string ToLowerCamelCase(this string value) { return ToCamelCaseImplementation(value, true).ToNewString(); }
+    public static string ToLowerCamelCase(this string value) => ToCamelCaseImplementation(value, true).ToNewString();
 
     /// <summary>
     /// Process a sequence of characters and returns its lower camel case representation.
@@ -17,10 +17,10 @@ public static partial class StringExtensions
     /// fooBar<br/>
     ///  fooBar<br/>
     /// </example>
-    public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, true); }
+    public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) => ToCamelCaseImplementation(chars, true);
 
     /// <inheritdoc cref="ToUpperCamelCase(IEnumerable{char})"/>
-    public static string ToUpperCamelCase(this string value) { return ToCamelCaseImplementation(value, false).ToNewString(); }
+    public static string ToUpperCamelCase(this string value) => ToCamelCaseImplementation(value, false).ToNewString();
 
     /// <summary>
     /// Process a sequence of characters and returns its upper camel case representation.
@@ -34,7 +34,7 @@ public static partial class StringExtensions
     /// FooBar<br/>
     ///  FooBar<br/>
     /// </example>
-    public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) { return ToCamelCaseImplementation(chars, false); }
+    public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) => ToCamelCaseImplementation(chars, false);
 
     private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> chars, bool isLower)
     {
@@ -68,7 +68,7 @@ public static partial class StringExtensions
     }
 
     /// <inheritdoc cref="SpaceCamelCase(IEnumerable{char})"/>
-    public static string SpaceCamelCase(this string value) { return SpaceCamelCase((IEnumerable<char>)value).ToNewString(); }
+    public static string SpaceCamelCase(this string value) => SpaceCamelCase((IEnumerable<char>)value).ToNewString();
 
     /// <summary>
     /// Process a sequence of characters and returns the same sequence of characters but with spaces inserted

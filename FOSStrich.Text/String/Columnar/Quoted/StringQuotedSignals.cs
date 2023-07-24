@@ -31,9 +31,9 @@
 /// </remarks>
 public sealed class StringQuotedSignals
 {
-    public static readonly StringQuotedSignals Csv = new StringQuotedSignals(",", "\"", Environment.NewLine, string.Empty);
-    public static readonly StringQuotedSignals Pipe = new StringQuotedSignals("|", "\"", Environment.NewLine, string.Empty);
-    public static readonly StringQuotedSignals Tab = new StringQuotedSignals("\t", "\"", Environment.NewLine, string.Empty);
+    public static StringQuotedSignals Csv { get; } = new(",", "\"", Environment.NewLine, string.Empty);
+    public static StringQuotedSignals Pipe { get; } = new("|", "\"", Environment.NewLine, string.Empty);
+    public static StringQuotedSignals Tab { get; } = new("\t", "\"", Environment.NewLine, string.Empty);
 
     /// <summary>
     /// Constructor with params for all signal values.
@@ -56,25 +56,23 @@ public sealed class StringQuotedSignals
             throw new ArgumentException("No parameter may be containable within any other.");
     }
 
-    private static bool ContainsAny(string source, params string[] compares)
-    {
-        return source.Length > 0
+    private static bool ContainsAny(string source, params string[] compares) =>
+        source.Length > 0
             && compares.Where(compare => compare.Length > 0).Any(compare => source.Contains(compare) || compare.Contains(source));
-    }
 
-    public bool DelimiterIsSpecified { get { return !string.IsNullOrEmpty(_delimiter); } }
-    public string Delimiter { get { return _delimiter; } }
+    public bool DelimiterIsSpecified => !string.IsNullOrEmpty(_delimiter);
+    public string Delimiter => _delimiter;
     private readonly string _delimiter;
 
-    public bool QuoteIsSpecified { get { return !string.IsNullOrEmpty(_quote); } }
-    public string Quote { get { return _quote; } }
+    public bool QuoteIsSpecified => !string.IsNullOrEmpty(_quote);
+    public string Quote => _quote;
     private readonly string _quote;
 
-    public bool NewRowIsSpecified { get { return !string.IsNullOrEmpty(_newRow); } }
-    public string NewRow { get { return _newRow; } }
+    public bool NewRowIsSpecified => !string.IsNullOrEmpty(_newRow);
+    public string NewRow => _newRow;
     private readonly string _newRow;
 
-    public bool EscapeIsSpecified { get { return !string.IsNullOrEmpty(_escape); } }
-    public string Escape { get { return _escape; } }
+    public bool EscapeIsSpecified => !string.IsNullOrEmpty(_escape);
+    public string Escape => _escape;
     private readonly string _escape;
 }

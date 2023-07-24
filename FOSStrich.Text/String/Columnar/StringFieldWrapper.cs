@@ -15,13 +15,13 @@ public sealed class StringFieldWrapper
         _value = value;
     }
 
-    public string ColumnName { get { return _columnName; } }
+    public string ColumnName => _columnName;
     private readonly string _columnName;
 
-    public string Value { get { return _value; } }
+    public string Value => _value;
     private readonly string _value;
 
-    public override string ToString() { return _value ?? string.Empty; }
+    public override string ToString() => _value ?? string.Empty;
 
     public static explicit operator string(StringFieldWrapper field)
     {

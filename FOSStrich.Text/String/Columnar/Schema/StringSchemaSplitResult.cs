@@ -11,9 +11,9 @@ public sealed class StringSchemaSplitResult
         _result = entry.RowWrapperFactory.Wrap(fields);
     }
 
-    public StringSchemaEntry Entry { get { return _entry; } }
+    public StringSchemaEntry Entry => _entry;
     private readonly StringSchemaEntry _entry;
 
-    public StringRowWrapper Result { get { return _result; } }
+    public StringRowWrapper Result => _result;
     private readonly StringRowWrapper _result;
 }

@@ -3,7 +3,7 @@
 public static partial class StringExtensions
 {
     /// <inheritdoc cref="Filter(IEnumerable{char}, CharFilters)"/>
-    public static string Filter(this string value, CharFilters filters) { return Filter((IEnumerable<char>)value, filters).ToNewString(); }
+    public static string Filter(this string value, CharFilters filters) => Filter((IEnumerable<char>)value, filters).ToNewString();
 
     /// <summary>
     /// Removes unwanted characters from a sequence of characters.

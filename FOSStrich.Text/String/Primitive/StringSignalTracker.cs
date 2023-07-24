@@ -76,7 +76,7 @@ public sealed class StringSignalTracker
             _activeCounters = new List<int>(_signal.Length);
     }
 
-    public string Signal { get { return _signal; } }
+    public string Signal => _signal;
     private readonly string _signal;
 
     // These values could easily be computed; however, their precomputation is a PERF optimization noticed
@@ -91,13 +91,13 @@ public sealed class StringSignalTracker
     /// <summary>
     /// IsCounting will be true when the Tracker's state represents a partially matched Signal.
     /// </summary>
-    public bool IsCounting { get { return _signalIsMultiChar && _activeCounters.Count > 0; } }
+    public bool IsCounting => _signalIsMultiChar && _activeCounters.Count > 0;
 
     /// <summary>
     /// IsTriggered will be true when the Signal has been matched. No further processing can take place until
     /// the Tracker has been Reset.
     /// </summary>
-    public bool IsTriggered { get { return _triggered; } }
+    public bool IsTriggered => _triggered;
 
     /// <summary>
     /// Puts the Tracker in a newly created state.
