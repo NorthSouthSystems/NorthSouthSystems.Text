@@ -44,15 +44,15 @@ public sealed class StringQuotedSignals
     /// <param name="escape">String used to escape the meaning of the immediately following character.</param>
     public StringQuotedSignals(string delimiter, string quote, string newRow, string escape)
     {
-        _delimiter = delimiter.NullToEmpty();
-        _quote = quote.NullToEmpty();
-        _newRow = newRow.NullToEmpty();
-        _escape = escape.NullToEmpty();
+        Delimiter = delimiter.NullToEmpty();
+        Quote = quote.NullToEmpty();
+        NewRow = newRow.NullToEmpty();
+        Escape = escape.NullToEmpty();
 
         if (!DelimiterIsSpecified)
             throw new ArgumentException("Delimiter must be non-null and non-empty.");
 
-        if (ContainsAny(_delimiter, _quote, _newRow, _escape) || ContainsAny(_quote, _newRow, _escape) || ContainsAny(_newRow, _escape))
+        if (ContainsAny(Delimiter, Quote, NewRow, Escape) || ContainsAny(Quote, NewRow, Escape) || ContainsAny(NewRow, Escape))
             throw new ArgumentException("No parameter may be containable within any other.");
     }
 
@@ -60,19 +60,15 @@ public sealed class StringQuotedSignals
         source.Length > 0
             && compares.Where(compare => compare.Length > 0).Any(compare => source.Contains(compare) || compare.Contains(source));
 
-    public bool DelimiterIsSpecified => !string.IsNullOrEmpty(_delimiter);
-    public string Delimiter => _delimiter;
-    private readonly string _delimiter;
+    public bool DelimiterIsSpecified => !string.IsNullOrEmpty(Delimiter);
+    public string Delimiter { get; }
 
-    public bool QuoteIsSpecified => !string.IsNullOrEmpty(_quote);
-    public string Quote => _quote;
-    private readonly string _quote;
+    public bool QuoteIsSpecified => !string.IsNullOrEmpty(Quote);
+    public string Quote { get; }
 
-    public bool NewRowIsSpecified => !string.IsNullOrEmpty(_newRow);
-    public string NewRow => _newRow;
-    private readonly string _newRow;
+    public bool NewRowIsSpecified => !string.IsNullOrEmpty(NewRow);
+    public string NewRow { get; }
 
-    public bool EscapeIsSpecified => !string.IsNullOrEmpty(_escape);
-    public string Escape => _escape;
-    private readonly string _escape;
+    public bool EscapeIsSpecified => !string.IsNullOrEmpty(Escape);
+    public string Escape { get; }
 }

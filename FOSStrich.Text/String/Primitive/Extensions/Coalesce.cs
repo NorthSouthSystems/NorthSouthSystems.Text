@@ -7,13 +7,7 @@ public static partial class StringExtensions
     /// null string values the same as it treats Empty string values, and wants only to deal with null.
     /// </summary>
     /// <returns>Returns null when value == string.Empty; else, returns the original string.</returns>
-    public static string EmptyToNull(this string value)
-    {
-        if (string.IsNullOrEmpty(value))
-            return null;
-
-        return value;
-    }
+    public static string EmptyToNull(this string value) => string.IsNullOrEmpty(value) ? null : value;
 
     /// <summary>
     /// VIOLATES NULL REFERENCE SEMANTICS! Will return string.Empty if string.IsNullOrEmpty. This simplifies code that treats

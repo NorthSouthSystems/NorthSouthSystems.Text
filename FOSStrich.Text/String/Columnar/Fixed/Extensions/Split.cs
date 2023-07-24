@@ -76,16 +76,15 @@ public static partial class StringFixedExtensions
 
         string[] fields;
 
-        using (var charEnumerator = row.GetEnumerator())
-        {
-            fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
+        using var charEnumerator = row.GetEnumerator();
 
-            if (fields == null)
-                throw new ArgumentException("Empty row.", nameof(row));
+        fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
 
-            if (charEnumerator.MoveNext())
-                throw new ArgumentOutOfRangeException(nameof(row), "row length must equal the sum of all column widths.");
-        }
+        if (fields == null)
+            throw new ArgumentException("Empty row.", nameof(row));
+
+        if (charEnumerator.MoveNext())
+            throw new ArgumentOutOfRangeException(nameof(row), "row length must equal the sum of all column widths.");
 
         return fields;
     }

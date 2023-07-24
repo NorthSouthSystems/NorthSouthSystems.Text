@@ -35,7 +35,7 @@ public static partial class StringExtensions
         bool nonWhiteSpaceHit = false;
         bool bufferedSpace = false;
         bool bufferedNewLine = false;
-        StringSignalTracker newLineTracker = new StringSignalTracker(respectNewLine);
+        var newLineTracker = new StringSignalTracker(respectNewLine);
 
         foreach (char c in chars)
         {

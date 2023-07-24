@@ -22,7 +22,7 @@ public class StringSchemaEntryTests
         Assert.AreEqual(1, entry.RowWrapperFactory.ColumnNames.Length);
         Assert.AreEqual("0", entry.RowWrapperFactory.ColumnNames[0]);
 
-        entry = new StringSchemaEntry("C", new[] { 3, 4 }, '.', new string[0]);
+        entry = new StringSchemaEntry("C", new[] { 3, 4 }, '.', Array.Empty<string>());
         Assert.AreEqual("C", entry.Header);
         Assert.AreEqual(2, entry.Widths.Length);
         Assert.AreEqual(3, entry.Widths[0]);

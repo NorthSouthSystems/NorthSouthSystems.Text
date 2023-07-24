@@ -28,26 +28,19 @@ public sealed class StringSchemaEntry
         if (columnNames != null && columnNames.Length > 0 && columnNames.Length != columnWidths.Length)
             throw new ArgumentException("columnNames, if provided, must be the same length as columnWidths.", nameof(columnNames));
 
-        _header = header;
-        _widths = columnWidths;
-        _fillCharacter = fillCharacter;
+        Header = header;
+        Widths = columnWidths;
+        FillCharacter = fillCharacter;
 
         columnNames = (columnNames != null && columnNames.Length > 0)
             ? columnNames
             : Enumerable.Range(0, columnWidths.Length).Select(index => index.ToString(CultureInfo.InvariantCulture)).ToArray();
 
-        _rowWrapperFactory = new StringRowWrapperFactory(columnNames);
+        RowWrapperFactory = new StringRowWrapperFactory(columnNames);
     }
 
-    public string Header => _header;
-    private readonly string _header;
-
-    internal int[] Widths => _widths;
-    private readonly int[] _widths;
-
-    public char FillCharacter => _fillCharacter;
-    private readonly char _fillCharacter;
-
-    internal StringRowWrapperFactory RowWrapperFactory => _rowWrapperFactory;
-    private readonly StringRowWrapperFactory _rowWrapperFactory;
+    public string Header { get; }
+    internal int[] Widths { get; }
+    public char FillCharacter { get; }
+    internal StringRowWrapperFactory RowWrapperFactory { get; }
 }

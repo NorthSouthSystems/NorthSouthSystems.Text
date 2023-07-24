@@ -36,9 +36,7 @@ public sealed class StringRowWrapper
     {
         get
         {
-            int index;
-
-            if (!_factory.TryGetIndex(columnName, out index))
+            if (!_factory.TryGetIndex(columnName, out int index))
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Column not found: {0}.", columnName), nameof(columnName));
 
             return new StringFieldWrapper(_factory.ColumnNames[index], index < _fields.Length ? _fields[index] : null);

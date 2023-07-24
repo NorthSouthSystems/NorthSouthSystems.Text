@@ -55,13 +55,13 @@ public static partial class StringQuotedExtensions
         if (signals == null)
             throw new ArgumentNullException(nameof(signals));
 
-        SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
+        var processor = new SplitQuotedProcessor(signals);
         string[][] rowsFields = processor.Process(row).Take(2).ToArray();
 
         if (rowsFields.Length > 1)
             throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", nameof(row));
 
-        return rowsFields.Length == 0 ? new string[0] : rowsFields[0];
+        return rowsFields.Length == 0 ? Array.Empty<string>() : rowsFields[0];
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public static partial class StringQuotedExtensions
         if (signals == null)
             throw new ArgumentNullException(nameof(signals));
 
-        SplitQuotedProcessor processor = new SplitQuotedProcessor(signals);
+        var processor = new SplitQuotedProcessor(signals);
         return processor.Process(rows);
     }
 
@@ -120,23 +120,23 @@ public static partial class StringQuotedExtensions
         {
             _signals = signals;
 
-            _delimiterTracker = new StringSignalTracker(_signals.Delimiter);
-            _quoteTracker = new StringSignalTracker(_signals.Quote);
-            _newRowTracker = new StringSignalTracker(_signals.NewRow);
-            _escapeTracker = new StringSignalTracker(_signals.Escape);
+            _delimiterTracker = new(_signals.Delimiter);
+            _quoteTracker = new(_signals.Quote);
+            _newRowTracker = new(_signals.NewRow);
+            _escapeTracker = new(_signals.Escape);
         }
 
-        private StringQuotedSignals _signals;
+        private readonly StringQuotedSignals _signals;
 
-        private StringSignalTracker _delimiterTracker;
-        private StringSignalTracker _quoteTracker;
-        private StringSignalTracker _newRowTracker;
-        private StringSignalTracker _escapeTracker;
+        private readonly StringSignalTracker _delimiterTracker;
+        private readonly StringSignalTracker _quoteTracker;
+        private readonly StringSignalTracker _newRowTracker;
+        private readonly StringSignalTracker _escapeTracker;
 
         private bool _inRow = false;
-        private List<string> _fields = new List<string>();
-        private List<char> _fieldBuffer = new List<char>();
-        private List<CharacterCategory> _fieldCategories = new List<CharacterCategory>();
+        private readonly List<string> _fields = new();
+        private readonly List<char> _fieldBuffer = new();
+        private readonly List<CharacterCategory> _fieldCategories = new();
 
         private int _consecutiveQuoteCount = 0;
         private bool _inQuotes = false;
@@ -259,7 +259,7 @@ public static partial class StringQuotedExtensions
             // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
             bool skipAQuote = _fieldCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
 
-            StringBuilder field = new StringBuilder();
+            var field = new StringBuilder();
             int fieldBufferIndex = 0;
 
             foreach (CharacterCategory category in _fieldCategories)

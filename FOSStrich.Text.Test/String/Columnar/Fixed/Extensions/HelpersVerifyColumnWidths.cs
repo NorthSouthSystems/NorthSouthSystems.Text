@@ -20,7 +20,7 @@ public static partial class StringFixedExtensionsTests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void Empty() => StringFixedExtensions.VerifyColumnWidths(new int[0]);
+        public void Empty() => StringFixedExtensions.VerifyColumnWidths(Array.Empty<int>());
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]

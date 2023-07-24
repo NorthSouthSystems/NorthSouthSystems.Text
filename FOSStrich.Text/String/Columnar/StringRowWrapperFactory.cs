@@ -22,15 +22,14 @@ public sealed class StringRowWrapperFactory
         if (duplicateColumnNames.Length > 0)
             throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Duplicate columnNames are not allowed: {0}.", string.Join(", ", duplicateColumnNames)));
 
-        _columnNames = new string[columnNames.Length];
-        Array.Copy(columnNames, _columnNames, columnNames.Length);
+        ColumnNames = new string[columnNames.Length];
+        Array.Copy(columnNames, ColumnNames, columnNames.Length);
 
         int index = 0;
-        _columnNameIndices = _columnNames.ToDictionary(columnName => columnName, columnName => index++);
+        _columnNameIndices = ColumnNames.ToDictionary(columnName => columnName, columnName => index++);
     }
 
-    internal string[] ColumnNames => _columnNames;
-    private readonly string[] _columnNames;
+    internal string[] ColumnNames { get; }
 
     private readonly Dictionary<string, int> _columnNameIndices;
 
@@ -39,7 +38,7 @@ public sealed class StringRowWrapperFactory
         if (fields == null)
             throw new ArgumentNullException(nameof(fields));
 
-        if (fields.Length > _columnNames.Length)
+        if (fields.Length > ColumnNames.Length)
             throw new ArgumentException("The number of fields must be <= the number of columns.");
 
         return new StringRowWrapper(this, fields);

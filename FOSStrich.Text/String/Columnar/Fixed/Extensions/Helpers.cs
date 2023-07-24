@@ -24,7 +24,7 @@ public static partial class StringFixedExtensions
         if (fields.Length != columnWidths.Length)
             throw new ArgumentException("Number of fields must equal number of column widths.");
 
-        List<string> errors = new List<string>();
+        var errors = new List<string>();
 
         for (int i = 0; i < fields.Length; i++)
         {

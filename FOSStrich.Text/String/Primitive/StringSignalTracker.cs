@@ -68,16 +68,15 @@ public sealed class StringSignalTracker
     /// </summary>
     public StringSignalTracker(string signal)
     {
-        _signal = signal.NullToEmpty();
-        _signalIsEmpty = string.IsNullOrEmpty(_signal);
-        _signalIsMultiChar = _signal.Length > 1;
+        Signal = signal.NullToEmpty();
+        _signalIsEmpty = string.IsNullOrEmpty(Signal);
+        _signalIsMultiChar = Signal.Length > 1;
 
         if (_signalIsMultiChar)
-            _activeCounters = new List<int>(_signal.Length);
+            _activeCounters = new List<int>(Signal.Length);
     }
 
-    public string Signal => _signal;
-    private readonly string _signal;
+    public string Signal { get; }
 
     // These values could easily be computed; however, their precomputation is a PERF optimization noticed
     // (in DEBUG mode albeit... might have been compiled out) when profiling, and they do make the code slightly
@@ -129,9 +128,9 @@ public sealed class StringSignalTracker
                 // Iterate backwards because we will be removing from the list during the iteration.
                 for (int i = _activeCounters.Count - 1; i >= 0; i--)
                 {
-                    if (_signal[_activeCounters[i]] == value)
+                    if (Signal[_activeCounters[i]] == value)
                     {
-                        if (_activeCounters[i] == _signal.Length - 1)
+                        if (_activeCounters[i] == Signal.Length - 1)
                         {
                             _triggered = true;
                             _activeCounters.Clear();
@@ -145,10 +144,10 @@ public sealed class StringSignalTracker
                 }
             }
 
-            if (_signal[0] == value)
+            if (Signal[0] == value)
                 _activeCounters.Add(1);
         }
-        else if (_signal[0] == value)
+        else if (Signal[0] == value)
             _triggered = true;
     }
 }

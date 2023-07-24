@@ -70,7 +70,7 @@ public static partial class StringFixedExtensions
     {
         VerifyCoalesceAndFitFields(fields, columnWidths, substringToFit);
 
-        StringBuilder row = new StringBuilder();
+        var row = new StringBuilder();
 
         for (int i = 0; i < fields.Length; i++)
         {
