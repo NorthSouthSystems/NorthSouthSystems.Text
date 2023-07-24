@@ -145,19 +145,18 @@ public static partial class StringFixedExtensions
 
         VerifyColumnWidths(columnWidths);
 
-        using (var charEnumerator = rows.GetEnumerator())
+        using var charEnumerator = rows.GetEnumerator();
+
+        string[] fields = null;
+
+        do
         {
-            string[] fields = null;
+            fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
 
-            do
-            {
-                fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
-
-                if (fields != null)
-                    yield return fields;
-            }
-            while (fields != null);
+            if (fields != null)
+                yield return fields;
         }
+        while (fields != null);
     }
 
     internal static string[] SplitFixedImplementation(IEnumerator<char> charEnumerator, int[] columnWidths, char fillCharacter)

@@ -58,9 +58,8 @@ public static partial class StringSchemaExtensions
 
         StringSchemaEntry entry = schema.GetEntryForRow(row);
 
-        using (var charEnumerator = row.Substring(entry.Header.Length).GetEnumerator())
-        {
-            return new StringSchemaSplitResult(entry, StringFixedExtensions.SplitFixedImplementation(charEnumerator, entry.Widths, entry.FillCharacter));
-        }
+        using var charEnumerator = row.Substring(entry.Header.Length).GetEnumerator();
+
+        return new StringSchemaSplitResult(entry, StringFixedExtensions.SplitFixedImplementation(charEnumerator, entry.Widths, entry.FillCharacter));
     }
 }
