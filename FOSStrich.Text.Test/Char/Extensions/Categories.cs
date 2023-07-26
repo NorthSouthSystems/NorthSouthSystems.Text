@@ -12,9 +12,9 @@ public static partial class CharExtensionsTests
             Assert.IsFalse('1'.IsInAnyCategory(CharCategories.None));
             Assert.IsFalse('.'.IsInAnyCategory(CharCategories.None));
             Assert.IsFalse(' '.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse('\t'.IsInAnyCategory(CharCategories.None));
             Assert.IsFalse('*'.IsInAnyCategory(CharCategories.None));
             Assert.IsFalse('@'.IsInAnyCategory(CharCategories.None));
+            Assert.IsFalse('\t'.IsInAnyCategory(CharCategories.None));
         }
 
         [TestMethod]
@@ -24,9 +24,9 @@ public static partial class CharExtensionsTests
             Assert.IsTrue('1'.IsInAnyCategory(CharCategories.All));
             Assert.IsTrue('.'.IsInAnyCategory(CharCategories.All));
             Assert.IsTrue(' '.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue('\t'.IsInAnyCategory(CharCategories.All));
             Assert.IsTrue('*'.IsInAnyCategory(CharCategories.All));
             Assert.IsTrue('@'.IsInAnyCategory(CharCategories.All));
+            Assert.IsTrue('\t'.IsInAnyCategory(CharCategories.All));
         }
 
         [TestMethod]
