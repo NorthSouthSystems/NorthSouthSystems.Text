@@ -12,7 +12,7 @@ public static partial class StringFixedExtensions
     /// </summary>
     /// <param name="columnWidths">The width of each column. E.g. The first field in fields will be place into a column the size of the first width in columnWidths.</param>
     /// <param name="fillCharacter">When a field is less than its column's width, fillCharacter is added until the columnWidth is reached. (default = ' ')</param>
-    /// <param name="substringToFit">Determines whether to substring a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
+    /// <param name="leftToFit">Determines whether to Left a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
     /// <example>
     /// <code>
     /// string fields = new [] { "A", "B", "C" };
@@ -55,20 +55,20 @@ public static partial class StringFixedExtensions
     /// Console Output:<br/>
     /// AB12<br/>
     /// </example>
-    public static string JoinFixedRow(this string[] fields, int[] columnWidths, char fillCharacter = ' ', bool substringToFit = false)
+    public static string JoinFixedRow(this string[] fields, int[] columnWidths, char fillCharacter = ' ', bool leftToFit = false)
     {
         VerifyColumnWidths(columnWidths);
 
-        return JoinFixedRowNoVerifyColumnWidths(fields, columnWidths, fillCharacter, substringToFit);
+        return JoinFixedRowNoVerifyColumnWidths(fields, columnWidths, fillCharacter, leftToFit);
     }
 
     /// <summary>
     /// This method exists solely as a performance optimization for StringSchemaExtensions.JoinSchemaRow. SchemaEntry ctor calls VerifyColumnWidths;
     /// therefore, JoinSchemaRow can call this method and bypass redundant calls to VerifyColumnWidths.
     /// </summary>
-    internal static string JoinFixedRowNoVerifyColumnWidths(string[] fields, int[] columnWidths, char fillCharacter, bool substringToFit)
+    internal static string JoinFixedRowNoVerifyColumnWidths(string[] fields, int[] columnWidths, char fillCharacter, bool leftToFit)
     {
-        VerifyCoalesceAndFitFields(fields, columnWidths, substringToFit);
+        VerifyCoalesceAndFitFields(fields, columnWidths, leftToFit);
 
         var row = new StringBuilder();
 

@@ -38,7 +38,7 @@ public static partial class StringFixedExtensionsTests
         }
 
         [TestMethod]
-        public void SubstringToFit()
+        public void LeftToFit()
         {
             string[] fields = new[] { "A", "BC", "DEF" };
             int[] columnWidths = new[] { 1, 2, 2 };

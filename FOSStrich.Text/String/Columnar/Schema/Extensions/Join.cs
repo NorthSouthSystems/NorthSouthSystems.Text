@@ -11,7 +11,7 @@ public static partial class StringSchemaExtensions
     /// <summary>
     /// Joins the set of string fields using the StringSchemaEntry for instructions.
     /// </summary>
-    /// <param name="substringToFit">Determines whether to substring a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
+    /// <param name="leftToFit">Determines whether to Left a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
     /// <example>
     /// <code>
     /// var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
@@ -35,12 +35,12 @@ public static partial class StringSchemaExtensions
     /// B123456<br/>
     /// C1-2-3-<br/>
     /// </example>
-    public static string JoinSchemaRow(this string[] fields, StringSchemaEntry entry, bool substringToFit = false)
+    public static string JoinSchemaRow(this string[] fields, StringSchemaEntry entry, bool leftToFit = false)
     {
         if (entry == null)
             throw new ArgumentNullException(nameof(entry));
 
         return entry.Header
-            + StringFixedExtensions.JoinFixedRowNoVerifyColumnWidths(fields, entry.Widths, entry.FillCharacter, substringToFit);
+            + StringFixedExtensions.JoinFixedRowNoVerifyColumnWidths(fields, entry.Widths, entry.FillCharacter, leftToFit);
     }
 }

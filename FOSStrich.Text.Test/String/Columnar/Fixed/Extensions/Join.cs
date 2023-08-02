@@ -52,7 +52,7 @@ public static partial class StringFixedExtensionsTests
         }
 
         [TestMethod]
-        public void SubstringToFit()
+        public void LeftToFit()
         {
             string join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', true);
             Assert.AreEqual("ACE", join);
