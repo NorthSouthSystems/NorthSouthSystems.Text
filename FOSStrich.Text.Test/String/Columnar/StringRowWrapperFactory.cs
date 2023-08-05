@@ -1,53 +1,28 @@
 ﻿namespace FOSStrich.Text;
 
-[TestClass]
 public class StringRowWrapperFactoryTests
 {
-    #region Exceptions
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConstructionColumnNamesNull()
+    [Fact]
+    public void Exceptions()
     {
-        var factory = new StringRowWrapperFactory(null);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ConstructionDuplicateColumnNames1()
-    {
-        var factory = new StringRowWrapperFactory(new[] { "A", "A" });
-    }
+        act = () => new StringRowWrapperFactory(null);
+        act.Should().Throw<ArgumentNullException>();
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ConstructionDuplicateColumnNames2()
-    {
-        var factory = new StringRowWrapperFactory(new[] { "A", "B", "B" });
-    }
+        act = () => new StringRowWrapperFactory(new[] { "A", "A" });
+        act.Should().Throw<ArgumentException>("ConstructionDuplicateColumnNames");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ConstructionDuplicateColumnNames3()
-    {
-        var factory = new StringRowWrapperFactory(new[] { "A", "B", "C", "A" });
-    }
+        act = () => new StringRowWrapperFactory(new[] { "A", "B", "B" });
+        act.Should().Throw<ArgumentException>("ConstructionDuplicateColumnNames");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void WrapFieldsNull()
-    {
-        var factory = new StringRowWrapperFactory(new[] { "A", "B", "C" });
-        factory.Wrap(null);
-    }
+        act = () => new StringRowWrapperFactory(new[] { "A", "B", "C", "A" });
+        act.Should().Throw<ArgumentException>("ConstructionDuplicateColumnNames");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void WrapFieldsTooMany()
-    {
-        var factory = new StringRowWrapperFactory(new[] { "A", "B", "C" });
-        factory.Wrap(new[] { "1", "2", "3", "4" });
-    }
+        act = () => new StringRowWrapperFactory(new[] { "A", "B", "C" }).Wrap(null);
+        act.Should().Throw<ArgumentNullException>();
 
-    #endregion
+        act = () => new StringRowWrapperFactory(new[] { "A", "B", "C" }).Wrap(new[] { "1", "2", "3", "4" });
+        act.Should().Throw<ArgumentException>("WrapFieldsTooMany");
+    }
 }

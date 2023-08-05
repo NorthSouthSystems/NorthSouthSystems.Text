@@ -1,74 +1,62 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringFixedExtensionsTests
+public class StringFixedExtensionsTests_SplitRow
 {
-    [TestClass]
-    public class SplitRow
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            string[] split = "ABC".SplitFixedRow(new[] { 1, 1, 1 });
-            CollectionAssert.AreEqual(new[] { "A", "B", "C" }, split);
+        "ABC".SplitFixedRow(new[] { 1, 1, 1 })
+            .Should().BeEquivalentTo(new[] { "A", "B", "C" });
 
-            split = "ABC".SplitFixedRow(new[] { 1, 2 });
-            CollectionAssert.AreEqual(new[] { "A", "BC" }, split);
+        "ABC".SplitFixedRow(new[] { 1, 2 })
+            .Should().BeEquivalentTo(new[] { "A", "BC" });
 
-            split = "ABCD".SplitFixedRow(new[] { 1, 2, 1 });
-            CollectionAssert.AreEqual(new[] { "A", "BC", "D" }, split);
+        "ABCD".SplitFixedRow(new[] { 1, 2, 1 })
+            .Should().BeEquivalentTo(new[] { "A", "BC", "D" });
 
-            split = "ABCDEF".SplitFixedRow(new[] { 2, 2, 2 });
-            CollectionAssert.AreEqual(new[] { "AB", "CD", "EF" }, split);
+        "ABCDEF".SplitFixedRow(new[] { 2, 2, 2 })
+            .Should().BeEquivalentTo(new[] { "AB", "CD", "EF" });
 
-            split = "A B C ".SplitFixedRow(new[] { 2, 2, 2 });
-            CollectionAssert.AreEqual(new[] { "A", "B", "C" }, split);
+        "A B C ".SplitFixedRow(new[] { 2, 2, 2 })
+            .Should().BeEquivalentTo(new[] { "A", "B", "C" });
 
-            split = "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 });
-            CollectionAssert.AreEqual(new[] { "A-", "B-", "C-" }, split);
+        "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 })
+            .Should().BeEquivalentTo(new[] { "A-", "B-", "C-" });
 
-            split = "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 }, '-');
-            CollectionAssert.AreEqual(new[] { "A", "B", "C" }, split);
+        "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 }, '-')
+            .Should().BeEquivalentTo(new[] { "A", "B", "C" });
 
-            split = "A B   ".SplitFixedRow(new[] { 2, 2, 2 });
-            CollectionAssert.AreEqual(new[] { "A", "B", "" }, split);
+        "A B   ".SplitFixedRow(new[] { 2, 2, 2 })
+            .Should().BeEquivalentTo(new[] { "A", "B", "" });
 
-            split = "A-B---".SplitFixedRow(new[] { 2, 2, 2 });
-            CollectionAssert.AreEqual(new[] { "A-", "B-", "--" }, split);
+        "A-B---".SplitFixedRow(new[] { 2, 2, 2 })
+            .Should().BeEquivalentTo(new[] { "A-", "B-", "--" });
 
-            split = "A-B---".SplitFixedRow(new[] { 2, 2, 2 }, '-');
-            CollectionAssert.AreEqual(new[] { "A", "B", "" }, split);
-        }
+        "A-B---".SplitFixedRow(new[] { 2, 2, 2 }, '-')
+            .Should().BeEquivalentTo(new[] { "A", "B", "" });
+    }
 
-        #region Exceptions
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            string s = null;
-            s.SplitFixedRow(new[] { 1 });
-        }
+        act = () => ((string)null).SplitFixedRow(new[] { 1 });
+        act.Should().Throw<ArgumentNullException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void ThisEmpty() => string.Empty.SplitFixedRow(new[] { 1 });
+        act = () => string.Empty.SplitFixedRow(new[] { 1 });
+        act.Should().Throw<ArgumentException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch1() => "1".SplitFixedRow(new[] { 2 });
+        act = () => "1".SplitFixedRow(new[] { 2 });
+        act.Should().Throw<ArgumentOutOfRangeException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch2() => "12".SplitFixedRow(new[] { 3 });
+        act = () => "12".SplitFixedRow(new[] { 3 });
+        act.Should().Throw<ArgumentOutOfRangeException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch3() => "12".SplitFixedRow(new[] { 1, 2 });
+        act = () => "12".SplitFixedRow(new[] { 1, 2 });
+        act.Should().Throw<ArgumentOutOfRangeException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void LengthColumnWidthSumMismatch4() => "1234".SplitFixedRow(new[] { 1, 2 });
-
-        #endregion
+        act = () => "1234".SplitFixedRow(new[] { 1, 2 });
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 }

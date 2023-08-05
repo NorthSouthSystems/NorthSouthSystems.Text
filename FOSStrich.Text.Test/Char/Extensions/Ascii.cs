@@ -1,42 +1,40 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class CharExtensionsTests
+public class CharExtensionsTests_Ascii
 {
-    [TestClass]
-    public class Ascii
-    {
-        [TestMethod]
-        public void IsAscii()
-        {
-            Assert.IsTrue('a'.IsAscii());
-            Assert.IsTrue('1'.IsAscii());
-            Assert.IsTrue('.'.IsAscii());
-            Assert.IsTrue(' '.IsAscii());
-            Assert.IsTrue('*'.IsAscii());
-            Assert.IsTrue('@'.IsAscii());
+    [Theory]
+    [InlineData('a')]
+    [InlineData('1')]
+    [InlineData('.')]
+    [InlineData(' ')]
+    [InlineData('*')]
+    [InlineData('@')]
+    [InlineData('\t')]
+    [InlineData('\r')]
+    [InlineData('\n')]
+    public void IsAsciiTrue(char c) =>
+        c.IsAscii().Should().BeTrue();
 
-            Assert.IsTrue('\t'.IsAscii());
-            Assert.IsTrue('\r'.IsAscii());
-            Assert.IsTrue('\n'.IsAscii());
+    [Theory]
+    [InlineData('\u2714')]
+    public void IsAsciiFalse(char c) =>
+        c.IsAscii().Should().BeFalse();
 
-            Assert.IsFalse('\u2714'.IsAscii());
-        }
+    [Theory]
+    [InlineData('a')]
+    [InlineData('1')]
+    [InlineData('.')]
+    [InlineData(' ')]
+    [InlineData('*')]
+    [InlineData('@')]
+    public void IsAsciiPrintableTrue(char c) =>
+        c.IsAsciiPrintable().Should().BeTrue();
 
-        [TestMethod]
-        public void IsAsciiPrintable()
-        {
-            Assert.IsTrue('a'.IsAsciiPrintable());
-            Assert.IsTrue('1'.IsAsciiPrintable());
-            Assert.IsTrue('.'.IsAsciiPrintable());
-            Assert.IsTrue(' '.IsAsciiPrintable());
-            Assert.IsTrue('*'.IsAsciiPrintable());
-            Assert.IsTrue('@'.IsAsciiPrintable());
-
-            Assert.IsFalse('\t'.IsAsciiPrintable());
-            Assert.IsFalse('\r'.IsAsciiPrintable());
-            Assert.IsFalse('\n'.IsAsciiPrintable());
-
-            Assert.IsFalse('\u2714'.IsAsciiPrintable());
-        }
-    }
+    [Theory]
+    [InlineData('\t')]
+    [InlineData('\r')]
+    [InlineData('\n')]
+    [InlineData('\u2714')]
+    public void IsAsciiPrintableFalse(char c) =>
+        c.IsAsciiPrintable().Should().BeFalse();
 }

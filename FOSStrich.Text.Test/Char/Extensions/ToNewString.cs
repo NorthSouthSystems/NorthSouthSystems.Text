@@ -1,16 +1,11 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class CharExtensionsTests
+public class CharExtensionsTests_ToNewString
 {
-    [TestClass]
-    public class ToNewString
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            char[] chars = new[] { 'f', 'o', 'o', 'b', 'a', 'r' };
-            string s = chars.ToNewString();
-            Assert.AreEqual("foobar", s);
-        }
+        char[] chars = new[] { 'f', 'o', 'o', 'b', 'a', 'r' };
+        chars.ToNewString().Should().Be(new string(chars));
     }
 }

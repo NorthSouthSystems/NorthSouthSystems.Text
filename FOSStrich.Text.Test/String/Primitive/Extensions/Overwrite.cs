@@ -1,53 +1,32 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringExtensionsTests
+public class StringExtensionsTests_Overwrite
 {
-    [TestClass]
-    public class Overwrite
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            string result;
+        "abc".Overwrite(0, "z").Should().Be("zbc");
+        "abc".Overwrite(1, "z").Should().Be("azc");
+        "abc".Overwrite(1, "zy").Should().Be("azy");
+        "abc".Overwrite(2, "zy").Should().Be("abzy");
+        "abc".Overwrite(3, "zy").Should().Be("abczy");
+    }
 
-            result = "abc".Overwrite(0, "z");
-            Assert.AreEqual("zbc", result);
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-            result = "abc".Overwrite(1, "z");
-            Assert.AreEqual("azc", result);
+        act = () => ((string)null).Overwrite(0, "z");
+        act.Should().Throw<ArgumentNullException>();
 
-            result = "abc".Overwrite(1, "zy");
-            Assert.AreEqual("azy", result);
+        act = () => "a".Overwrite(-1, "z");
+        act.Should().Throw<ArgumentOutOfRangeException>();
 
-            result = "abc".Overwrite(2, "zy");
-            Assert.AreEqual("abzy", result);
+        act = () => "a".Overwrite(2, "z");
+        act.Should().Throw<ArgumentOutOfRangeException>();
 
-            result = "abc".Overwrite(3, "zy");
-            Assert.AreEqual("abczy", result);
-        }
-
-        #region Exceptions
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            string s = null;
-            s.Overwrite(0, "z");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void StartIndexLessThanZero() => "a".Overwrite(-1, "z");
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void StartIndexGreaterThanValueLength() => "a".Overwrite(2, "z");
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void NewValueNull() => "a".Overwrite(0, null);
-
-        #endregion
+        act = () => "a".Overwrite(0, null);
+        act.Should().Throw<ArgumentNullException>();
     }
 }

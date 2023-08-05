@@ -1,124 +1,49 @@
 ﻿namespace FOSStrich.Text;
 
-[TestClass]
 public class StringQuotedSignalsTests
 {
-    [TestMethod]
+    [Fact]
     public void Basic()
     {
         var signals = new StringQuotedSignals(",", null, Environment.NewLine, string.Empty);
-        Assert.IsTrue(signals.DelimiterIsSpecified);
-        Assert.AreEqual(",", signals.Delimiter);
 
-        Assert.IsFalse(signals.QuoteIsSpecified);
-        Assert.AreEqual(string.Empty, signals.Quote);
+        signals.DelimiterIsSpecified.Should().BeTrue();
+        signals.Delimiter.Should().Be(",");
 
-        Assert.IsTrue(signals.NewRowIsSpecified);
-        Assert.AreEqual(Environment.NewLine, signals.NewRow);
+        signals.QuoteIsSpecified.Should().BeFalse();
+        signals.Quote.Should().BeEmpty();
 
-        Assert.IsFalse(signals.EscapeIsSpecified);
-        Assert.AreEqual(string.Empty, signals.Escape);
+        signals.NewRowIsSpecified.Should().BeTrue();
+        signals.NewRow.Should().Be(Environment.NewLine);
+
+        signals.EscapeIsSpecified.Should().BeFalse();
+        signals.Escape.Should().BeEmpty();
     }
 
-    #region Exceptions
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionNoDelimiter1()
+    [Theory]
+    [InlineData(null, "\"", "\n", "\\")]
+    [InlineData(null, "\"", "\r", "\\")]
+    [InlineData(null, "\"", "\r\n", "\\")]
+    [InlineData("", "\"", "\n", "\\")]
+    [InlineData("", "\"", "\r", "\\")]
+    [InlineData("", "\"", "\r\n", "\\")]
+    [InlineData("A", "AB", null, null)]
+    [InlineData("A", null, "AB", null)]
+    [InlineData("A", null, null, "AB")]
+    [InlineData("AB", "A", null, null)]
+    [InlineData("AB", null, "A", null)]
+    [InlineData("AB", null, null, "A")]
+    [InlineData(",", "A", "AB", null)]
+    [InlineData(",", "A", null, "AB")]
+    [InlineData(",", "AB", "A", null)]
+    [InlineData(",", "AB", null, "A")]
+    [InlineData(",", null, "A", "AB")]
+    [InlineData(",", null, "AB", "A")]
+    public void Exceptions(string delimiter, string quote, string newRow, string escape)
     {
-        var signals = new StringQuotedSignals(null, "\"", Environment.NewLine, "\\");
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionNoDelimiter2()
-    {
-        var signals = new StringQuotedSignals(string.Empty, "\"", Environment.NewLine, "\\");
+        act = () => new StringQuotedSignals(delimiter, quote, newRow, escape);
+        act.Should().Throw<ArgumentException>();
     }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument1()
-    {
-        var signals = new StringQuotedSignals("A", "AB", null, null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument2()
-    {
-        var signals = new StringQuotedSignals("A", null, "AB", null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument3()
-    {
-        var signals = new StringQuotedSignals("A", null, null, "AB");
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument4()
-    {
-        var signals = new StringQuotedSignals("AB", "A", null, null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument5()
-    {
-        var signals = new StringQuotedSignals("AB", null, "A", null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument6()
-    {
-        var signals = new StringQuotedSignals("AB", null, null, "A");
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument7()
-    {
-        var signals = new StringQuotedSignals(",", "A", "AB", null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument8()
-    {
-        var signals = new StringQuotedSignals(",", "A", null, "AB");
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument9()
-    {
-        var signals = new StringQuotedSignals(",", "AB", "A", null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument10()
-    {
-        var signals = new StringQuotedSignals(",", "AB", null, "A");
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument11()
-    {
-        var signals = new StringQuotedSignals(",", null, "A", "AB");
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ContructionOverlapArgument12()
-    {
-        var signals = new StringQuotedSignals(",", null, "AB", "A");
-    }
-
-    #endregion
 }

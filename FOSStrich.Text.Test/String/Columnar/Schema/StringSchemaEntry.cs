@@ -1,60 +1,51 @@
 ﻿namespace FOSStrich.Text;
 
-[TestClass]
 public class StringSchemaEntryTests
 {
-    [TestMethod]
+    [Fact]
     public void Construction()
     {
-        var entry = new StringSchemaEntry("A", new[] { 1 }, ' ', new[] { "Column0" });
-        Assert.AreEqual("A", entry.Header);
-        Assert.AreEqual(1, entry.Widths.Length);
-        Assert.AreEqual(1, entry.Widths[0]);
-        Assert.AreEqual(' ', entry.FillCharacter);
-        Assert.AreEqual(1, entry.RowWrapperFactory.ColumnNames.Length);
-        Assert.AreEqual("Column0", entry.RowWrapperFactory.ColumnNames[0]);
+        StringSchemaEntry entry;
 
-        entry = new StringSchemaEntry("B", new[] { 2 }, '-', null);
-        Assert.AreEqual("B", entry.Header);
-        Assert.AreEqual(1, entry.Widths.Length);
-        Assert.AreEqual(2, entry.Widths[0]);
-        Assert.AreEqual('-', entry.FillCharacter);
-        Assert.AreEqual(1, entry.RowWrapperFactory.ColumnNames.Length);
-        Assert.AreEqual("0", entry.RowWrapperFactory.ColumnNames[0]);
+        entry = new("A", new[] { 1 }, ' ', new[] { "Column0" });
+        entry.Header.Should().Be("A");
+        entry.Widths.Length.Should().Be(1);
+        entry.Widths[0].Should().Be(1);
+        entry.FillCharacter.Should().Be(' ');
+        entry.RowWrapperFactory.ColumnNames.Length.Should().Be(1);
+        entry.RowWrapperFactory.ColumnNames[0].Should().Be("Column0");
 
-        entry = new StringSchemaEntry("C", new[] { 3, 4 }, '.', Array.Empty<string>());
-        Assert.AreEqual("C", entry.Header);
-        Assert.AreEqual(2, entry.Widths.Length);
-        Assert.AreEqual(3, entry.Widths[0]);
-        Assert.AreEqual(4, entry.Widths[1]);
-        Assert.AreEqual('.', entry.FillCharacter);
-        Assert.AreEqual(2, entry.RowWrapperFactory.ColumnNames.Length);
-        Assert.AreEqual("0", entry.RowWrapperFactory.ColumnNames[0]);
-        Assert.AreEqual("1", entry.RowWrapperFactory.ColumnNames[1]);
+        entry = new("B", new[] { 2 }, '-', null);
+        entry.Header.Should().Be("B");
+        entry.Widths.Length.Should().Be(1);
+        entry.Widths[0].Should().Be(2);
+        entry.FillCharacter.Should().Be('-');
+        entry.RowWrapperFactory.ColumnNames.Length.Should().Be(1);
+        entry.RowWrapperFactory.ColumnNames[0].Should().Be("0");
+
+        entry = new("C", new[] { 3, 4 }, '.', Array.Empty<string>());
+        entry.Header.Should().Be("C");
+        entry.Widths.Length.Should().Be(2);
+        entry.Widths[0].Should().Be(3);
+        entry.Widths[1].Should().Be(4);
+        entry.FillCharacter.Should().Be('.');
+        entry.RowWrapperFactory.ColumnNames.Length.Should().Be(2);
+        entry.RowWrapperFactory.ColumnNames[0].Should().Be("0");
+        entry.RowWrapperFactory.ColumnNames[1].Should().Be("1");
     }
 
-    #region Exceptions
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ConstructionNullHeader()
+    [Fact]
+    public void Exceptions()
     {
-        StringSchemaEntry entry = new StringSchemaEntry(null, new[] { 1 });
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ConstructionEmptyHeader()
-    {
-        StringSchemaEntry entry = new StringSchemaEntry(string.Empty, new[] { 1 });
-    }
+        act = () => new StringSchemaEntry(null, new[] { 1 });
+        act.Should().Throw<ArgumentException>("ConstructionNullHeader");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ConstructionColumnWidthsAndNamesLengthMismatch()
-    {
-        StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1, 1 }, ' ', new[] { "Column0" });
-    }
+        act = () => new StringSchemaEntry(string.Empty, new[] { 1 });
+        act.Should().Throw<ArgumentException>("ConstructionEmptyHeader");
 
-    #endregion
+        act = () => new StringSchemaEntry("A", new[] { 1, 1 }, ' ', new[] { "Column0" });
+        act.Should().Throw<ArgumentException>("ConstructionColumnWidthsAndNamesLengthMismatch");
+    }
 }

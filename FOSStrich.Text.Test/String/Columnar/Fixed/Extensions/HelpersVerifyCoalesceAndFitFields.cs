@@ -1,99 +1,67 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringFixedExtensionsTests
+public class StringFixedExtensionsTests_VerifyCoalesceAndFitFields
 {
-    [TestClass]
-    public class VerifyCoalesceAndFitFields
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            string[] fields = new[] { "A", "BC", "DEF" };
-            int[] columnWidths = new[] { 1, 2, 3 };
+        string[] fields = new[] { "A", "BC", "DEF" };
+        int[] columnWidths = new[] { 1, 2, 3 };
 
-            string[] fieldsExpected = new string[fields.Length];
-            Array.Copy(fields, fieldsExpected, fields.Length);
+        string[] fieldsExpected = new string[fields.Length];
+        Array.Copy(fields, fieldsExpected, fields.Length);
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-            CollectionAssert.AreEqual(fieldsExpected, fields);
+        StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
+        fields.Should().BeEquivalentTo(fieldsExpected);
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, true);
-            CollectionAssert.AreEqual(fieldsExpected, fields);
-        }
+        StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, true);
+        fields.Should().BeEquivalentTo(fieldsExpected);
+    }
 
-        [TestMethod]
-        public void Coalesce()
-        {
-            string[] fields;
-            int[] columnWidths = new[] { 1, 1, 1 };
+    [Fact]
+    public void Coalesce()
+    {
+        string[] fields;
+        int[] columnWidths = new[] { 1, 1, 1 };
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { null, "B", "C" }, columnWidths, false);
-            CollectionAssert.AreEqual(new[] { string.Empty, "B", "C" }, fields);
+        StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { null, "B", "C" }, columnWidths, false);
+        fields.Should().BeEquivalentTo(new[] { string.Empty, "B", "C" });
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { "A", null, "C" }, columnWidths, false);
-            CollectionAssert.AreEqual(new[] { "A", string.Empty, "C" }, fields);
+        StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { "A", null, "C" }, columnWidths, false);
+        fields.Should().BeEquivalentTo(new[] { "A", string.Empty, "C" });
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { "A", "B", null }, columnWidths, false);
-            CollectionAssert.AreEqual(new[] { "A", "B", string.Empty }, fields);
-        }
+        StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { "A", "B", null }, columnWidths, false);
+        fields.Should().BeEquivalentTo(new[] { "A", "B", string.Empty });
+    }
 
-        [TestMethod]
-        public void LeftToFit()
-        {
-            string[] fields = new[] { "A", "BC", "DEF" };
-            int[] columnWidths = new[] { 1, 2, 2 };
+    [Fact]
+    public void LeftToFit()
+    {
+        string[] fields = new[] { "A", "BC", "DEF" };
+        int[] columnWidths = new[] { 1, 2, 2 };
 
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, true);
-            CollectionAssert.AreEqual(new[] { "A", "BC", "DE" }, fields);
-        }
+        StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, true);
+        fields.Should().BeEquivalentTo(new[] { "A", "BC", "DE" });
+    }
 
-        #region Exceptions
+    [Fact]
+    public void Exceptions()
+    {
+        Action act = null;
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void FieldsNull()
-        {
-            string[] fields = null;
-            int[] columnWidths = new[] { 1 };
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-        }
+        act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(null, new[] { 1 }, false);
+        act.Should().Throw<ArgumentNullException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void FieldsAndColumnWidthsLengthMismatch1()
-        {
-            string[] fields = new[] { "A", "B", "C" };
-            int[] columnWidths = new[] { 1, 1 };
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-        }
+        act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "A", "B", "C" }, new[] { 1, 1 }, false);
+        act.Should().Throw<ArgumentException>("FieldsAndColumnWidthsLengthMismatch");
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void FieldsAndColumnWidthsLengthMismatch2()
-        {
-            string[] fields = new[] { "A", "B" };
-            int[] columnWidths = new[] { 1, 2, 3 };
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-        }
+        act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "A", "B" }, new[] { 1, 2, 3 }, false);
+        act.Should().Throw<ArgumentException>("FieldsAndColumnWidthsLengthMismatch");
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void FieldBiggerThanCorrespondingColumnWidth1()
-        {
-            string[] fields = new[] { "AB", "CD" };
-            int[] columnWidths = new[] { 1, 2 };
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-        }
+        act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "AB", "CD" }, new[] { 1, 2 }, false);
+        act.Should().Throw<ArgumentOutOfRangeException>("FieldBiggerThanCorrespondingColumnWidth");
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void FieldBiggerThanCorrespondingColumnWidth2()
-        {
-            string[] fields = new[] { "AB", "CD" };
-            int[] columnWidths = new[] { 2, 1 };
-            StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-        }
-
-        #endregion
+        act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "AB", "CD" }, new[] { 2, 1 }, false);
+        act.Should().Throw<ArgumentOutOfRangeException>("FieldBiggerThanCorrespondingColumnWidth");
     }
 }

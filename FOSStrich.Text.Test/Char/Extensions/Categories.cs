@@ -1,64 +1,45 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class CharExtensionsTests
+public class CharExtensionsTests_Categories
 {
-    [TestClass]
-    public class Categories
+    [Theory]
+    [InlineData('a')]
+    [InlineData('A')]
+    [InlineData('1')]
+    [InlineData('.')]
+    [InlineData(' ')]
+    [InlineData('*')]
+    [InlineData('@')]
+    [InlineData('\t')]
+    public void IsInAnyCategoryNoneAll(char c)
     {
-        [TestMethod]
-        public void IsInAnyCategoryNone()
-        {
-            Assert.IsFalse('a'.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse('1'.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse('.'.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse(' '.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse('*'.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse('@'.IsInAnyCategory(CharCategories.None));
-            Assert.IsFalse('\t'.IsInAnyCategory(CharCategories.None));
-        }
+        c.IsInAnyCategory(CharCategories.None).Should().BeFalse();
+        c.IsInAnyCategory(CharCategories.All).Should().BeTrue();
+    }
 
-        [TestMethod]
-        public void IsInAnyCategoryAll()
-        {
-            Assert.IsTrue('a'.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue('1'.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue('.'.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue(' '.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue('*'.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue('@'.IsInAnyCategory(CharCategories.All));
-            Assert.IsTrue('\t'.IsInAnyCategory(CharCategories.All));
-        }
+    [Theory]
+    [InlineData('a', new[] { CharCategories.Letter, CharCategories.Lower })]
+    [InlineData('A', new[] { CharCategories.Letter, CharCategories.Upper })]
+    [InlineData('1', new[] { CharCategories.Digit, CharCategories.Number })]
+    [InlineData('.', new[] { CharCategories.Punctuation })]
+    [InlineData('!', new[] { CharCategories.Punctuation })]
+    [InlineData(' ', new[] { CharCategories.Separator, CharCategories.WhiteSpace })]
+    [InlineData('\t', new[] { CharCategories.Control, CharCategories.WhiteSpace })]
+    [InlineData('+', new[] { CharCategories.Symbol })]
+    [InlineData('<', new[] { CharCategories.Symbol })]
+    public void IsInAnyCategoryVarious(char c, CharCategories[] categories)
+    {
+        foreach (var category in categories)
+            c.IsInAnyCategory(category).Should().BeTrue();
 
-        [TestMethod]
-        public void IsInAnyCategoryVarious()
-        {
-            AssertChar('a', CharCategories.Letter, CharCategories.Lower);
-            AssertChar('A', CharCategories.Letter, CharCategories.Upper);
+        c.IsInAnyCategory(
+                categories.Aggregate(CharCategories.None, (accumulate, category) => accumulate | category))
+            .Should()
+            .BeTrue();
 
-            AssertChar('1', CharCategories.Digit | CharCategories.Number);
-
-            AssertChar('.', CharCategories.Punctuation);
-            AssertChar('!', CharCategories.Punctuation);
-
-            AssertChar(' ', CharCategories.Separator | CharCategories.WhiteSpace);
-            AssertChar('\t', CharCategories.Control | CharCategories.Separator | CharCategories.WhiteSpace);
-
-            AssertChar('+', CharCategories.Symbol);
-            AssertChar('<', CharCategories.Symbol);
-
-            static void AssertChar(char c, params CharCategories[] categories)
-            {
-                foreach (var category in categories)
-                    Assert.IsTrue(c.IsInAnyCategory(category));
-
-                Assert.IsTrue(
-                    c.IsInAnyCategory(
-                        categories.Aggregate(CharCategories.None, (accumulate, category) => accumulate | category)));
-
-                Assert.IsFalse(
-                    c.IsInAnyCategory(
-                        categories.Aggregate(CharCategories.All, (accumulate, category) => accumulate ^ category)));
-            }
-        }
+        c.IsInAnyCategory(
+                categories.Aggregate(CharCategories.All, (accumulate, category) => accumulate ^ category))
+            .Should()
+            .BeFalse();
     }
 }

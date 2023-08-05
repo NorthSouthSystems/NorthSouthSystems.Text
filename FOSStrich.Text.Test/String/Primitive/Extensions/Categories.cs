@@ -1,32 +1,28 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringExtensionsTests
+public class StringExtensionsTests_WhereIsInAnyCategory
 {
-    [TestClass]
-    public class WhereIsInAnyCategory
+    [Theory]
+    [InlineData("a1b2c3d", CharCategories.Digit | CharCategories.Letter, "a1b2c3d")]
+    [InlineData("a1b2c3d", CharCategories.Digit, "123")]
+    [InlineData("a1b2c3d", CharCategories.Letter, "abcd")]
+    [InlineData("a1b2c3d", CharCategories.Punctuation | CharCategories.WhiteSpace, "")]
+    [InlineData("a1b2-c3d", CharCategories.Digit | CharCategories.Letter, "a1b2c3d")]
+    [InlineData("a1b2-c3d", CharCategories.Punctuation, "-")]
+    public void Basic(string value, CharCategories categories, string shouldBe)
     {
-        [TestMethod]
-        public void Basic()
-        {
-            Assert.AreEqual("a1b2c3d", "a1b2c3d".WhereIsInAnyCategory(CharCategories.All));
-            Assert.AreEqual("a1b2c3d", "a1b2c3d".WhereIsInAnyCategory(CharCategories.Digit | CharCategories.Letter));
-            Assert.AreEqual("123", "a1b2c3d".WhereIsInAnyCategory(CharCategories.Digit));
-            Assert.AreEqual("abcd", "a1b2c3d".WhereIsInAnyCategory(CharCategories.Letter));
-            Assert.AreEqual(string.Empty, "a1b2c3d".WhereIsInAnyCategory(CharCategories.Punctuation | CharCategories.WhiteSpace));
-            Assert.AreEqual("a1b2c3d", "a1b2-c3d".WhereIsInAnyCategory(CharCategories.Digit | CharCategories.Letter));
-            Assert.AreEqual("-", "a1b2-c3d".WhereIsInAnyCategory(CharCategories.Punctuation));
-        }
+        value.WhereIsInAnyCategory(categories).Should().Be(shouldBe);
 
-        #region Exceptions
+        value.WhereIsInAnyCategory(CharCategories.All).Should().Be(value);
+        shouldBe.WhereIsInAnyCategory(categories).Should().Be(shouldBe);
+    }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            string s = null;
-            s.WhereIsInAnyCategory(CharCategories.All);
-        }
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-        #endregion
+        act = () => ((string)null).WhereIsInAnyCategory(CharCategories.All);
+        act.Should().Throw<ArgumentNullException>();
     }
 }

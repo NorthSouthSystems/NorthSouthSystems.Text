@@ -1,330 +1,241 @@
 ﻿namespace FOSStrich.Text;
 
-[TestClass]
 public class StringFieldWrapperTests
 {
-    [TestMethod]
+    [Fact]
     public void Basic()
     {
-        var wrapper = new StringFieldWrapper("A", "1");
-        Assert.AreEqual("A", wrapper.ColumnName);
-        Assert.AreEqual("1", wrapper.Value);
-        Assert.AreEqual("1", wrapper.ToString());
+        StringFieldWrapper wrapper;
 
-        wrapper = new StringFieldWrapper("A", null);
-        Assert.AreEqual(string.Empty, wrapper.ToString());
+        wrapper = new("A", "1");
+        wrapper.ColumnName.Should().Be("A");
+        wrapper.Value.Should().Be("1");
+        wrapper.ToString().Should().Be("1");
+
+        wrapper = new("A", null);
+        wrapper.ToString().Should().BeEmpty();
     }
 
-    [TestMethod]
+    [Fact]
     public void ConversionBool()
     {
-        var wrapper = new StringFieldWrapper("A", "TRUE");
-        Assert.AreEqual("TRUE", (string)wrapper);
-        Assert.IsTrue((bool)wrapper);
-        Assert.IsTrue(((bool?)wrapper).Value);
+        StringFieldWrapper wrapper;
 
-        wrapper = new StringFieldWrapper("A", "true");
-        Assert.AreEqual("true", (string)wrapper);
-        Assert.IsTrue((bool)wrapper);
-        Assert.IsTrue(((bool?)wrapper).Value);
+        wrapper = new("A", "TRUE");
+        ((string)wrapper).Should().Be("TRUE");
+        ((bool)wrapper).Should().BeTrue();
+        ((bool?)wrapper).Value.Should().BeTrue();
 
-        wrapper = new StringFieldWrapper("A", "FALSE");
-        Assert.AreEqual("FALSE", (string)wrapper);
-        Assert.IsFalse((bool)wrapper);
-        Assert.IsFalse(((bool?)wrapper).Value);
+        wrapper = new("A", "true");
+        ((string)wrapper).Should().Be("true");
+        ((bool)wrapper).Should().BeTrue();
+        ((bool?)wrapper).Value.Should().BeTrue();
+
+        wrapper = new("A", "FALSE");
+        ((string)wrapper).Should().Be("FALSE");
+        ((bool)wrapper).Should().BeFalse();
+        ((bool?)wrapper).Value.Should().BeFalse();
     }
 
-    [TestMethod]
+    [Fact]
     public void ConversionNumeric()
     {
-        var wrapper = new StringFieldWrapper("A", "7");
-        Assert.AreEqual("7", (string)wrapper);
-        Assert.AreEqual(7, (int)wrapper);
-        Assert.AreEqual(7, ((int?)wrapper).Value);
-        Assert.AreEqual(7u, (uint)wrapper);
-        Assert.AreEqual(7u, ((uint?)wrapper).Value);
-        Assert.AreEqual(7L, (long)wrapper);
-        Assert.AreEqual(7L, ((long?)wrapper).Value);
-        Assert.AreEqual(7ul, (ulong)wrapper);
-        Assert.AreEqual(7ul, ((ulong?)wrapper).Value);
-        Assert.AreEqual(7f, (float)wrapper);
-        Assert.AreEqual(7f, ((float?)wrapper).Value);
-        Assert.AreEqual(7d, (double)wrapper);
-        Assert.AreEqual(7d, ((double?)wrapper).Value);
-        Assert.AreEqual(7m, (decimal)wrapper);
-        Assert.AreEqual(7m, ((decimal?)wrapper).Value);
+        StringFieldWrapper wrapper;
 
-        wrapper = new StringFieldWrapper("A", "7000000000");
-        Assert.AreEqual("7000000000", (string)wrapper);
-        Assert.AreEqual(7000000000L, (long)wrapper);
-        Assert.AreEqual(7000000000L, ((long?)wrapper).Value);
-        Assert.AreEqual(7000000000ul, (ulong)wrapper);
-        Assert.AreEqual(7000000000ul, ((ulong?)wrapper).Value);
+        wrapper = new("A", "7");
+        ((string)wrapper).Should().Be("7");
+        ((int)wrapper).Should().Be(7);
+        ((int?)wrapper).Value.Should().Be(7);
+        ((uint)wrapper).Should().Be(7u);
+        ((uint?)wrapper).Value.Should().Be(7u);
+        ((long)wrapper).Should().Be(7L);
+        ((long?)wrapper).Value.Should().Be(7L);
+        ((ulong)wrapper).Should().Be(7ul);
+        ((ulong?)wrapper).Value.Should().Be(7ul);
+        ((float)wrapper).Should().Be(7f);
+        ((float?)wrapper).Value.Should().Be(7f);
+        ((double)wrapper).Should().Be(7d);
+        ((double?)wrapper).Value.Should().Be(7d);
+        ((decimal)wrapper).Should().Be(7m);
+        ((decimal?)wrapper).Value.Should().Be(7m);
 
-        wrapper = new StringFieldWrapper("A", "7.7");
-        Assert.AreEqual("7.7", (string)wrapper);
-        Assert.AreEqual(7.7f, (float)wrapper);
-        Assert.AreEqual(7.7f, ((float?)wrapper).Value);
-        Assert.AreEqual(7.7d, (double)wrapper);
-        Assert.AreEqual(7.7d, ((double?)wrapper).Value);
-        Assert.AreEqual(7.7m, (decimal)wrapper);
-        Assert.AreEqual(7.7m, ((decimal?)wrapper).Value);
+        wrapper = new("A", "7000000000");
+        ((string)wrapper).Should().Be("7000000000");
+        ((long)wrapper).Should().Be(7000000000L);
+        ((long?)wrapper).Value.Should().Be(7000000000L);
+        ((ulong)wrapper).Should().Be(7000000000ul);
+        ((ulong?)wrapper).Value.Should().Be(7000000000ul);
+
+        wrapper = new("A", "7.7");
+        ((string)wrapper).Should().Be("7.7");
+        ((float)wrapper).Should().Be(7.7f);
+        ((float?)wrapper).Value.Should().Be(7.7f);
+        ((double)wrapper).Should().Be(7.7d);
+        ((double?)wrapper).Value.Should().Be(7.7d);
+        ((decimal)wrapper).Should().Be(7.7m);
+        ((decimal?)wrapper).Value.Should().Be(7.7m);
     }
 
-    [TestMethod]
+    [Fact]
     public void ConversionDateTime()
     {
-        DateTime now = DateTime.Now;
-        DateTimeOffset nowOffset = DateTimeOffset.Now;
+        StringFieldWrapper wrapper;
 
-        var wrapper = new StringFieldWrapper("A", now.ToString("o"));
-        Assert.AreEqual(now.ToString("o"), (string)wrapper);
-        Assert.AreEqual(now, (DateTime)wrapper);
-        Assert.AreEqual(now, ((DateTime?)wrapper).Value);
+        var now = DateTime.Now;
+        var nowOffset = DateTimeOffset.Now;
 
-        wrapper = new StringFieldWrapper("A", nowOffset.ToString("o"));
-        Assert.AreEqual(nowOffset.ToString("o"), (string)wrapper);
-        Assert.AreEqual(nowOffset, (DateTimeOffset)wrapper);
-        Assert.AreEqual(nowOffset, ((DateTimeOffset?)wrapper).Value);
+        wrapper = new("A", now.ToString("o"));
+        ((string)wrapper).Should().Be(now.ToString("o"));
+        ((DateTime)wrapper).Should().Be(now);
+        ((DateTime?)wrapper).Value.Should().Be(now);
 
-        TimeSpan ts = now - now.Date;
+        wrapper = new("A", nowOffset.ToString("o"));
+        ((string)wrapper).Should().Be(nowOffset.ToString("o"));
+        ((DateTimeOffset)wrapper).Should().Be(nowOffset);
+        ((DateTimeOffset?)wrapper).Value.Should().Be(nowOffset);
+
+        var ts = now - now.Date;
         ts = new TimeSpan(ts.Hours, ts.Minutes, ts.Seconds);
         string tsXsd = string.Format("PT{0}H{1}M{2}S", ts.Hours, ts.Minutes, ts.Seconds);
 
-        wrapper = new StringFieldWrapper("A", tsXsd);
-        Assert.AreEqual(tsXsd, (string)wrapper);
-        Assert.AreEqual(ts, (TimeSpan)wrapper);
-        Assert.AreEqual(ts, ((TimeSpan?)wrapper).Value);
+        wrapper = new("A", tsXsd);
+        ((string)wrapper).Should().Be(tsXsd);
+        ((TimeSpan)wrapper).Should().Be(ts);
+        ((TimeSpan?)wrapper).Value.Should().Be(ts);
     }
 
-    [TestMethod]
+    [Fact]
     public void ConversionGuid()
     {
+        StringFieldWrapper wrapper;
+
         Guid guid = Guid.NewGuid();
 
-        var wrapper = new StringFieldWrapper("A", guid.ToString());
-        Assert.AreEqual(guid.ToString(), (string)wrapper);
-        Assert.AreEqual(guid, (Guid)wrapper);
-        Assert.AreEqual(guid, ((Guid?)wrapper).Value);
+        wrapper = new("A", guid.ToString());
+        ((string)wrapper).Should().Be(guid.ToString());
+        ((Guid)wrapper).Should().Be(guid);
+        ((Guid?)wrapper).Value.Should().Be(guid);
     }
 
-    [TestMethod]
+    [Fact]
     public void ConversionIsNull()
     {
-        AssertIsNull(null);
-        Assert.IsNull((string)((StringFieldWrapper)null));
+        StringFieldWrapper wrapper;
 
-        var wrapper = new StringFieldWrapper("A", null);
-        Assert.IsNull((string)wrapper);
-        AssertIsNull(wrapper);
+        wrapper = null;
+        ((string)wrapper).Should().BeNull();
+        ShouldBeNull(null);
 
-        wrapper = new StringFieldWrapper("A", string.Empty);
-        AssertIsNull(wrapper);
+        wrapper = new("A", null);
+        ((string)wrapper).Should().BeNull();
+        ShouldBeNull(wrapper);
 
-        wrapper = new StringFieldWrapper("A", " ");
-        AssertIsNull(wrapper);
+        wrapper = new("A", string.Empty);
+        ShouldBeNull(wrapper);
 
-        wrapper = new StringFieldWrapper("A", "  ");
-        AssertIsNull(wrapper);
+        wrapper = new("A", " ");
+        ShouldBeNull(wrapper);
+
+        wrapper = new("A", "  ");
+        ShouldBeNull(wrapper);
+
+        static void ShouldBeNull(StringFieldWrapper w)
+        {
+            ((bool?)w).Should().BeNull();
+            ((int?)w).Should().BeNull();
+            ((uint?)w).Should().BeNull();
+            ((long?)w).Should().BeNull();
+            ((ulong?)w).Should().BeNull();
+            ((float?)w).Should().BeNull();
+            ((double?)w).Should().BeNull();
+            ((decimal?)w).Should().BeNull();
+            ((DateTime?)w).Should().BeNull();
+            ((DateTimeOffset?)w).Should().BeNull();
+            ((TimeSpan?)w).Should().BeNull();
+            ((Guid?)w).Should().BeNull();
+        }
     }
 
-    private void AssertIsNull(StringFieldWrapper wrapper)
+    [Fact]
+    public void Exceptions()
     {
-        Assert.IsNull((bool?)wrapper);
-        Assert.IsNull((int?)wrapper);
-        Assert.IsNull((uint?)wrapper);
-        Assert.IsNull((long?)wrapper);
-        Assert.IsNull((ulong?)wrapper);
-        Assert.IsNull((float?)wrapper);
-        Assert.IsNull((double?)wrapper);
-        Assert.IsNull((decimal?)wrapper);
-        Assert.IsNull((DateTime?)wrapper);
-        Assert.IsNull((DateTimeOffset?)wrapper);
-        Assert.IsNull((TimeSpan?)wrapper);
-        Assert.IsNull((Guid?)wrapper);
+        Action act;
+        object x;
+
+        // wrapper = null
+
+        act = () => x = (bool)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (int)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (uint)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (long)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (ulong)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (float)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (double)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (decimal)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (DateTime)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (DateTimeOffset)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (TimeSpan)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (Guid)((StringFieldWrapper)null);
+        act.Should().Throw<ArgumentNullException>();
+
+        // field = null
+
+        act = () => x = (bool)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (int)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (uint)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (long)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (ulong)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (float)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (double)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (decimal)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (DateTime)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (DateTimeOffset)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (TimeSpan)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
+
+        act = () => x = (Guid)(new StringFieldWrapper("A", null));
+        act.Should().Throw<ArgumentNullException>();
     }
-
-    #region Exceptions
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionBoolArgumentNull1()
-    {
-        var x = (bool)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionBoolArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (bool)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionIntArgumentNull1()
-    {
-        var x = (int)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionIntArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (int)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionUIntArgumentNull1()
-    {
-        var x = (uint)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionUIntArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (uint)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionLongArgumentNull1()
-    {
-        var x = (long)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionLongArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (long)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionULongArgumentNull1()
-    {
-        var x = (ulong)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionULongArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (ulong)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionFloatArgumentNull1()
-    {
-        var x = (float)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionFloatArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (float)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDoubleArgumentNull1()
-    {
-        var x = (double)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDoubleArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (double)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDecimalArgumentNull1()
-    {
-        var x = (decimal)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDecimalArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (decimal)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDateTimeArgumentNull1()
-    {
-        var x = (DateTime)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDateTimeArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (DateTime)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDateTimeOffsetArgumentNull1()
-    {
-        var x = (DateTimeOffset)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionDateTimeOffsetArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (DateTimeOffset)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionTimeSpanArgumentNull1()
-    {
-        var x = (TimeSpan)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionTimeSpanArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (TimeSpan)wrapper;
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionGuidArgumentNull1()
-    {
-        var x = (Guid)((StringFieldWrapper)null);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void ConversionGuidArgumentNull2()
-    {
-        var wrapper = new StringFieldWrapper("A", null);
-        var x = (Guid)wrapper;
-    }
-
-    #endregion
 }

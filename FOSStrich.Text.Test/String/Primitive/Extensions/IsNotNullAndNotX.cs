@@ -1,26 +1,22 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringExtensionsTests
+public class StringExtensionsTests_IsNotNullAndNotX
 {
-    [TestClass]
-    public class IsNotNullAndNotX
+    [Fact]
+    public void IsNotNullAndNotEmpty()
     {
-        [TestMethod]
-        public void IsNotNullAndNotEmpty()
-        {
-            Assert.IsFalse(StringExtensions.IsNotNullAndNotEmpty(null));
-            Assert.IsFalse(StringExtensions.IsNotNullAndNotEmpty(string.Empty));
-            Assert.IsTrue(StringExtensions.IsNotNullAndNotEmpty("a"));
-        }
+        StringExtensions.IsNotNullAndNotEmpty(null).Should().BeFalse();
+        StringExtensions.IsNotNullAndNotEmpty(string.Empty).Should().BeFalse();
+        StringExtensions.IsNotNullAndNotEmpty("a").Should().BeTrue();
+    }
 
-        [TestMethod]
-        public void IsNotNullAndNotWhiteSpace()
-        {
-            Assert.IsFalse(StringExtensions.IsNotNullAndNotWhiteSpace(null));
-            Assert.IsFalse(StringExtensions.IsNotNullAndNotWhiteSpace(string.Empty));
-            Assert.IsFalse(StringExtensions.IsNotNullAndNotWhiteSpace(" "));
-            Assert.IsFalse(StringExtensions.IsNotNullAndNotWhiteSpace(Environment.NewLine));
-            Assert.IsTrue(StringExtensions.IsNotNullAndNotWhiteSpace("a"));
-        }
+    [Fact]
+    public void IsNotNullAndNotWhiteSpace()
+    {
+        StringExtensions.IsNotNullAndNotWhiteSpace(null).Should().BeFalse();
+        StringExtensions.IsNotNullAndNotWhiteSpace(string.Empty).Should().BeFalse();
+        StringExtensions.IsNotNullAndNotWhiteSpace(" ").Should().BeFalse();
+        StringExtensions.IsNotNullAndNotWhiteSpace(Environment.NewLine).Should().BeFalse();
+        StringExtensions.IsNotNullAndNotWhiteSpace("a").Should().BeTrue();
     }
 }

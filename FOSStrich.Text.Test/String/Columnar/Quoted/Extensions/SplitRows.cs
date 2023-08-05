@@ -1,64 +1,52 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringQuotedExtensionsTests
+public class StringQuotedExtensionsTests_SplitRows
 {
-    [TestClass]
-    public class SplitRows
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            string[][] splits = string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.Csv.NewRow)
-                .SplitQuotedRows(StringQuotedSignals.Csv)
-                .ToArray();
+        string[][] splits = string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.Csv.NewRow)
+            .SplitQuotedRows(StringQuotedSignals.Csv)
+            .ToArray();
 
-            Assert.AreEqual(3, splits.Length);
+        splits.Length.Should().Be(3);
 
-            Assert.AreEqual(3, splits[0].Length);
-            Assert.AreEqual("a", splits[0][0]);
-            Assert.AreEqual("b", splits[0][1]);
-            Assert.AreEqual("c", splits[0][2]);
+        splits[0].Length.Should().Be(3);
+        splits[0][0].Should().Be("a");
+        splits[0][1].Should().Be("b");
+        splits[0][2].Should().Be("c");
 
-            Assert.AreEqual(3, splits[1].Length);
-            Assert.AreEqual("d", splits[1][0]);
-            Assert.AreEqual("e", splits[1][1]);
-            Assert.AreEqual("f", splits[1][2]);
+        splits[1].Length.Should().Be(3);
+        splits[1][0].Should().Be("d");
+        splits[1][1].Should().Be("e");
+        splits[1][2].Should().Be("f");
 
-            Assert.AreEqual(3, splits[2].Length);
-            Assert.AreEqual("g", splits[2][0]);
-            Assert.AreEqual("h", splits[2][1]);
-            Assert.AreEqual("i", splits[2][2]);
+        splits[2].Length.Should().Be(3);
+        splits[2][0].Should().Be("g");
+        splits[2][1].Should().Be("h");
+        splits[2][2].Should().Be("i");
 
-            splits = string.Format("a,b,c{0}", StringQuotedSignals.Csv.NewRow)
-                .SplitQuotedRows(StringQuotedSignals.Csv)
-                .ToArray();
+        splits = string.Format("a,b,c{0}", StringQuotedSignals.Csv.NewRow)
+            .SplitQuotedRows(StringQuotedSignals.Csv)
+            .ToArray();
 
-            Assert.AreEqual(1, splits.Length);
+        splits.Length.Should().Be(1);
 
-            Assert.AreEqual(3, splits[0].Length);
-            Assert.AreEqual("a", splits[0][0]);
-            Assert.AreEqual("b", splits[0][1]);
-            Assert.AreEqual("c", splits[0][2]);
-        }
+        splits[0].Length.Should().Be(3);
+        splits[0][0].Should().Be("a");
+        splits[0][1].Should().Be("b");
+        splits[0][2].Should().Be("c");
+    }
 
-        #region Exceptions
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void RowsNull()
-        {
-            string s = null;
-            s.SplitQuotedRows(StringQuotedSignals.Csv).ToArray();
-        }
+        act = () => ((string)null).SplitQuotedRows(StringQuotedSignals.Csv).ToArray();
+        act.Should().Throw<ArgumentNullException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void SignalsNull()
-        {
-            string s = string.Empty;
-            s.SplitQuotedRows(null).ToArray();
-        }
-
-        #endregion
+        act = () => string.Empty.SplitQuotedRows(null).ToArray();
+        act.Should().Throw<ArgumentNullException>();
     }
 }

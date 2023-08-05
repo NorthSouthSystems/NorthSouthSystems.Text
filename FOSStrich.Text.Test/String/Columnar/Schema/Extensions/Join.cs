@@ -1,64 +1,48 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringSchemaExtensionsTests
+public class StringSchemaExtensionsTests_Join
 {
-    [TestClass]
-    public class Join
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
-            var b = new StringSchemaEntry("B", new[] { 2, 2, 2 });
-            var c = new StringSchemaEntry("C", new[] { 2, 2, 2 }, '-');
+        var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
+        var b = new StringSchemaEntry("B", new[] { 2, 2, 2 });
+        var c = new StringSchemaEntry("C", new[] { 2, 2, 2 }, '-');
 
-            string join = new[] { "1", "2", "3" }.JoinSchemaRow(a);
-            Assert.AreEqual("A123", join);
+        new[] { "1", "2", "3" }.JoinSchemaRow(a)
+            .Should().Be("A123");
 
-            join = new[] { "12", "34", "56" }.JoinSchemaRow(b);
-            Assert.AreEqual("B123456", join);
+        new[] { "12", "34", "56" }.JoinSchemaRow(b)
+            .Should().Be("B123456");
 
-            join = new[] { "1", "2", "3" }.JoinSchemaRow(b);
-            Assert.AreEqual("B1 2 3 ", join);
+        new[] { "1", "2", "3" }.JoinSchemaRow(b)
+            .Should().Be("B1 2 3 ");
 
-            join = new[] { "1", "2", "3" }.JoinSchemaRow(c);
-            Assert.AreEqual("C1-2-3-", join);
-        }
+        new[] { "1", "2", "3" }.JoinSchemaRow(c)
+            .Should().Be("C1-2-3-");
+    }
 
-        [TestMethod]
-        public void NullsAndEmptys()
-        {
-            var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
+    [Fact]
+    public void NullsAndEmptys()
+    {
+        var a = new StringSchemaEntry("A", new[] { 1, 1, 1 });
 
-            string join;
+        new[] { null, "2", "3" }.JoinSchemaRow(a)
+            .Should().Be("A 23");
 
-            join = new[] { null, "2", "3" }.JoinSchemaRow(a);
-            Assert.AreEqual("A 23", join);
+        new[] { "1", "2", string.Empty }.JoinSchemaRow(a)
+            .Should().Be("A12 ");
+    }
 
-            join = new[] { "1", "2", string.Empty }.JoinSchemaRow(a);
-            Assert.AreEqual("A12 ", join);
-        }
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-        #region Exceptions
+        act = () => ((string[])null).JoinSchemaRow(new StringSchemaEntry("A", new[] { 1, 1, 1 }));
+        act.Should().Throw<ArgumentNullException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            string[] split = null;
-            StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1, 1, 1 });
-
-            split.JoinSchemaRow(entry);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void EntryNull()
-        {
-            string[] split = new[] { "1" };
-            split.JoinSchemaRow(null);
-        }
-
-        #endregion
+        act = () => new[] { "1" }.JoinSchemaRow(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 }

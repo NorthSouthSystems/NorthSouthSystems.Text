@@ -1,9 +1,8 @@
 ﻿namespace FOSStrich.Text;
 
-[TestClass]
 public class StringSchemaTests
 {
-    [TestMethod]
+    [Fact]
     public void Basic()
     {
         var schema = new StringSchema();
@@ -12,98 +11,85 @@ public class StringSchemaTests
         schema.AddEntry(new StringSchemaEntry("C", new[] { 3, 3 }));
         schema.AddEntry(new StringSchemaEntry("DE", new[] { 4, 4 }));
 
-        var entry = schema.GetEntryForRow("Afoo");
+        StringSchemaEntry entry;
 
-        Assert.AreEqual("A", entry.Header);
-        CollectionAssert.AreEqual(new[] { 3 }, entry.Widths);
+        entry = schema.GetEntryForRow("Afoo");
+        entry.Header.Should().Be("A");
+        entry.Widths.Should().BeEquivalentTo(new[] { 3 });
 
         entry = schema["A"];
-
-        Assert.AreEqual("A", entry.Header);
-        CollectionAssert.AreEqual(new[] { 3 }, entry.Widths);
+        entry.Header.Should().Be("A");
+        entry.Widths.Should().BeEquivalentTo(new[] { 3 });
 
         entry = schema.GetEntryForRow("Bfoobar");
-
-        Assert.AreEqual("B", entry.Header);
-        CollectionAssert.AreEqual(new[] { 6 }, entry.Widths);
+        entry.Header.Should().Be("B");
+        entry.Widths.Should().BeEquivalentTo(new[] { 6 });
 
         entry = schema["B"];
-
-        Assert.AreEqual("B", entry.Header);
-        CollectionAssert.AreEqual(new[] { 6 }, entry.Widths);
+        entry.Header.Should().Be("B");
+        entry.Widths.Should().BeEquivalentTo(new[] { 6 });
 
         entry = schema.GetEntryForRow("Cfoobar");
-
-        Assert.AreEqual("C", entry.Header);
-        CollectionAssert.AreEqual(new[] { 3, 3 }, entry.Widths);
+        entry.Header.Should().Be("C");
+        entry.Widths.Should().BeEquivalentTo(new[] { 3, 3 });
 
         entry = schema["C"];
-
-        Assert.AreEqual("C", entry.Header);
-        CollectionAssert.AreEqual(new[] { 3, 3 }, entry.Widths);
+        entry.Header.Should().Be("C");
+        entry.Widths.Should().BeEquivalentTo(new[] { 3, 3 });
 
         entry = schema.GetEntryForRow("DEfoosbars");
-
-        Assert.AreEqual("DE", entry.Header);
-        CollectionAssert.AreEqual(new[] { 4, 4 }, entry.Widths);
+        entry.Header.Should().Be("DE");
+        entry.Widths.Should().BeEquivalentTo(new[] { 4, 4 });
 
         entry = schema["DE"];
-
-        Assert.AreEqual("DE", entry.Header);
-        CollectionAssert.AreEqual(new[] { 4, 4 }, entry.Widths);
+        entry.Header.Should().Be("DE");
+        entry.Widths.Should().BeEquivalentTo(new[] { 4, 4 });
     }
 
-    #region Exceptions
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
-    public void AddEntryNullEntry()
+    [Fact]
+    public void Exceptions()
     {
-        var schema = new StringSchema();
-        schema.AddEntry(null);
-    }
+        Action act;
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void GetEntryForValueNoEntry1()
-    {
-        var schema = new StringSchema();
-        StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1 });
-        schema.AddEntry(entry);
-        schema.GetEntryForRow("Bfoo");
-    }
+        act = () => new StringSchema().AddEntry(null);
+        act.Should().Throw<ArgumentNullException>();
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void GetEntryForValueNoEntry2()
-    {
-        var schema = new StringSchema();
-        StringSchemaEntry entry = new StringSchemaEntry("AB", new[] { 1 });
-        schema.AddEntry(entry);
-        schema.GetEntryForRow("Afoo");
-    }
+        act = () =>
+        {
+            var schema = new StringSchema();
+            var entry = new StringSchemaEntry("A", new[] { 1 });
+            schema.AddEntry(entry);
+            schema.GetEntryForRow("Bfoo");
+        };
+        act.Should().Throw<ArgumentOutOfRangeException>("GetEntryForValueNoEntry");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void VerifyEntryOverlappedHeader1()
-    {
-        var schema = new StringSchema();
-        StringSchemaEntry entry = new StringSchemaEntry("A", new[] { 1 });
-        schema.AddEntry(entry);
-        entry = new StringSchemaEntry("AB", new[] { 1 });
-        schema.AddEntry(entry);
-    }
+        act = () =>
+        {
+            var schema = new StringSchema();
+            var entry = new StringSchemaEntry("AB", new[] { 1 });
+            schema.AddEntry(entry);
+            schema.GetEntryForRow("Afoo");
+        };
+        act.Should().Throw<ArgumentOutOfRangeException>("GetEntryForValueNoEntry");
 
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void VerifyEntryOverlappedHeader2()
-    {
-        var schema = new StringSchema();
-        StringSchemaEntry entry = new StringSchemaEntry("AB", new[] { 1 });
-        schema.AddEntry(entry);
-        entry = new StringSchemaEntry("A", new[] { 1 });
-        schema.AddEntry(entry);
-    }
+        act = () =>
+        {
+            var schema = new StringSchema();
+            var entry = new StringSchemaEntry("A", new[] { 1 });
+            schema.AddEntry(entry);
+            entry = new StringSchemaEntry("AB", new[] { 1 });
+            schema.AddEntry(entry);
+        };
+        act.Should().Throw<ArgumentOutOfRangeException>("VerifyEntryOverlappedHeader");
 
-    #endregion
+        act = () =>
+        {
+            var schema = new StringSchema();
+            var entry = new StringSchemaEntry("AB", new[] { 1 });
+            schema.AddEntry(entry);
+            entry = new StringSchemaEntry("A", new[] { 1 });
+            schema.AddEntry(entry);
+        };
+        act.Should().Throw<ArgumentOutOfRangeException>("VerifyEntryOverlappedHeader");
+    }
 }

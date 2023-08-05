@@ -1,51 +1,39 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringSchemaExtensionsTests
+public class StringSchemaExtensionsTests_Split
 {
-    [TestClass]
-    public class Split
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            var schema = new StringSchema();
-            schema.AddEntry(new StringSchemaEntry("A", new[] { 1, 1, 1 }));
-            schema.AddEntry(new StringSchemaEntry("B", new[] { 2, 2, 2 }));
-            schema.AddEntry(new StringSchemaEntry("CD", new[] { 3, 3, 3 }));
+        var schema = new StringSchema();
+        schema.AddEntry(new("A", new[] { 1, 1, 1 }));
+        schema.AddEntry(new("B", new[] { 2, 2, 2 }));
+        schema.AddEntry(new("CD", new[] { 3, 3, 3 }));
 
+        StringSchemaSplitResult split;
 
-            var split = "A123".SplitSchemaRow(schema);
-            Assert.AreEqual("A", split.Entry.Header);
-            CollectionAssert.AreEqual(new[] { "1", "2", "3" }, split.Result.Fields.Select(field => field.Value).ToArray());
+        split = "A123".SplitSchemaRow(schema);
+        split.Entry.Header.Should().Be("A");
+        split.Result.Fields.Select(field => field.Value).Should().BeEquivalentTo(new[] { "1", "2", "3" });
 
-            split = "B123456".SplitSchemaRow(schema);
-            Assert.AreEqual("B", split.Entry.Header);
-            CollectionAssert.AreEqual(new[] { "12", "34", "56" }, split.Result.Fields.Select(field => field.Value).ToArray());
+        split = "B123456".SplitSchemaRow(schema);
+        split.Entry.Header.Should().Be("B");
+        split.Result.Fields.Select(field => field.Value).Should().BeEquivalentTo(new[] { "12", "34", "56" });
 
-            split = "CD123456789".SplitSchemaRow(schema);
-            Assert.AreEqual("CD", split.Entry.Header);
-            CollectionAssert.AreEqual(new[] { "123", "456", "789" }, split.Result.Fields.Select(field => field.Value).ToArray());
-        }
+        split = "CD123456789".SplitSchemaRow(schema);
+        split.Entry.Header.Should().Be("CD");
+        split.Result.Fields.Select(field => field.Value).Should().BeEquivalentTo(new[] { "123", "456", "789" });
+    }
 
-        #region Exceptions
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            var schema = new StringSchema();
-            string value = null;
-            value.SplitSchemaRow(schema);
-        }
+        act = () => ((string)null).SplitSchemaRow(new());
+        act.Should().Throw<ArgumentNullException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void SchemaNull()
-        {
-            string value = "Afoo";
-            value.SplitSchemaRow(null);
-        }
-
-        #endregion
+        act = () => "Afoo".SplitSchemaRow(null);
+        act.Should().Throw<ArgumentNullException>();
     }
 }

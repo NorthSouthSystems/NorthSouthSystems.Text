@@ -1,17 +1,18 @@
 ﻿namespace FOSStrich.Text;
 
-[TestClass]
 public class StringSignalTrackerTests
 {
-    [TestMethod]
+    [Fact]
     public void Empty()
     {
-        StringSignalTracker tracker = new StringSignalTracker(string.Empty);
+        StringSignalTracker tracker;
+
+        tracker = new(string.Empty);
         EmptyBase(tracker);
         tracker.Reset();
         EmptyBase(tracker);
 
-        tracker = new StringSignalTracker(null);
+        tracker = new(null);
         EmptyBase(tracker);
         tracker.Reset();
         EmptyBase(tracker);
@@ -19,28 +20,30 @@ public class StringSignalTrackerTests
 
     private void EmptyBase(StringSignalTracker tracker)
     {
-        Assert.AreEqual(string.Empty, tracker.Signal);
+        tracker.Signal.Should().BeEmpty();
 
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
-
-        tracker.ProcessChar('a');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
+
+        tracker.ProcessChar('a');
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
     }
 
-    [TestMethod]
+    [Fact]
     public void SingleChar()
     {
-        StringSignalTracker tracker = new StringSignalTracker("a");
+        StringSignalTracker tracker;
+
+        tracker = new("a");
         SingleCharBase(tracker);
         tracker.Reset();
         SingleCharBase(tracker);
@@ -48,24 +51,26 @@ public class StringSignalTrackerTests
 
     private void SingleCharBase(StringSignalTracker tracker)
     {
-        Assert.AreEqual("a", tracker.Signal);
+        tracker.Signal.Should().Be("a");
 
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('b');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsTrue(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeTrue();
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiCharSimple()
     {
-        StringSignalTracker tracker = new StringSignalTracker("ab");
+        StringSignalTracker tracker;
+
+        tracker = new("ab");
         MultiCharSimpleBase(tracker);
         tracker.Reset();
         MultiCharSimpleBase(tracker);
@@ -73,36 +78,38 @@ public class StringSignalTrackerTests
 
     private void MultiCharSimpleBase(StringSignalTracker tracker)
     {
-        Assert.AreEqual("ab", tracker.Signal);
+        tracker.Signal.Should().Be("ab");
 
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('b');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('c');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('b');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsTrue(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeTrue();
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiCharComplex()
     {
-        StringSignalTracker tracker = new StringSignalTracker("abac");
+        StringSignalTracker tracker;
+
+        tracker = new("abac");
         MultiCharComplexBase(tracker);
         tracker.Reset();
         MultiCharComplexBase(tracker);
@@ -110,58 +117,59 @@ public class StringSignalTrackerTests
 
     private void MultiCharComplexBase(StringSignalTracker tracker)
     {
-        Assert.AreEqual("abac", tracker.Signal);
+        tracker.Signal.Should().Be("abac");
 
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('b');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('c');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('b');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('b');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('a');
-        Assert.IsTrue(tracker.IsCounting);
-        Assert.IsFalse(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeTrue();
+        tracker.IsTriggered.Should().BeFalse();
 
         tracker.ProcessChar('c');
-        Assert.IsFalse(tracker.IsCounting);
-        Assert.IsTrue(tracker.IsTriggered);
+        tracker.IsCounting.Should().BeFalse();
+        tracker.IsTriggered.Should().BeTrue();
     }
 
-    #region Exceptions
-
-    [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void ProcessCharAlreadyTriggered()
+    [Fact]
+    public void Exceptions()
     {
-        StringSignalTracker tracker = new StringSignalTracker("a");
-        tracker.ProcessChar('a');
-        tracker.ProcessChar(' ');
-    }
+        Action act;
 
-    #endregion
+        act = () =>
+        {
+            var tracker = new StringSignalTracker("a");
+            tracker.ProcessChar('a');
+            tracker.ProcessChar(' ');
+        };
+        act.Should().Throw<InvalidOperationException>("ProcessCharAlreadyTriggered");
+    }
 }

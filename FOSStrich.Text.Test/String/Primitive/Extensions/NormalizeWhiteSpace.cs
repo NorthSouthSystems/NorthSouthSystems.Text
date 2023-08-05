@@ -1,99 +1,72 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringExtensionsTests
+public class StringExtensionsTests_NormalizeWhiteSpace
 {
-    [TestClass]
-    public class NormalizeWhiteSpace
+    [Theory]
+    [InlineData("")]
+    [InlineData("A")]
+    [InlineData("No Changes")]
+    [InlineData("No Changes At All")]
+    public void NoChanges(string value) =>
+        value.NormalizeWhiteSpace().Should().Be(value);
+
+    [Theory]
+    [InlineData(" ", "")]
+    [InlineData(" A", "A")]
+    [InlineData("A ", "A")]
+    [InlineData(" A ", "A")]
+    [InlineData("  A  ", "A")]
+    [InlineData(" Changes ", "Changes")]
+    [InlineData("Lots  Of   Changes", "Lots Of Changes")]
+    [InlineData(("a{Environment.NewLine}b"), "a{Environment.NewLine}b")]
+    [InlineData(("a {Environment.NewLine}b"), "a{Environment.NewLine}b")]
+    [InlineData(("a{Environment.NewLine} b"), "a{Environment.NewLine}b")]
+    [InlineData(("a {Environment.NewLine} b"), "a{Environment.NewLine}b")]
+    [InlineData(("Lots\tOf{Environment.NewLine}Changes"), "Lots Of{Environment.NewLine}Changes")]
+    [InlineData((" Lots \t Of {Environment.NewLine} Changes "), "Lots Of{Environment.NewLine}Changes")]
+    public void ChangesNewLineRespect(string value, string shouldBe)
     {
-        [TestMethod]
-        public void NoChanges()
-        {
-            Assert.AreEqual("", "".NormalizeWhiteSpace());
-            Assert.AreEqual("A", "A".NormalizeWhiteSpace());
-            Assert.AreEqual("No Changes", "No Changes".NormalizeWhiteSpace());
-            Assert.AreEqual("No Changes At All", "No Changes At All".NormalizeWhiteSpace());
-        }
+        value = value.Replace("{Environment.NewLine}", Environment.NewLine);
+        shouldBe = shouldBe.Replace("{Environment.NewLine}", Environment.NewLine);
 
-        [TestMethod]
-        public void Changes()
-        {
-            Assert.AreEqual("", " ".NormalizeWhiteSpace());
-            Assert.AreEqual("A", " A".NormalizeWhiteSpace());
-            Assert.AreEqual("A", "A ".NormalizeWhiteSpace());
-            Assert.AreEqual("A", " A ".NormalizeWhiteSpace());
-            Assert.AreEqual("A", "  A  ".NormalizeWhiteSpace());
-            Assert.AreEqual("Changes", " Changes ".NormalizeWhiteSpace());
-            Assert.AreEqual("Lots Of Changes", "Lots  Of   Changes".NormalizeWhiteSpace());
-            Assert.AreEqual("Lots Of" + Environment.NewLine + "Changes", ("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace());
-            Assert.AreEqual("Lots Of Changes", ("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace(null));
-            Assert.AreEqual("Lots Of" + Environment.NewLine + "Changes", (" Lots \t Of " + Environment.NewLine + " Changes ").NormalizeWhiteSpace());
-            Assert.AreEqual("Lots Of Changes", (" Lots \t Of " + Environment.NewLine + " Changes ").NormalizeWhiteSpace(null));
-        }
+        value.NormalizeWhiteSpace().Should().Be(shouldBe);
+        new string(value.AsEnumerable().NormalizeWhiteSpace().ToArray()).Should().Be(shouldBe);
+    }
 
-        [TestMethod]
-        public void IEnumerableChanges()
-        {
-            Assert.AreEqual("", new string(" ".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("A", new string(" A".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("A", new string("A ".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("A", new string(" A ".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("A", new string("  A  ".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("Changes", new string(" Changes ".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("Lots Of Changes", new string("Lots  Of   Changes".AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("Lots Of" + Environment.NewLine + "Changes", new string(("Lots\tOf" + Environment.NewLine + "Changes").AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("Lots Of Changes", new string(("Lots\tOf" + Environment.NewLine + "Changes").AsEnumerable().NormalizeWhiteSpace(null).ToArray()));
-            Assert.AreEqual("Lots Of" + Environment.NewLine + "Changes", new string((" Lots \t Of " + Environment.NewLine + " Changes ").AsEnumerable().NormalizeWhiteSpace().ToArray()));
-            Assert.AreEqual("Lots Of Changes", new string((" Lots \t Of " + Environment.NewLine + " Changes ").AsEnumerable().NormalizeWhiteSpace(null).ToArray()));
-        }
+    [Theory]
+    [InlineData("\r", "")]
+    [InlineData("\n", "")]
+    [InlineData("\r\n", "")]
+    [InlineData("{Environment.NewLine}", "")]
+    [InlineData("a\rb", "a b")]
+    [InlineData("a\r b", "a b")]
+    [InlineData("a \rb", "a b")]
+    [InlineData("a \r b", "a b")]
+    [InlineData("a\nb", "a b")]
+    [InlineData("a\n b", "a b")]
+    [InlineData("a \nb", "a b")]
+    [InlineData("a \n b", "a b")]
+    [InlineData("a\r\nb", "a b")]
+    [InlineData("a\r\n b", "a b")]
+    [InlineData("a \r\nb", "a b")]
+    [InlineData("a \r\n b", "a b")]
+    [InlineData(("Lots\tOf{Environment.NewLine}Changes"), "Lots Of Changes")]
+    [InlineData((" Lots \t Of {Environment.NewLine} Changes "), "Lots Of Changes")]
+    public void ChangesNewLineNoRespect(string value, string shouldBe)
+    {
+        value = value.Replace("{Environment.NewLine}", Environment.NewLine);
+        shouldBe = shouldBe.Replace("{Environment.NewLine}", Environment.NewLine);
 
-        [TestMethod]
-        public void NewLineRespect()
-        {
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a" + Environment.NewLine + "b").NormalizeWhiteSpace());
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a " + Environment.NewLine + "b").NormalizeWhiteSpace());
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a" + Environment.NewLine + " b").NormalizeWhiteSpace());
-            Assert.AreEqual("a" + Environment.NewLine + "b", ("a " + Environment.NewLine + " b").NormalizeWhiteSpace());
-        }
+        value.NormalizeWhiteSpace(null).Should().Be(shouldBe);
+        new string(value.AsEnumerable().NormalizeWhiteSpace(null).ToArray()).Should().Be(shouldBe);
+    }
 
-        [TestMethod]
-        public void NewLineNoRespect()
-        {
-            Assert.AreEqual("", "\r".NormalizeWhiteSpace(null));
-            Assert.AreEqual("", "\n".NormalizeWhiteSpace(null));
-            Assert.AreEqual("", "\r\n".NormalizeWhiteSpace(null));
-            Assert.AreEqual("", Environment.NewLine.NormalizeWhiteSpace(null));
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-            Assert.AreEqual("a b", "a\rb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a\r b".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \rb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \r b".NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", "a\nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a\n b".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \n b".NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", "a\r\nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a\r\n b".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \r\nb".NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", "a \r\n b".NormalizeWhiteSpace(null));
-
-            Assert.AreEqual("a b", ("a" + Environment.NewLine + "b").NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", ("a " + Environment.NewLine + "b").NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", ("a" + Environment.NewLine + " b").NormalizeWhiteSpace(null));
-            Assert.AreEqual("a b", ("a " + Environment.NewLine + " b").NormalizeWhiteSpace(null));
-        }
-
-        #region Exceptions
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ThisNull()
-        {
-            string s = null;
-            s.NormalizeWhiteSpace();
-        }
-
-        #endregion
+        act = () => ((string)null).NormalizeWhiteSpace();
+        act.Should().Throw<ArgumentNullException>();
     }
 }

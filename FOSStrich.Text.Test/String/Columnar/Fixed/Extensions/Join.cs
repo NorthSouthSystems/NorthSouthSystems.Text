@@ -1,64 +1,58 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringFixedExtensionsTests
+public class StringFixedExtensionsTests_Join
 {
-    [TestClass]
-    public class Join
+    [Fact]
+    public void Basic()
     {
-        [TestMethod]
-        public void Basic()
-        {
-            string join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 });
-            Assert.AreEqual("ABC", join);
+        new[] { "A", "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 })
+            .Should().Be("ABC");
 
-            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', false);
-            Assert.AreEqual("ABC", join);
+        new[] { "A", "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', false)
+            .Should().Be("ABC");
 
-            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 1, 1 });
-            Assert.AreEqual("A BC", join);
+        new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 1, 1 })
+            .Should().Be("A BC");
 
-            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 1, 1 }, '-', false);
-            Assert.AreEqual("A-BC", join);
+        new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 1, 1 }, '-', false)
+            .Should().Be("A-BC");
 
-            join = new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 2, 2 });
-            Assert.AreEqual("A B C ", join);
+        new[] { "A", "B", "C" }.JoinFixedRow(new[] { 2, 2, 2 })
+            .Should().Be("A B C ");
 
-            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 2, 2, 2 });
-            Assert.AreEqual("ABCDEF", join);
+        new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 2, 2, 2 })
+            .Should().Be("ABCDEF");
 
-            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 3, 2, 2 }, '-', false);
-            Assert.AreEqual("AB-CDEF", join);
+        new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 3, 2, 2 }, '-', false)
+            .Should().Be("AB-CDEF");
 
-            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 4, 4, 4 }, '-', false);
-            Assert.AreEqual("AB--CD--EF--", join);
-        }
+        new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 4, 4, 4 }, '-', false)
+            .Should().Be("AB--CD--EF--");
+    }
 
-        [TestMethod]
-        public void NullsAndEmptys()
-        {
-            string join;
+    [Fact]
+    public void NullsAndEmptys()
+    {
+        new[] { null, "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 })
+            .Should().Be(" BC");
 
-            join = new[] { null, "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 });
-            Assert.AreEqual(" BC", join);
+        new[] { null, "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 }, '-')
+            .Should().Be("-BC");
 
-            join = new[] { null, "B", "C" }.JoinFixedRow(new[] { 1, 1, 1 }, '-');
-            Assert.AreEqual("-BC", join);
+        new[] { "A", "B", string.Empty }.JoinFixedRow(new[] { 1, 1, 1 })
+            .Should().Be("AB ");
 
-            join = new[] { "A", "B", string.Empty }.JoinFixedRow(new[] { 1, 1, 1 });
-            Assert.AreEqual("AB ", join);
+        new[] { "A", "B", string.Empty }.JoinFixedRow(new[] { 1, 1, 1 }, '-')
+            .Should().Be("AB-");
+    }
 
-            join = new[] { "A", "B", string.Empty }.JoinFixedRow(new[] { 1, 1, 1 }, '-');
-            Assert.AreEqual("AB-", join);
-        }
+    [Fact]
+    public void LeftToFit()
+    {
+        new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', true)
+            .Should().Be("ACE");
 
-        [TestMethod]
-        public void LeftToFit()
-        {
-            string join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 1, 1, 1 }, '-', true);
-            Assert.AreEqual("ACE", join);
-
-            join = new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 3, 3, 1 }, '-', true);
-            Assert.AreEqual("AB-CD-E", join);
-        }
+        new[] { "AB", "CD", "EF" }.JoinFixedRow(new[] { 3, 3, 1 }, '-', true)
+            .Should().Be("AB-CD-E");
     }
 }

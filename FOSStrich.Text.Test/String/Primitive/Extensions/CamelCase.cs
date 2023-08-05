@@ -1,66 +1,63 @@
 ﻿namespace FOSStrich.Text;
 
-public static partial class StringExtensionsTests
+public class StringExtensionsTests_CamelCase
 {
-    [TestClass]
-    public class CamelCase
+    [Theory]
+    [InlineData("DanTerry", "danTerry")]
+    [InlineData(" DanTerry", " danTerry")]
+    public void ToLower(string value, string shouldBe)
     {
-        [TestMethod]
-        public void ToLower()
-        {
-            Assert.AreEqual("danTerry", "DanTerry".ToLowerCamelCase());
-            Assert.AreEqual(" danTerry", " DanTerry".ToLowerCamelCase());
+        value.ToLowerCamelCase().Should().Be(shouldBe);
+        shouldBe.ToLowerCamelCase().Should().Be(shouldBe);
 
-            Assert.AreEqual("danTerry", new string("DanTerry".AsEnumerable().ToLowerCamelCase().ToArray()));
-            Assert.AreEqual(" danTerry", new string(" DanTerry".AsEnumerable().ToLowerCamelCase().ToArray()));
-        }
+        new string(value.AsEnumerable().ToLowerCamelCase().ToArray()).Should().Be(shouldBe);
+        new string(shouldBe.AsEnumerable().ToLowerCamelCase().ToArray()).Should().Be(shouldBe);
+    }
 
-        [TestMethod]
-        public void ToUpper()
-        {
-            Assert.AreEqual("DanTerry", "danTerry".ToUpperCamelCase());
-            Assert.AreEqual(" DanTerry", " danTerry".ToUpperCamelCase());
+    [Theory]
+    [InlineData("danTerry", "DanTerry")]
+    [InlineData(" danTerry", " DanTerry")]
+    public void ToUpper(string value, string shouldBe)
+    {
+        value.ToUpperCamelCase().Should().Be(shouldBe);
+        shouldBe.ToUpperCamelCase().Should().Be(shouldBe);
 
-            Assert.AreEqual("DanTerry", new string("danTerry".AsEnumerable().ToUpperCamelCase().ToArray()));
-            Assert.AreEqual(" DanTerry", new string(" danTerry".AsEnumerable().ToUpperCamelCase().ToArray()));
-        }
+        new string(value.AsEnumerable().ToUpperCamelCase().ToArray()).Should().Be(shouldBe);
+        new string(shouldBe.AsEnumerable().ToUpperCamelCase().ToArray()).Should().Be(shouldBe);
+    }
 
-        [TestMethod]
-        public void Space()
-        {
-            Assert.AreEqual(string.Empty, string.Empty.SpaceCamelCase());
-            Assert.AreEqual("Dan Terry", "DanTerry".SpaceCamelCase());
-            Assert.AreEqual("Dan Terry Dan Terry", "DanTerry DanTerry".SpaceCamelCase());
-            Assert.AreEqual("Dan Terry Dan Dan Terry Dan", "DanTerryDan DanTerryDan".SpaceCamelCase());
-            Assert.AreEqual("1 A", "1A".SpaceCamelCase());
-            Assert.AreEqual("123 A", "123A".SpaceCamelCase());
-            Assert.AreEqual("123 a", "123a".SpaceCamelCase());
-            Assert.AreEqual("A 1", "A1".SpaceCamelCase());
-            Assert.AreEqual("A 123", "A123".SpaceCamelCase());
-            Assert.AreEqual("a 123", "a123".SpaceCamelCase());
-            Assert.AreEqual("A 1 A", "A1A".SpaceCamelCase());
-            Assert.AreEqual("A 123 A", "A123A".SpaceCamelCase());
-            Assert.AreEqual("a 123 a", "a123a".SpaceCamelCase());
-        }
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("DanTerry", "Dan Terry")]
+    [InlineData("DanTerry DanTerry", "Dan Terry Dan Terry")]
+    [InlineData("DanTerryDan DanTerryDan", "Dan Terry Dan Dan Terry Dan")]
+    [InlineData("1A", "1 A")]
+    [InlineData("123A", "123 A")]
+    [InlineData("123a", "123 a")]
+    [InlineData("A1", "A 1")]
+    [InlineData("A123", "A 123")]
+    [InlineData("a123", "a 123")]
+    [InlineData("A1A", "A 1 A")]
+    [InlineData("A123A", "A 123 A")]
+    [InlineData("a123a", "a 123 a")]
+    public void Space(string value, string shouldBe)
+    {
+        value.SpaceCamelCase().Should().Be(shouldBe);
+        shouldBe.SpaceCamelCase().Should().Be(shouldBe);
+    }
 
-        #region Exceptions
+    [Fact]
+    public void Exceptions()
+    {
+        Action act;
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ToLowerThisNull()
-        {
-            string s = null;
-            s.ToLowerCamelCase();
-        }
+        act = () => ((string)null).ToLowerCamelCase();
+        act.Should().Throw<ArgumentNullException>();
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void SpaceThisNull()
-        {
-            string s = null;
-            s.SpaceCamelCase();
-        }
+        act = () => ((string)null).ToUpperCamelCase();
+        act.Should().Throw<ArgumentNullException>();
 
-        #endregion
+        act = () => ((string)null).SpaceCamelCase();
+        act.Should().Throw<ArgumentNullException>();
     }
 }
