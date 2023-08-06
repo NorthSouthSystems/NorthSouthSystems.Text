@@ -14,15 +14,15 @@ public class StringSchemaExtensionsTests_Split
 
         split = "A123".SplitSchemaRow(schema);
         split.Entry.Header.Should().Be("A");
-        split.Result.Fields.Select(field => field.Value).Should().BeEquivalentTo(new[] { "1", "2", "3" });
+        split.Result.Fields.Select(field => field.Value).Should().Equal(new[] { "1", "2", "3" });
 
         split = "B123456".SplitSchemaRow(schema);
         split.Entry.Header.Should().Be("B");
-        split.Result.Fields.Select(field => field.Value).Should().BeEquivalentTo(new[] { "12", "34", "56" });
+        split.Result.Fields.Select(field => field.Value).Should().Equal(new[] { "12", "34", "56" });
 
         split = "CD123456789".SplitSchemaRow(schema);
         split.Entry.Header.Should().Be("CD");
-        split.Result.Fields.Select(field => field.Value).Should().BeEquivalentTo(new[] { "123", "456", "789" });
+        split.Result.Fields.Select(field => field.Value).Should().Equal(new[] { "123", "456", "789" });
     }
 
     [Fact]

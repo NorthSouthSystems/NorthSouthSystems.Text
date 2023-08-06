@@ -6,34 +6,34 @@ public class StringFixedExtensionsTests_SplitRow
     public void Basic()
     {
         "ABC".SplitFixedRow(new[] { 1, 1, 1 })
-            .Should().BeEquivalentTo(new[] { "A", "B", "C" });
+            .Should().Equal(new[] { "A", "B", "C" });
 
         "ABC".SplitFixedRow(new[] { 1, 2 })
-            .Should().BeEquivalentTo(new[] { "A", "BC" });
+            .Should().Equal(new[] { "A", "BC" });
 
         "ABCD".SplitFixedRow(new[] { 1, 2, 1 })
-            .Should().BeEquivalentTo(new[] { "A", "BC", "D" });
+            .Should().Equal(new[] { "A", "BC", "D" });
 
         "ABCDEF".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().BeEquivalentTo(new[] { "AB", "CD", "EF" });
+            .Should().Equal(new[] { "AB", "CD", "EF" });
 
         "A B C ".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().BeEquivalentTo(new[] { "A", "B", "C" });
+            .Should().Equal(new[] { "A", "B", "C" });
 
         "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().BeEquivalentTo(new[] { "A-", "B-", "C-" });
+            .Should().Equal(new[] { "A-", "B-", "C-" });
 
         "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 }, '-')
-            .Should().BeEquivalentTo(new[] { "A", "B", "C" });
+            .Should().Equal(new[] { "A", "B", "C" });
 
         "A B   ".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().BeEquivalentTo(new[] { "A", "B", "" });
+            .Should().Equal(new[] { "A", "B", "" });
 
         "A-B---".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().BeEquivalentTo(new[] { "A-", "B-", "--" });
+            .Should().Equal(new[] { "A-", "B-", "--" });
 
         "A-B---".SplitFixedRow(new[] { 2, 2, 2 }, '-')
-            .Should().BeEquivalentTo(new[] { "A", "B", "" });
+            .Should().Equal(new[] { "A", "B", "" });
     }
 
     [Fact]

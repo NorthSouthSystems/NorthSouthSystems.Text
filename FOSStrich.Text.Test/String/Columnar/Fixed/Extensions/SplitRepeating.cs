@@ -7,18 +7,18 @@ public class StringFixedExtensionsTests_SplitRepeating
     {
         string[][] rowsFields = "123".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
         rowsFields.Length.Should().Be(1);
-        rowsFields[0].Should().BeEquivalentTo(new[] { "1", "2", "3" });
+        rowsFields[0].Should().Equal(new[] { "1", "2", "3" });
 
         rowsFields = "123456".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
         rowsFields.Length.Should().Be(2);
-        rowsFields[0].Should().BeEquivalentTo(new[] { "1", "2", "3" });
-        rowsFields[1].Should().BeEquivalentTo(new[] { "4", "5", "6" });
+        rowsFields[0].Should().Equal(new[] { "1", "2", "3" });
+        rowsFields[1].Should().Equal(new[] { "4", "5", "6" });
 
         rowsFields = "123456789".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
         rowsFields.Length.Should().Be(3);
-        rowsFields[0].Should().BeEquivalentTo(new[] { "1", "2", "3" });
-        rowsFields[1].Should().BeEquivalentTo(new[] { "4", "5", "6" });
-        rowsFields[2].Should().BeEquivalentTo(new[] { "7", "8", "9" });
+        rowsFields[0].Should().Equal(new[] { "1", "2", "3" });
+        rowsFields[1].Should().Equal(new[] { "4", "5", "6" });
+        rowsFields[2].Should().Equal(new[] { "7", "8", "9" });
     }
 
     [Fact]
@@ -26,21 +26,21 @@ public class StringFixedExtensionsTests_SplitRepeating
     {
         string[][] rowsFields = "1 34 67 9".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
         rowsFields.Length.Should().Be(3);
-        rowsFields[0].Should().BeEquivalentTo(new[] { "1", "", "3" });
-        rowsFields[1].Should().BeEquivalentTo(new[] { "4", "", "6" });
-        rowsFields[2].Should().BeEquivalentTo(new[] { "7", "", "9" });
+        rowsFields[0].Should().Equal(new[] { "1", "", "3" });
+        rowsFields[1].Should().Equal(new[] { "4", "", "6" });
+        rowsFields[2].Should().Equal(new[] { "7", "", "9" });
 
         rowsFields = "1-34-67-9".SplitFixedRepeating(new[] { 1, 1, 1 }).ToArray();
         rowsFields.Length.Should().Be(3);
-        rowsFields[0].Should().BeEquivalentTo(new[] { "1", "-", "3" });
-        rowsFields[1].Should().BeEquivalentTo(new[] { "4", "-", "6" });
-        rowsFields[2].Should().BeEquivalentTo(new[] { "7", "-", "9" });
+        rowsFields[0].Should().Equal(new[] { "1", "-", "3" });
+        rowsFields[1].Should().Equal(new[] { "4", "-", "6" });
+        rowsFields[2].Should().Equal(new[] { "7", "-", "9" });
 
         rowsFields = "1-34-67-9".SplitFixedRepeating(new[] { 1, 1, 1 }, '-').ToArray();
         rowsFields.Length.Should().Be(3);
-        rowsFields[0].Should().BeEquivalentTo(new[] { "1", "", "3" });
-        rowsFields[1].Should().BeEquivalentTo(new[] { "4", "", "6" });
-        rowsFields[2].Should().BeEquivalentTo(new[] { "7", "", "9" });
+        rowsFields[0].Should().Equal(new[] { "1", "", "3" });
+        rowsFields[1].Should().Equal(new[] { "4", "", "6" });
+        rowsFields[2].Should().Equal(new[] { "7", "", "9" });
     }
 
     [Fact]

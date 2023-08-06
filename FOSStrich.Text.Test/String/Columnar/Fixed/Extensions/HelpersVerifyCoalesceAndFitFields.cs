@@ -12,10 +12,10 @@ public class StringFixedExtensionsTests_VerifyCoalesceAndFitFields
         Array.Copy(fields, fieldsExpected, fields.Length);
 
         StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, false);
-        fields.Should().BeEquivalentTo(fieldsExpected);
+        fields.Should().Equal(fieldsExpected);
 
         StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, true);
-        fields.Should().BeEquivalentTo(fieldsExpected);
+        fields.Should().Equal(fieldsExpected);
     }
 
     [Fact]
@@ -25,13 +25,13 @@ public class StringFixedExtensionsTests_VerifyCoalesceAndFitFields
         int[] columnWidths = new[] { 1, 1, 1 };
 
         StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { null, "B", "C" }, columnWidths, false);
-        fields.Should().BeEquivalentTo(new[] { string.Empty, "B", "C" });
+        fields.Should().Equal(new[] { string.Empty, "B", "C" });
 
         StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { "A", null, "C" }, columnWidths, false);
-        fields.Should().BeEquivalentTo(new[] { "A", string.Empty, "C" });
+        fields.Should().Equal(new[] { "A", string.Empty, "C" });
 
         StringFixedExtensions.VerifyCoalesceAndFitFields(fields = new[] { "A", "B", null }, columnWidths, false);
-        fields.Should().BeEquivalentTo(new[] { "A", "B", string.Empty });
+        fields.Should().Equal(new[] { "A", "B", string.Empty });
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class StringFixedExtensionsTests_VerifyCoalesceAndFitFields
         int[] columnWidths = new[] { 1, 2, 2 };
 
         StringFixedExtensions.VerifyCoalesceAndFitFields(fields, columnWidths, true);
-        fields.Should().BeEquivalentTo(new[] { "A", "BC", "DE" });
+        fields.Should().Equal(new[] { "A", "BC", "DE" });
     }
 
     [Fact]
