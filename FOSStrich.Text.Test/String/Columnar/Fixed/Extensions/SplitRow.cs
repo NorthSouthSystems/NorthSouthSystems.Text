@@ -6,34 +6,34 @@ public class StringFixedExtensionsTests_SplitRow
     public void Basic()
     {
         "ABC".SplitFixedRow(new[] { 1, 1, 1 })
-            .Should().Equal(new[] { "A", "B", "C" });
+            .Should().Equal("A", "B", "C");
 
         "ABC".SplitFixedRow(new[] { 1, 2 })
-            .Should().Equal(new[] { "A", "BC" });
+            .Should().Equal("A", "BC");
 
         "ABCD".SplitFixedRow(new[] { 1, 2, 1 })
-            .Should().Equal(new[] { "A", "BC", "D" });
+            .Should().Equal("A", "BC", "D");
 
         "ABCDEF".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().Equal(new[] { "AB", "CD", "EF" });
+            .Should().Equal("AB", "CD", "EF");
 
         "A B C ".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().Equal(new[] { "A", "B", "C" });
+            .Should().Equal("A", "B", "C");
 
         "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().Equal(new[] { "A-", "B-", "C-" });
+            .Should().Equal("A-", "B-", "C-");
 
         "A-B-C-".SplitFixedRow(new[] { 2, 2, 2 }, '-')
-            .Should().Equal(new[] { "A", "B", "C" });
+            .Should().Equal("A", "B", "C");
 
         "A B   ".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().Equal(new[] { "A", "B", "" });
+            .Should().Equal("A", "B", "");
 
         "A-B---".SplitFixedRow(new[] { 2, 2, 2 })
-            .Should().Equal(new[] { "A-", "B-", "--" });
+            .Should().Equal("A-", "B-", "--");
 
         "A-B---".SplitFixedRow(new[] { 2, 2, 2 }, '-')
-            .Should().Equal(new[] { "A", "B", "" });
+            .Should().Equal("A", "B", "");
     }
 
     [Fact]

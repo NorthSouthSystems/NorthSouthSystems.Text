@@ -15,35 +15,35 @@ public class StringSchemaTests
 
         entry = schema.GetEntryForRow("Afoo");
         entry.Header.Should().Be("A");
-        entry.Widths.Should().Equal(new[] { 3 });
+        entry.Widths.Should().Equal(3);
 
         entry = schema["A"];
         entry.Header.Should().Be("A");
-        entry.Widths.Should().Equal(new[] { 3 });
+        entry.Widths.Should().Equal(3);
 
         entry = schema.GetEntryForRow("Bfoobar");
         entry.Header.Should().Be("B");
-        entry.Widths.Should().Equal(new[] { 6 });
+        entry.Widths.Should().Equal(6);
 
         entry = schema["B"];
         entry.Header.Should().Be("B");
-        entry.Widths.Should().Equal(new[] { 6 });
+        entry.Widths.Should().Equal(6);
 
         entry = schema.GetEntryForRow("Cfoobar");
         entry.Header.Should().Be("C");
-        entry.Widths.Should().Equal(new[] { 3, 3 });
+        entry.Widths.Should().Equal(3, 3);
 
         entry = schema["C"];
         entry.Header.Should().Be("C");
-        entry.Widths.Should().Equal(new[] { 3, 3 });
+        entry.Widths.Should().Equal(3, 3);
 
         entry = schema.GetEntryForRow("DEfoosbars");
         entry.Header.Should().Be("DE");
-        entry.Widths.Should().Equal(new[] { 4, 4 });
+        entry.Widths.Should().Equal(4, 4);
 
         entry = schema["DE"];
         entry.Header.Should().Be("DE");
-        entry.Widths.Should().Equal(new[] { 4, 4 });
+        entry.Widths.Should().Equal(4, 4);
     }
 
     [Fact]

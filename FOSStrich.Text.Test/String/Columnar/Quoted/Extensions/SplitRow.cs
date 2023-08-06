@@ -19,39 +19,39 @@ public class StringQuotedExtensionsTests_SplitRow
         Split(string.Empty, signals).Length.Should().Be(0);
 
         Split("{0}", signals)
-            .Should().Equal(new[] { string.Empty, string.Empty });
+            .Should().Equal(string.Empty, string.Empty);
 
         Split("{0}{0}", signals)
-            .Should().Equal(new[] { string.Empty, string.Empty, string.Empty });
+            .Should().Equal(string.Empty, string.Empty, string.Empty);
 
         Split("a", signals)
-            .Should().Equal(new[] { "a" });
+            .Should().Equal("a");
 
         Split("a{0}b", signals)
-            .Should().Equal(new[] { "a", "b" });
+            .Should().Equal("a", "b");
 
         Split("a{0}b{0}c", signals)
-            .Should().Equal(new[] { "a", "b", "c" });
+            .Should().Equal("a", "b", "c");
 
         Split("a{0}b{0}", signals)
-            .Should().Equal(new[] { "a", "b", string.Empty });
+            .Should().Equal("a", "b", string.Empty);
 
         Split("a{0}{0}c", signals)
-            .Should().Equal(new[] { "a", string.Empty, "c" });
+            .Should().Equal("a", string.Empty, "c");
 
         if (signals.NewRowIsSpecified)
         {
             Split("{2}", signals)
-                .Should().Equal(new[] { string.Empty });
+                .Should().Equal(string.Empty);
 
             Split("a{2}", signals)
-                .Should().Equal(new[] { "a" });
+                .Should().Equal("a");
 
             Split("a{0}b{2}", signals)
-                .Should().Equal(new[] { "a", "b" });
+                .Should().Equal("a", "b");
 
             Split("a{0}b{0}c{2}", signals)
-                .Should().Equal(new[] { "a", "b", "c" });
+                .Should().Equal("a", "b", "c");
         }
     }
 
@@ -76,102 +76,102 @@ public class StringQuotedExtensionsTests_SplitRow
     private static void QuotedBaseQuotingUnnecessary(StringQuotedSignals signals)
     {
         Split("{1}{1}", signals)
-            .Should().Equal(new[] { string.Empty });
+            .Should().Equal(string.Empty);
 
         Split("{1}a{1}", signals)
-            .Should().Equal(new[] { "a" });
+            .Should().Equal("a");
 
         Split("{1}a{1}{0}{1}b{1}", signals)
-            .Should().Equal(new[] { "a", "b" });
+            .Should().Equal("a", "b");
 
         Split("{1}a{1}{0}{1}b{1}{0}{1}c{1}", signals)
-            .Should().Equal(new[] { "a", "b", "c" });
+            .Should().Equal("a", "b", "c");
 
         Split("{1}a{1}{0}b{0}{1}c{1}", signals)
-            .Should().Equal(new[] { "a", "b", "c" });
+            .Should().Equal("a", "b", "c");
 
         Split("a{0}{1}b{1}{0}c", signals)
-            .Should().Equal(new[] { "a", "b", "c" });
+            .Should().Equal("a", "b", "c");
 
         Split("a{0}{1}{1}{0}c", signals)
-            .Should().Equal(new[] { "a", string.Empty, "c" });
+            .Should().Equal("a", string.Empty, "c");
 
         Split("{1}a{1}{0}{1}b{1}{0}", signals)
-            .Should().Equal(new[] { "a", "b", string.Empty });
+            .Should().Equal("a", "b", string.Empty);
 
         Split("{1}a{1}{0}{1}b{1}{0}{1}{1}", signals)
-            .Should().Equal(new[] { "a", "b", string.Empty });
+            .Should().Equal("a", "b", string.Empty);
     }
 
     private static void QuotedBaseQuotingNecessary(StringQuotedSignals signals)
     {
         Split("{1}{1}{1}{1}", signals)
-            .Should().Equal(new[] { signals.Quote });
+            .Should().Equal(signals.Quote);
 
         Split("{1}a{0}{1}", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter });
+            .Should().Equal("a" + signals.Delimiter);
 
         Split("{1}a{0}a{1}", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a" });
+            .Should().Equal("a" + signals.Delimiter + "a");
 
         Split("{1}a{0}a{1}{0}b", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b" });
+            .Should().Equal("a" + signals.Delimiter + "a", "b");
 
         Split("{1}a{0}a{1}{0}{1}b{0}{1}", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b" + signals.Delimiter });
+            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter);
 
         Split("{1}a{0}a{1}{0}{1}b{0}b{1}", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b" });
+            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b");
 
         Split("{1}a{0}a{1}{0}{1}b{0}b{1}{0}c", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" });
+            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c");
 
         Split("{1}a{0}a{1}{0}{1}b{0}b{1}{0}{1}c{0}{1}", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" + signals.Delimiter });
+            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" + signals.Delimiter);
 
         Split("{1}a{0}a{1}{0}{1}b{0}b{1}{0}{1}c{0}c{1}", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" + signals.Delimiter + "c" });
+            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" + signals.Delimiter + "c");
 
         Split("{1}a{0}{1}{0}b{0}c", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter, "b", "c" });
+            .Should().Equal("a" + signals.Delimiter, "b", "c");
 
         Split("a{0}{1}b{0}{1}{0}c", signals)
-            .Should().Equal(new[] { "a", "b" + signals.Delimiter, "c" });
+            .Should().Equal("a", "b" + signals.Delimiter, "c");
 
         Split("a{0}b{0}{1}c{0}{1}", signals)
-            .Should().Equal(new[] { "a", "b", "c" + signals.Delimiter });
+            .Should().Equal("a", "b", "c" + signals.Delimiter);
 
         Split("{1}a{0}a{1}{0}b{0}c", signals)
-            .Should().Equal(new[] { "a" + signals.Delimiter + "a", "b", "c" });
+            .Should().Equal("a" + signals.Delimiter + "a", "b", "c");
 
         Split("a{0}{1}b{0}b{1}{0}c", signals)
-            .Should().Equal(new[] { "a", "b" + signals.Delimiter + "b", "c" });
+            .Should().Equal("a", "b" + signals.Delimiter + "b", "c");
 
         Split("a{0}b{0}{1}c{0}c{1}", signals)
-            .Should().Equal(new[] { "a", "b", "c" + signals.Delimiter + "c" });
+            .Should().Equal("a", "b", "c" + signals.Delimiter + "c");
 
         Split("a{0}b{0}c{0}{1}{0}{1}", signals)
-            .Should().Equal(new[] { "a", "b", "c", signals.Delimiter });
+            .Should().Equal("a", "b", "c", signals.Delimiter);
 
         if (signals.NewRowIsSpecified)
         {
             Split("{1}a{2}{1}", signals)
-                .Should().Equal(new[] { "a" + signals.NewRow });
+                .Should().Equal("a" + signals.NewRow);
 
             Split("{1}a{2}a{1}", signals)
-                .Should().Equal(new[] { "a" + signals.NewRow + "a" });
+                .Should().Equal("a" + signals.NewRow + "a");
 
             Split("{1}a{2}a{1}{0}b", signals)
-                .Should().Equal(new[] { "a" + signals.NewRow + "a", "b" });
+                .Should().Equal("a" + signals.NewRow + "a", "b");
 
             Split("{1}a{2}a{1}{0}{1}b{2}{1}", signals)
-                .Should().Equal(new[] { "a" + signals.NewRow + "a", "b" + signals.NewRow });
+                .Should().Equal("a" + signals.NewRow + "a", "b" + signals.NewRow);
 
             Split("{1}a{2}a{1}{0}{1}b{2}b{1}", signals)
-                .Should().Equal(new[] { "a" + signals.NewRow + "a", "b" + signals.NewRow + "b" });
+                .Should().Equal("a" + signals.NewRow + "a", "b" + signals.NewRow + "b");
 
             Split("{1}a{2}a{1}{0}{1}b{2}b{1}{0}{1}{2}{1}", signals)
-                .Should().Equal(new[] { "a" + signals.NewRow + "a", "b" + signals.NewRow + "b", signals.NewRow });
+                .Should().Equal("a" + signals.NewRow + "a", "b" + signals.NewRow + "b", signals.NewRow);
         }
     }
 
@@ -191,84 +191,84 @@ public class StringQuotedExtensionsTests_SplitRow
             throw new NotSupportedException();
 
         Split("{1}{1}a", signals)
-            .Should().Equal(new[] { signals.Quote + "a" });
+            .Should().Equal(signals.Quote + "a");
 
         Split("{1}{1}{1}a{1}", signals)
-            .Should().Equal(new[] { signals.Quote + "a" });
+            .Should().Equal(signals.Quote + "a");
 
         Split("{1}{1}{1}{1}a", signals)
-            .Should().Equal(new[] { signals.Quote + signals.Quote + "a" });
+            .Should().Equal(signals.Quote + signals.Quote + "a");
 
         Split("{1}{1}{1}{1}{1}a{1}", signals)
-            .Should().Equal(new[] { signals.Quote + signals.Quote + "a" });
+            .Should().Equal(signals.Quote + signals.Quote + "a");
 
         Split("{1}{1}a{0}b", signals)
-            .Should().Equal(new[] { signals.Quote + "a", "b" });
+            .Should().Equal(signals.Quote + "a", "b");
 
         Split("{1}{1}{1}a{1}{0}b", signals)
-            .Should().Equal(new[] { signals.Quote + "a", "b" });
+            .Should().Equal(signals.Quote + "a", "b");
 
         Split("{1}{1}{1}{1}a{0}b", signals)
-            .Should().Equal(new[] { signals.Quote + signals.Quote + "a", "b" });
+            .Should().Equal(signals.Quote + signals.Quote + "a", "b");
 
         Split("{1}{1}{1}{1}{1}a{1}{0}b", signals)
-            .Should().Equal(new[] { signals.Quote + signals.Quote + "a", "b" });
+            .Should().Equal(signals.Quote + signals.Quote + "a", "b");
 
         Split("a{0}{1}{1}b", signals)
-            .Should().Equal(new[] { "a", signals.Quote + "b" });
+            .Should().Equal("a", signals.Quote + "b");
 
         Split("a{0}{1}{1}{1}b{1}", signals)
-            .Should().Equal(new[] { "a", signals.Quote + "b" });
+            .Should().Equal("a", signals.Quote + "b");
 
         Split("a{0}{1}{1}{1}{1}b", signals)
-            .Should().Equal(new[] { "a", signals.Quote + signals.Quote + "b" });
+            .Should().Equal("a", signals.Quote + signals.Quote + "b");
 
         Split("a{0}{1}{1}{1}{1}{1}b{1}", signals)
-            .Should().Equal(new[] { "a", signals.Quote + signals.Quote + "b" });
+            .Should().Equal("a", signals.Quote + signals.Quote + "b");
 
         Split("a{0}{1}{1}b{0}c", signals)
-            .Should().Equal(new[] { "a", signals.Quote + "b", "c" });
+            .Should().Equal("a", signals.Quote + "b", "c");
 
         Split("a{0}{1}{1}{1}b{1}{0}c", signals)
-            .Should().Equal(new[] { "a", signals.Quote + "b", "c" });
+            .Should().Equal("a", signals.Quote + "b", "c");
 
         Split("a{0}{1}{1}{1}{1}b{0}c", signals)
-            .Should().Equal(new[] { "a", signals.Quote + signals.Quote + "b", "c" });
+            .Should().Equal("a", signals.Quote + signals.Quote + "b", "c");
 
         Split("a{0}{1}{1}{1}{1}{1}b{1}{0}c", signals)
-            .Should().Equal(new[] { "a", signals.Quote + signals.Quote + "b", "c" });
+            .Should().Equal("a", signals.Quote + signals.Quote + "b", "c");
 
         Split("{1}{1}a{0}{1}{1}b{0}{1}{1}c", signals)
-            .Should().Equal(new[] { signals.Quote + "a", signals.Quote + "b", signals.Quote + "c" });
+            .Should().Equal(signals.Quote + "a", signals.Quote + "b", signals.Quote + "c");
 
         Split("{1}{1}{1}a{1}{0}{1}{1}{1}b{1}{0}{1}{1}{1}c{1}", signals)
-            .Should().Equal(new[] { signals.Quote + "a", signals.Quote + "b", signals.Quote + "c" });
+            .Should().Equal(signals.Quote + "a", signals.Quote + "b", signals.Quote + "c");
 
         Split("{1}{1}{1}a{0}{1}{0}{1}{1}{1}b{0}{1}{0}{1}{1}{1}c{0}{1}", signals)
-            .Should().Equal(new[] { signals.Quote + "a" + signals.Delimiter, signals.Quote + "b" + signals.Delimiter, signals.Quote + "c" + signals.Delimiter });
+            .Should().Equal(signals.Quote + "a" + signals.Delimiter, signals.Quote + "b" + signals.Delimiter, signals.Quote + "c" + signals.Delimiter);
 
         if (signals.EscapeIsSpecified)
         {
             Split("{3}{1}", signals)
-                .Should().Equal(new[] { signals.Quote });
+                .Should().Equal(signals.Quote);
 
             Split("{1}{3}{1}{1}", signals)
-                .Should().Equal(new[] { signals.Quote });
+                .Should().Equal(signals.Quote);
 
             Split("{3}{1}a", signals)
-                .Should().Equal(new[] { signals.Quote + "a" });
+                .Should().Equal(signals.Quote + "a");
 
             Split("{1}{3}{1}a{1}", signals)
-                .Should().Equal(new[] { signals.Quote + "a" });
+                .Should().Equal(signals.Quote + "a");
 
             Split("{3}{1}{3}{1}a", signals)
-                .Should().Equal(new[] { signals.Quote + signals.Quote + "a" });
+                .Should().Equal(signals.Quote + signals.Quote + "a");
 
             Split("{1}{3}{1}{3}{1}a{1}", signals)
-                .Should().Equal(new[] { signals.Quote + signals.Quote + "a" });
+                .Should().Equal(signals.Quote + signals.Quote + "a");
 
             Split("{1}{3}{1}{3}{1}a{0}{2}{1}{0}b", signals)
-                .Should().Equal(new[] { signals.Quote + signals.Quote + "a" + signals.Delimiter + signals.NewRow, "b" });
+                .Should().Equal(signals.Quote + signals.Quote + "a" + signals.Delimiter + signals.NewRow, "b");
         }
     }
 
@@ -286,49 +286,49 @@ public class StringQuotedExtensionsTests_SplitRow
             throw new NotSupportedException();
 
         Split("{3}", signals)
-            .Should().Equal(new[] { string.Empty });
+            .Should().Equal(string.Empty);
 
         Split("{3}{0}a", signals)
-            .Should().Equal(new[] { signals.Delimiter + "a" });
+            .Should().Equal(signals.Delimiter + "a");
 
         Split("{3}{0}a{0}b", signals)
-            .Should().Equal(new[] { signals.Delimiter + "a", "b" });
+            .Should().Equal(signals.Delimiter + "a", "b");
 
         Split("{3}{0}a{3}{0}b", signals)
-            .Should().Equal(new[] { signals.Delimiter + "a" + signals.Delimiter + "b" });
+            .Should().Equal(signals.Delimiter + "a" + signals.Delimiter + "b");
 
         Split("{3}a{0}{3}b{0}{3}c", signals)
-            .Should().Equal(new[] { "a", "b", "c" });
+            .Should().Equal("a", "b", "c");
 
         Split("a{0}b{0}c{3}{0}", signals)
-            .Should().Equal(new[] { "a", "b", "c" + signals.Delimiter });
+            .Should().Equal("a", "b", "c" + signals.Delimiter);
 
         Split("a{0}b{0}c{3}{0}{0}d", signals)
-            .Should().Equal(new[] { "a", "b", "c" + signals.Delimiter, "d" });
+            .Should().Equal("a", "b", "c" + signals.Delimiter, "d");
 
         if (signals.QuoteIsSpecified)
         {
             Split("a{0}b{0}c{3}{1}", signals)
-                .Should().Equal(new[] { "a", "b", "c" + signals.Quote });
+                .Should().Equal("a", "b", "c" + signals.Quote);
 
             Split("a{0}b{0}c{3}{1}{0}d", signals)
-                .Should().Equal(new[] { "a", "b", "c" + signals.Quote, "d" });
+                .Should().Equal("a", "b", "c" + signals.Quote, "d");
         }
 
         if (signals.NewRowIsSpecified)
         {
             Split("a{0}b{0}c{3}{2}", signals)
-                .Should().Equal(new[] { "a", "b", "c" + signals.NewRow });
+                .Should().Equal("a", "b", "c" + signals.NewRow);
 
             Split("a{0}b{0}c{3}{2}{0}d", signals)
-                .Should().Equal(new[] { "a", "b", "c" + signals.NewRow, "d" });
+                .Should().Equal("a", "b", "c" + signals.NewRow, "d");
         }
 
         Split("a{0}b{0}c{3}{3}", signals)
-            .Should().Equal(new[] { "a", "b", "c" + signals.Escape });
+            .Should().Equal("a", "b", "c" + signals.Escape);
 
         Split("a{0}b{0}c{3}{3}{0}d", signals)
-            .Should().Equal(new[] { "a", "b", "c" + signals.Escape, "d" });
+            .Should().Equal("a", "b", "c" + signals.Escape, "d");
     }
 
     [Fact]
@@ -336,11 +336,11 @@ public class StringQuotedExtensionsTests_SplitRow
     {
         var signals = new StringQuotedSignals("ab", null, null, null);
         "1aab2aab3a".SplitQuotedRow(signals)
-            .Should().Equal(new[] { "1a", "2a", "3a" });
+            .Should().Equal("1a", "2a", "3a");
 
         signals = new StringQuotedSignals("ababb", null, null, null);
         "1abababb2abababb3ab".SplitQuotedRow(signals)
-            .Should().Equal(new[] { "1ab", "2ab", "3ab" });
+            .Should().Equal("1ab", "2ab", "3ab");
     }
 
     [Fact]
