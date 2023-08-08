@@ -44,9 +44,9 @@ public class StringQuotedExtensionsTests_SplitRows
         Action act;
 
         act = () => ((string)null).SplitQuotedRows(StringQuotedSignals.Csv).ToArray();
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Empty.SplitQuotedRows(null).ToArray();
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
     }
 }

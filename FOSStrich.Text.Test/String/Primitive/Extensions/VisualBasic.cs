@@ -42,15 +42,15 @@ public class StringExtensionsTests_VisualBasic
         Action act;
 
         act = () => ((string)null).Left(1);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => "a".Left(-1);
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
 
         act = () => ((string)null).Right(1);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => "a".Right(-1);
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
     }
 }

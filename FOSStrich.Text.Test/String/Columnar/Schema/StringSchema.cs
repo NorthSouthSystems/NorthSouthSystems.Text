@@ -52,7 +52,7 @@ public class StringSchemaTests
         Action act;
 
         act = () => new StringSchema().AddEntry(null);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () =>
         {
@@ -61,7 +61,7 @@ public class StringSchemaTests
             schema.AddEntry(entry);
             schema.GetEntryForRow("Bfoo");
         };
-        act.Should().Throw<ArgumentOutOfRangeException>("GetEntryForValueNoEntry");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("GetEntryForValueNoEntry");
 
         act = () =>
         {
@@ -70,7 +70,7 @@ public class StringSchemaTests
             schema.AddEntry(entry);
             schema.GetEntryForRow("Afoo");
         };
-        act.Should().Throw<ArgumentOutOfRangeException>("GetEntryForValueNoEntry");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("GetEntryForValueNoEntry");
 
         act = () =>
         {
@@ -80,7 +80,7 @@ public class StringSchemaTests
             entry = new StringSchemaEntry("AB", new[] { 1 });
             schema.AddEntry(entry);
         };
-        act.Should().Throw<ArgumentOutOfRangeException>("VerifyEntryOverlappedHeader");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("VerifyEntryOverlappedHeader");
 
         act = () =>
         {
@@ -90,6 +90,6 @@ public class StringSchemaTests
             entry = new StringSchemaEntry("A", new[] { 1 });
             schema.AddEntry(entry);
         };
-        act.Should().Throw<ArgumentOutOfRangeException>("VerifyEntryOverlappedHeader");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("VerifyEntryOverlappedHeader");
     }
 }

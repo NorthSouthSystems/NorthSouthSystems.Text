@@ -18,15 +18,15 @@ public class StringExtensionsTests_Overwrite
         Action act;
 
         act = () => ((string)null).Overwrite(0, "z");
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => "a".Overwrite(-1, "z");
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
 
         act = () => "a".Overwrite(2, "z");
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
 
         act = () => "a".Overwrite(0, null);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
     }
 }

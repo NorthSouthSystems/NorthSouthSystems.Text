@@ -35,7 +35,7 @@ public class StringRowWrapperTests
             var row = factory.Wrap(new[] { "F0", "F1" });
             var field = row[-1];
         };
-        act.Should().Throw<ArgumentOutOfRangeException>("IndexOutOfRange");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("IndexOutOfRange");
 
         act = () =>
         {
@@ -43,7 +43,7 @@ public class StringRowWrapperTests
             var row = factory.Wrap(new[] { "F0", "F1" });
             var field = row[3];
         };
-        act.Should().Throw<ArgumentOutOfRangeException>("IndexOutOfRange");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("IndexOutOfRange");
 
         act = () =>
         {
@@ -51,6 +51,6 @@ public class StringRowWrapperTests
             var row = factory.Wrap(new[] { "F0", "F1" });
             var field = row["C3"];
         };
-        act.Should().Throw<ArgumentException>("ColumnNotFound");
+        act.Should().ThrowExactly<ArgumentException>("ColumnNotFound");
     }
 }

@@ -52,12 +52,12 @@ public class StringExtensionsTests_CamelCase
         Action act;
 
         act = () => ((string)null).ToLowerCamelCase();
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => ((string)null).ToUpperCamelCase();
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => ((string)null).SpaceCamelCase();
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
     }
 }

@@ -23,6 +23,6 @@ public class StringExtensionsTests_WhereIsInAnyCategory
         Action act;
 
         act = () => ((string)null).WhereIsInAnyCategory(CharCategories.All);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
     }
 }

@@ -94,18 +94,18 @@ public class StringQuotedExtensionsTests_Join
         Action act = null;
 
         act = () => ((string[])null).JoinQuotedRow(StringQuotedSignals.Csv);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => new[] { "A" }.JoinQuotedRow(null);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => new[] { "A" }.JoinQuotedRow(new StringQuotedSignals(",", null, null, null), true);
-        act.Should().Throw<ArgumentException>("QuoteNotSpecified");
+        act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
 
         act = () => new[] { "A," }.JoinQuotedRow(new StringQuotedSignals(",", null, null, null));
-        act.Should().Throw<ArgumentException>("QuoteNotSpecified");
+        act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
 
         act = () => new[] { "A" + Environment.NewLine }.JoinQuotedRow(new StringQuotedSignals(",", null, Environment.NewLine, null));
-        act.Should().Throw<ArgumentException>("QuoteNotSpecified");
+        act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
     }
 }

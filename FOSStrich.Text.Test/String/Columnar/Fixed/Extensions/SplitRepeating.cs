@@ -49,27 +49,27 @@ public class StringFixedExtensionsTests_SplitRepeating
         Action act = null;
 
         act = () => ((string)null).SplitFixedRepeating(new[] { 1 }).ToArray();
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => "1".SplitFixedRepeating(new[] { 2 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
 
         act = () => "12".SplitFixedRepeating(new[] { 3 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
 
         act = () => "12".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
 
         act = () => "123".SplitFixedRepeating(new[] { 2 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
 
         act = () => "123".SplitFixedRepeating(new[] { 1, 1 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
 
         act = () => "12345".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
 
         act = () => "1234567".SplitFixedRepeating(new[] { 1, 2 }).ToArray();
-        act.Should().Throw<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("LengthColumnWidthSumMismatch");
     }
 }

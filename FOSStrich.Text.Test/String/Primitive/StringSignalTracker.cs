@@ -170,6 +170,6 @@ public class StringSignalTrackerTests
             tracker.ProcessChar('a');
             tracker.ProcessChar(' ');
         };
-        act.Should().Throw<InvalidOperationException>("ProcessCharAlreadyTriggered");
+        act.Should().ThrowExactly<InvalidOperationException>("ProcessCharAlreadyTriggered");
     }
 }

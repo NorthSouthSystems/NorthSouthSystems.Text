@@ -15,27 +15,27 @@ public class StringFixedExtensionsTests_VerifyColumnWidths
         Action act = null;
 
         act = () => StringFixedExtensions.VerifyColumnWidths(null);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => StringFixedExtensions.VerifyColumnWidths(Array.Empty<int>());
-        act.Should().Throw<ArgumentException>();
+        act.Should().ThrowExactly<ArgumentException>();
 
         act = () => StringFixedExtensions.VerifyColumnWidths(new[] { 0 });
-        act.Should().Throw<ArgumentOutOfRangeException>("WidthEqualToZero");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("WidthEqualToZero");
 
         act = () => StringFixedExtensions.VerifyColumnWidths(new[] { 0, 1 });
-        act.Should().Throw<ArgumentOutOfRangeException>("WidthEqualToZero");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("WidthEqualToZero");
 
         act = () => StringFixedExtensions.VerifyColumnWidths(new[] { 1, 0 });
-        act.Should().Throw<ArgumentOutOfRangeException>("WidthEqualToZero");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("WidthEqualToZero");
 
         act = () => StringFixedExtensions.VerifyColumnWidths(new[] { -1 });
-        act.Should().Throw<ArgumentOutOfRangeException>("WidthLessThanZero");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("WidthLessThanZero");
 
         act = () => StringFixedExtensions.VerifyColumnWidths(new[] { -1, 1 });
-        act.Should().Throw<ArgumentOutOfRangeException>("WidthLessThanZero");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("WidthLessThanZero");
 
         act = () => StringFixedExtensions.VerifyColumnWidths(new[] { 1, -1 });
-        act.Should().Throw<ArgumentOutOfRangeException>("WidthLessThanZero");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("WidthLessThanZero");
     }
 }

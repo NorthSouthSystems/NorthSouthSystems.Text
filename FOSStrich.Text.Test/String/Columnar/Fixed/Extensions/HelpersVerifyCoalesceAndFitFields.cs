@@ -50,18 +50,18 @@ public class StringFixedExtensionsTests_VerifyCoalesceAndFitFields
         Action act = null;
 
         act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(null, new[] { 1 }, false);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "A", "B", "C" }, new[] { 1, 1 }, false);
-        act.Should().Throw<ArgumentException>("FieldsAndColumnWidthsLengthMismatch");
+        act.Should().ThrowExactly<ArgumentException>("FieldsAndColumnWidthsLengthMismatch");
 
         act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "A", "B" }, new[] { 1, 2, 3 }, false);
-        act.Should().Throw<ArgumentException>("FieldsAndColumnWidthsLengthMismatch");
+        act.Should().ThrowExactly<ArgumentException>("FieldsAndColumnWidthsLengthMismatch");
 
         act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "AB", "CD" }, new[] { 1, 2 }, false);
-        act.Should().Throw<ArgumentOutOfRangeException>("FieldBiggerThanCorrespondingColumnWidth");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("FieldBiggerThanCorrespondingColumnWidth");
 
         act = () => StringFixedExtensions.VerifyCoalesceAndFitFields(new[] { "AB", "CD" }, new[] { 2, 1 }, false);
-        act.Should().Throw<ArgumentOutOfRangeException>("FieldBiggerThanCorrespondingColumnWidth");
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>("FieldBiggerThanCorrespondingColumnWidth");
     }
 }

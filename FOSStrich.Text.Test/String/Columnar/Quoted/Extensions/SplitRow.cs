@@ -349,18 +349,18 @@ public class StringQuotedExtensionsTests_SplitRow
         Action act;
 
         act = () => ((string)null).SplitQuotedRow(StringQuotedSignals.Csv);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Empty.SplitQuotedRow(null);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Format("a,b,c{0}d", StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
-        act.Should().Throw<ArgumentException>("NewLineInArgument");
+        act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
         act = () => string.Format("a,b,c{0}d,e,f", StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
-        act.Should().Throw<ArgumentException>("NewLineInArgument");
+        act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
         act = () => string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
-        act.Should().Throw<ArgumentException>("NewLineInArgument");
+        act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
     }
 }

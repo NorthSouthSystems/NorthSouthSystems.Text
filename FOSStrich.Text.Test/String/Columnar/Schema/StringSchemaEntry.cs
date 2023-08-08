@@ -40,12 +40,12 @@ public class StringSchemaEntryTests
         Action act;
 
         act = () => new StringSchemaEntry(null, new[] { 1 });
-        act.Should().Throw<ArgumentException>("ConstructionNullHeader");
+        act.Should().ThrowExactly<ArgumentException>("ConstructionNullHeader");
 
         act = () => new StringSchemaEntry(string.Empty, new[] { 1 });
-        act.Should().Throw<ArgumentException>("ConstructionEmptyHeader");
+        act.Should().ThrowExactly<ArgumentException>("ConstructionEmptyHeader");
 
         act = () => new StringSchemaEntry("A", new[] { 1, 1 }, ' ', new[] { "Column0" });
-        act.Should().Throw<ArgumentException>("ConstructionColumnWidthsAndNamesLengthMismatch");
+        act.Should().ThrowExactly<ArgumentException>("ConstructionColumnWidthsAndNamesLengthMismatch");
     }
 }

@@ -31,9 +31,9 @@ public class StringSchemaExtensionsTests_Split
         Action act;
 
         act = () => ((string)null).SplitSchemaRow(new());
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => "Afoo".SplitSchemaRow(null);
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
     }
 }

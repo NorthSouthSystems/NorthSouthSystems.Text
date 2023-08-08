@@ -42,21 +42,21 @@ public class StringFixedExtensionsTests_SplitRow
         Action act;
 
         act = () => ((string)null).SplitFixedRow(new[] { 1 });
-        act.Should().Throw<ArgumentNullException>();
+        act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Empty.SplitFixedRow(new[] { 1 });
-        act.Should().Throw<ArgumentException>();
+        act.Should().ThrowExactly<ArgumentException>();
 
         act = () => "1".SplitFixedRow(new[] { 2 });
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
 
         act = () => "12".SplitFixedRow(new[] { 3 });
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
 
         act = () => "12".SplitFixedRow(new[] { 1, 2 });
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
 
         act = () => "1234".SplitFixedRow(new[] { 1, 2 });
-        act.Should().Throw<ArgumentOutOfRangeException>();
+        act.Should().ThrowExactly<ArgumentOutOfRangeException>();
     }
 }

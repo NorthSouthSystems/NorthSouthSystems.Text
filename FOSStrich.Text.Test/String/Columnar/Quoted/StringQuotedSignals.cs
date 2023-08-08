@@ -44,6 +44,6 @@ public class StringQuotedSignalsTests
         Action act;
 
         act = () => new StringQuotedSignals(delimiter, quote, newRow, escape);
-        act.Should().Throw<ArgumentException>();
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }
