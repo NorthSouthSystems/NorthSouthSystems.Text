@@ -1,0 +1,51 @@
+name: Build, Test, and Analyze
+
+on: [push, workflow_dispatch]
+
+jobs:
+    build-test-analyze:
+        runs-on: windows-latest
+
+        steps:
+        - uses: actions/checkout@v3
+          with:
+              fetch-depth: 0 # Nerdbank.GitVersioning requires deep clone. Deep clone improves Sonar.
+        
+        - uses: actions/setup-dotnet@v3
+          with:
+              dotnet-version: 8.0.x
+
+        - run: dotnet tool install --global dotnet-coverage
+  
+        - uses: actions/setup-java@v3 # Sonar.
+          with:
+              java-version: 17
+              distribution: 'zulu'
+
+        - run: dotnet tool install --global dotnet-sonarscanner
+              
+        - run: dotnet restore
+  
+        - env:
+              #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+              SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          shell: powershell
+          run: |
+              $version = & nbgv get-version --variable NuGetPackageVersion
+
+              dotnet-sonarscanner begin `
+                  /o:"fosstrich" `
+                  /k:"FOSStrich_FOSStrich.Text" `
+                  /v:$version `
+                  /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
+                  /d:sonar.dotnet.excludeTestProjects=true `
+                  /d:sonar.host.url="https://sonarcloud.io" `
+                  /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+              dotnet build --no-restore --configuration Release
+
+              dotnet-coverage collect `
+                  "dotnet test --no-build --configuration Release --verbosity normal" `
+                  -f xml -o "coverage.xml"
+
+              dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
