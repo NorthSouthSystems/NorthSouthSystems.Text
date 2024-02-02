@@ -34,8 +34,8 @@ jobs:
               $version = & nbgv get-version --variable NuGetPackageVersion
 
               dotnet-sonarscanner begin `
-                  /o:"fosstrich" `
-                  /k:"FOSStrich_FOSStrich.Text" `
+                  /o:"northsouthsystems" `
+                  /k:"NorthSouthSystems_NorthSouthSystems.Text" `
                   /v:$version `
                   /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
                   /d:sonar.dotnet.excludeTestProjects=true `

@@ -1,11 +1,6 @@
 # What?
-The Software Botany Ivy project is a library containing various string utilities. Included in the library are fluent APIs for parsing and creating quoted delimited and fixed-width positional text.  For example, quoted CSV such as that used by Microsoft Excel is supported. The library is built on .NET 4.0 using the C# language.
-# Why?
-System.String.Split has certain inadequacies regarding delimited input such as quoted CSV text.  To solve these shortcomings, there are many open source CSV parser implementations freely available. From the lyrics of Teen Angst by Cracker, "What the world needs now is another folk singer (ed: CSV parsing library) like I need a hole in my head." Yeah, so I wrote one anyways.
+This repository hosts a .NET library containing various string utilities. Included in the library are fluent APIs for parsing and creating quoted delimited and fixed-width positional text.  For example, quoted CSV such as that used by Microsoft Excel is supported.
 
-To be honest, this library started as a sandbox for me to try out tools and methodologies that don't get adequate evaluation during my day job and its accelerated development cycles.  I've used this library as my guinea pig for using MS Test and its code coverage functionality to achieve full unit test coverage to the point of "WTF am I writing a method to test this one line of code".  I've also spent time to resolve every last code analysis warning except for a select few I just didn't agree with.  XML code comments and many of its tags have been used to document the entire public facing API. Sandcastle Help File Builder is configured to build a website help file for the project.  I used this project to build and publish my first NuGet Package.
-
-With all of that said, I haven't run into another CSV parser with a similar deferred execution extension method based fluent API. Also, there is an area of the library devoted to StringSchema splitting and joining that is an interesting variation of fixed-width parsing.  Other string utilities are also included that may not otherwise exist in the open source universe; although, I highly doubt that.  Regardless, enjoy!
 # How?
 ## Quoted Delimited Text (e.g. CSV) Splitting and Joining
 **Simple Split**

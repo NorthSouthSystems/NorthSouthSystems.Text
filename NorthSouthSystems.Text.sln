@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F796CC56-52B2-4B99-83B8-79990399FD71}"
+	ProjectSection(SolutionItems) = preProject
+		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthSouthSystems.Text", "NorthSouthSystems.Text\NorthSouthSystems.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthSouthSystems.Text.Test", "NorthSouthSystems.Text.Test\NorthSouthSystems.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{33E427CF-A022-4053-BD21-D195F0E49FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E427CF-A022-4053-BD21-D195F0E49FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E427CF-A022-4053-BD21-D195F0E49FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E427CF-A022-4053-BD21-D195F0E49FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
