@@ -120,34 +120,38 @@ public sealed class StringSignalTracker
         if (_triggered)
             throw new InvalidOperationException("Cannot process a char when a String Signal Tracker is triggered.");
 
-        if (_signalIsMultiChar)
+        if (!_signalIsMultiChar)
         {
-            // PERF : this condition would be adequately handled by the for loop; however, this is slightly faster.
-            if (_activeCounters.Count > 0)
-            {
-                // Iterate backwards because we will be removing from the list during the iteration.
-                for (int i = _activeCounters.Count - 1; i >= 0; i--)
-                {
-                    if (Signal[_activeCounters[i]] == value)
-                    {
-                        if (_activeCounters[i] == Signal.Length - 1)
-                        {
-                            _triggered = true;
-                            _activeCounters.Clear();
-                            return;
-                        }
-                        else
-                            _activeCounters[i]++;
-                    }
-                    else
-                        _activeCounters.RemoveAt(i);
-                }
-            }
-
             if (Signal[0] == value)
-                _activeCounters.Add(1);
+                _triggered = true;
+
+            return;
         }
-        else if (Signal[0] == value)
-            _triggered = true;
+
+        ProcessCharSignalIsMultiChar(value);
+    }
+
+    private void ProcessCharSignalIsMultiChar(char value)
+    {
+        // Iterate backwards because we will be removing from the list during the iteration.
+        for (int i = _activeCounters.Count - 1; i >= 0; i--)
+        {
+            if (Signal[_activeCounters[i]] == value)
+            {
+                if (_activeCounters[i] == Signal.Length - 1)
+                {
+                    _triggered = true;
+                    _activeCounters.Clear();
+                    return;
+                }
+                else
+                    _activeCounters[i]++;
+            }
+            else
+                _activeCounters.RemoveAt(i);
+        }
+
+        if (Signal[0] == value)
+            _activeCounters.Add(1);
     }
 }
