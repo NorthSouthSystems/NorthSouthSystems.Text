@@ -32,6 +32,9 @@ public static partial class StringExtensions
         if (chars == null)
             throw new ArgumentNullException(nameof(chars));
 
+        if (!string.IsNullOrWhiteSpace(respectNewLine))
+            throw new ArgumentException("Must only contain WhiteSpace chars.", nameof(respectNewLine));
+
         bool bufferedSpace = false;
         bool bufferedNewLine = false;
         var newLineTracker = new StringSignalTracker(respectNewLine);
@@ -46,7 +49,7 @@ public static partial class StringExtensions
             {
                 if (bufferedNewLine)
                 {
-                    foreach (char newLineChar in Environment.NewLine)
+                    foreach (char newLineChar in respectNewLine)
                         yield return newLineChar;
 
                     bufferedNewLine = false;
