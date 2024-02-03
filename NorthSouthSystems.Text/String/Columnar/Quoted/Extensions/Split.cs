@@ -137,6 +137,7 @@ public static partial class StringQuotedExtensions
         private readonly List<string> _fields = new();
         private readonly List<char> _fieldBuffer = new();
         private readonly List<CharacterCategory> _fieldCategories = new();
+        private readonly StringBuilder _fieldBuilder = new();
 
         private int _consecutiveQuoteCount = 0;
         private bool _inQuotes = false;
@@ -150,6 +151,7 @@ public static partial class StringQuotedExtensions
             _fields.Clear();
             _fieldBuffer.Clear();
             _fieldCategories.Clear();
+            _fieldBuilder.Clear();
 
             _consecutiveQuoteCount = 0;
             _inQuotes = false;
@@ -259,7 +261,6 @@ public static partial class StringQuotedExtensions
             // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
             bool skipAQuote = _fieldCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
 
-            var field = new StringBuilder();
             int fieldBufferIndex = 0;
 
             foreach (CharacterCategory category in _fieldCategories)
@@ -267,22 +268,22 @@ public static partial class StringQuotedExtensions
                 switch (category)
                 {
                     case CharacterCategory.Char:
-                        field.Append(_fieldBuffer[fieldBufferIndex]);
+                        _fieldBuilder.Append(_fieldBuffer[fieldBufferIndex]);
                         break;
 
                     case CharacterCategory.Delimiter:
-                        field.Append(_signals.Delimiter);
+                        _fieldBuilder.Append(_signals.Delimiter);
                         break;
 
                     case CharacterCategory.Quote:
                         if (skipAQuote)
                             skipAQuote = false;
                         else
-                            field.Append(_signals.Quote);
+                            _fieldBuilder.Append(_signals.Quote);
                         break;
 
                     case CharacterCategory.NewRow:
-                        field.Append(_signals.NewRow);
+                        _fieldBuilder.Append(_signals.NewRow);
                         break;
 
                     case CharacterCategory.NoOp:
@@ -295,9 +296,10 @@ public static partial class StringQuotedExtensions
                 fieldBufferIndex++;
             }
 
-            _fields.Add(field.ToString());
+            _fields.Add(_fieldBuilder.ToString());
             _fieldBuffer.Clear();
             _fieldCategories.Clear();
+            _fieldBuilder.Clear();
         }
 
         private void FlushConsecutiveQuotes()
