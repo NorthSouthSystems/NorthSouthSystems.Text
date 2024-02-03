@@ -259,7 +259,7 @@ public static partial class StringQuotedExtensions
 
             // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that it is Quoted,
             // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
-            bool skipAQuote = _fieldCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote);
+            bool mightSkipAQuote = true;
 
             int fieldBufferIndex = 0;
 
@@ -276,10 +276,17 @@ public static partial class StringQuotedExtensions
                         break;
 
                     case CharacterCategory.Quote:
-                        if (skipAQuote)
-                            skipAQuote = false;
-                        else
-                            _fieldBuilder.Append(_signals.Quote);
+                        // See comment above mightSkipAQuote declaration.
+                        // PERF : Iterate _fieldCategories only the first time that a Quote is actually encountered (instead of before the loop).
+                        if (mightSkipAQuote)
+                        {
+                            mightSkipAQuote = false;
+
+                            if (_fieldCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote))
+                                break;
+                        }
+
+                        _fieldBuilder.Append(_signals.Quote);
                         break;
 
                     case CharacterCategory.NewRow:
