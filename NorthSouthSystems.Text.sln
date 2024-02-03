@@ -8,9 +8,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthSouthSystems.Text", "NorthSouthSystems.Text\NorthSouthSystems.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text", "NorthSouthSystems.Text\NorthSouthSystems.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthSouthSystems.Text.Test", "NorthSouthSystems.Text.Test\NorthSouthSystems.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Test", "NorthSouthSystems.Text.Test\NorthSouthSystems.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Benchmark", "NorthSouthSystems.Text.Benchmark\NorthSouthSystems.Text.Benchmark.csproj", "{4877B00D-91A0-4195-95B0-B1564399DA01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,8 +28,15 @@ Global
 		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4877B00D-91A0-4195-95B0-B1564399DA01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4877B00D-91A0-4195-95B0-B1564399DA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4877B00D-91A0-4195-95B0-B1564399DA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4877B00D-91A0-4195-95B0-B1564399DA01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E2C9A20-30D6-403B-9CC5-5D1DA68EF520}
 	EndGlobalSection
 EndGlobal
