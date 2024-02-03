@@ -32,12 +32,11 @@ public static partial class StringExtensions
         if (chars == null)
             throw new ArgumentNullException(nameof(chars));
 
-        bool nonWhiteSpaceHit = false;
         bool bufferedSpace = false;
         bool bufferedNewLine = false;
         var newLineTracker = new StringSignalTracker(respectNewLine);
 
-        foreach (char c in chars)
+        foreach (char c in chars.SkipWhile(char.IsWhiteSpace))
         {
             if (char.IsWhiteSpace(c))
             {
@@ -47,9 +46,8 @@ public static partial class StringExtensions
             {
                 if (bufferedNewLine)
                 {
-                    if (nonWhiteSpaceHit)
-                        foreach (char newLineChar in Environment.NewLine)
-                            yield return newLineChar;
+                    foreach (char newLineChar in Environment.NewLine)
+                        yield return newLineChar;
 
                     bufferedNewLine = false;
                     bufferedSpace = false;
@@ -57,15 +55,12 @@ public static partial class StringExtensions
 
                 if (bufferedSpace)
                 {
-                    if (nonWhiteSpaceHit)
-                        yield return ' ';
+                    yield return ' ';
 
                     bufferedSpace = false;
                 }
 
                 yield return c;
-
-                nonWhiteSpaceHit = true;
             }
 
             newLineTracker.ProcessChar(c);
