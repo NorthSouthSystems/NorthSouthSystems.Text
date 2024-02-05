@@ -124,7 +124,19 @@ public static partial class StringQuotedExtensions
             _quoteTracker = new(_signals.Quote);
             _newRowTracker = new(_signals.NewRow);
             _escapeTracker = new(_signals.Escape);
+
+            _quoteQuoteTracker = new(_signals.Quote + _signals.Quote);
         }
+
+        private bool _inRow = false;
+        private readonly List<string> _fields = new();
+
+        private readonly StringBuilder _fieldBuilder = new();
+
+        private bool _inQuotes = false;
+        private bool _inQuotesEverCurrentField = false;
+        private bool _escaped = false;
+        private bool _escapedEverCurrentField = false;
 
         private readonly StringQuotedSignals _signals;
 
@@ -133,37 +145,36 @@ public static partial class StringQuotedExtensions
         private readonly StringSignalTracker _newRowTracker;
         private readonly StringSignalTracker _escapeTracker;
 
-        private bool _inRow = false;
-        private readonly List<string> _fields = new();
-        private readonly List<char> _fieldBuffer = new();
-        private readonly List<CharacterCategory> _fieldCategories = new();
-        private readonly StringBuilder _fieldBuilder = new();
-
-        private int _consecutiveQuoteCount = 0;
-        private bool _inQuotes = false;
-        private bool _escaped = false;
+        private readonly StringSignalTracker _quoteQuoteTracker;
 
         private void Reset()
         {
-            ResetTrackers();
-
             _inRow = false;
             _fields.Clear();
-            _fieldBuffer.Clear();
-            _fieldCategories.Clear();
-            _fieldBuilder.Clear();
 
-            _consecutiveQuoteCount = 0;
-            _inQuotes = false;
-            _escaped = false;
+            ResetField();
+            ResetTrackers();
         }
 
-        private void ResetTrackers()
+        private void ResetField()
+        {
+            _fieldBuilder.Clear();
+
+            _inQuotes = false;
+            _inQuotesEverCurrentField = false;
+            _escaped = false;
+            _escapedEverCurrentField = false;
+        }
+
+        private void ResetTrackers(bool wasQuoteTrackerTriggered = false)
         {
             _delimiterTracker.Reset();
             _quoteTracker.Reset();
             _newRowTracker.Reset();
             _escapeTracker.Reset();
+
+            if (!wasQuoteTrackerTriggered)
+                _quoteQuoteTracker.Reset();
         }
 
         public IEnumerable<string[]> Process(IEnumerable<char> rows)
@@ -171,72 +182,69 @@ public static partial class StringQuotedExtensions
             foreach (char c in rows)
             {
                 _inRow = true;
-                _fieldBuffer.Add(c);
-                _fieldCategories.Add(CharacterCategory.Char);
+                _fieldBuilder.Append(c);
 
-                if (!_escaped)
+                if (_escaped)
                 {
-                    _delimiterTracker.ProcessChar(c);
-                    _quoteTracker.ProcessChar(c);
-                    _newRowTracker.ProcessChar(c);
-                    _escapeTracker.ProcessChar(c);
-                }
-                else
                     _escaped = false;
-
-                // Quote needs to be processed first because of it's potential need to rewind a character and FlushConsecutiveQuotes.
-                if (_quoteTracker.IsTriggered)
-                {
-                    ResetTrackers();
-                    ReviseCategories(CharacterCategory.NoOp, _signals.Quote.Length);
-
-                    _consecutiveQuoteCount++;
+                    continue;
                 }
-                else if (!_quoteTracker.IsCounting && _consecutiveQuoteCount > 0)
-                {
-                    // Rewind a character so that our FlushConsecutiveQuotes is accurate.
-                    _fieldBuffer.RemoveAt(_fieldBuffer.Count - 1);
-                    _fieldCategories.RemoveAt(_fieldCategories.Count - 1);
 
-                    FlushConsecutiveQuotes();
+                _delimiterTracker.ProcessChar(c);
+                _quoteTracker.ProcessChar(c);
+                _newRowTracker.ProcessChar(c);
+                _escapeTracker.ProcessChar(c);
 
-                    // Now place the character being processed back in the buffers.
-                    _fieldBuffer.Add(c);
-                    _fieldCategories.Add(CharacterCategory.Char);
-                }
+                _quoteQuoteTracker.ProcessChar(c);
 
                 if (_delimiterTracker.IsTriggered)
                 {
                     ResetTrackers();
-                    ReviseCategories(_inQuotes ? CharacterCategory.Delimiter : CharacterCategory.NoOp, _signals.Delimiter.Length);
-
-                    if (!_inQuotes)
-                        FlushColumn();
-                }
-
-                if (_newRowTracker.IsTriggered)
-                {
-                    ResetTrackers();
-                    ReviseCategories(_inQuotes ? CharacterCategory.NewRow : CharacterCategory.NoOp, _signals.NewRow.Length);
 
                     if (!_inQuotes)
                     {
-                        FlushColumn();
+                        RewindField(_signals.Delimiter.Length);
+                        FlushField();
+                        ResetField();
+                    }
+                }
+                else if (_quoteQuoteTracker.IsTriggered)
+                {
+                    ResetTrackers();
+
+                    _inQuotes = false;
+                }
+                else if (_quoteTracker.IsTriggered)
+                {
+                    ResetTrackers(wasQuoteTrackerTriggered: true);
+                    RewindField(_signals.Quote.Length);
+
+                    _inQuotes = !_inQuotes;
+                    _inQuotesEverCurrentField = true;
+                }
+                else if (_newRowTracker.IsTriggered)
+                {
+                    ResetTrackers();
+
+                    if (!_inQuotes)
+                    {
+                        RewindField(_signals.NewRow.Length);
+                        FlushField();
                         yield return _fields.ToArray();
                         Reset();
                     }
                 }
-
-                if (_escapeTracker.IsTriggered)
+                else if (_escapeTracker.IsTriggered)
                 {
                     ResetTrackers();
-                    ReviseCategories(CharacterCategory.NoOp, _signals.Escape.Length);
+                    RewindField(_signals.Escape.Length);
 
                     _escaped = true;
+                    _escapedEverCurrentField = true;
                 }
             }
 
-            FlushColumn();
+            FlushField();
 
             if (_fields.Count > 0)
                 yield return _fields.ToArray();
@@ -244,92 +252,37 @@ public static partial class StringQuotedExtensions
             Reset();
         }
 
-        private void ReviseCategories(CharacterCategory category, int length)
-        {
-            for (int i = length; i > 0; i--)
-                _fieldCategories[_fieldCategories.Count - i] = i == length ? category : CharacterCategory.NoOp;
-        }
+        private void RewindField(int length) => _fieldBuilder.Length -= length;
 
-        private void FlushColumn()
+        private void FlushField()
         {
             if (!_inRow)
                 return;
 
-            FlushConsecutiveQuotes();
+            string field = _fieldBuilder.ToString();
 
-            // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that it is Quoted,
-            // and therefore it will contain an extra Quote. E.G. a,"",c or a,"""",c
-            bool mightSkipAQuote = true;
-
-            int fieldBufferIndex = 0;
-
-            foreach (CharacterCategory category in _fieldCategories)
+            // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that the field
+            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder and _inQuotes == false;
+            // therefore, _fieldBuilder will contain an extra Quote. E.G.
+            //     a,"",c
+            //     a,"""",c
+            //     a,"""""",c
+            if (_inQuotesEverCurrentField
+                && !_escapedEverCurrentField
+                && (field == _signals.Quote || field.SequenceEqual(RepeatQuote())))
             {
-                switch (category)
-                {
-                    case CharacterCategory.Char:
-                        _fieldBuilder.Append(_fieldBuffer[fieldBufferIndex]);
-                        break;
-
-                    case CharacterCategory.Delimiter:
-                        _fieldBuilder.Append(_signals.Delimiter);
-                        break;
-
-                    case CharacterCategory.Quote:
-                        // See comment above mightSkipAQuote declaration.
-                        // PERF : Iterate _fieldCategories only the first time that a Quote is actually encountered (instead of before the loop).
-                        if (mightSkipAQuote)
-                        {
-                            mightSkipAQuote = false;
-
-                            if (_fieldCategories.All(category => category == CharacterCategory.NoOp || category == CharacterCategory.Quote))
-                                break;
-                        }
-
-                        _fieldBuilder.Append(_signals.Quote);
-                        break;
-
-                    case CharacterCategory.NewRow:
-                        _fieldBuilder.Append(_signals.NewRow);
-                        break;
-
-                    case CharacterCategory.NoOp:
-                        break;
-
-                    default:
-                        throw new NotImplementedException(category.ToString());
-                }
-
-                fieldBufferIndex++;
+                RewindField(_signals.Quote.Length);
+                field = _fieldBuilder.ToString();
             }
 
-            _fields.Add(_fieldBuilder.ToString());
-            _fieldBuffer.Clear();
-            _fieldCategories.Clear();
-            _fieldBuilder.Clear();
-        }
+            IEnumerable<char> RepeatQuote()
+            {
+                for (int i = 0; i < field.Length / _signals.Quote.Length; i++)
+                    foreach (char c in _signals.Quote)
+                        yield return c;
+            }
 
-        private void FlushConsecutiveQuotes()
-        {
-            if (_consecutiveQuoteCount == 0)
-                return;
-
-            if (_consecutiveQuoteCount % 2 == 1)
-                _inQuotes = !_inQuotes;
-
-            for (int i = _consecutiveQuoteCount / 2; i > 0; i--)
-                ReviseCategories(CharacterCategory.Quote, i * 2 * _signals.Quote.Length);
-
-            _consecutiveQuoteCount = 0;
-        }
-
-        private enum CharacterCategory : byte
-        {
-            Char,
-            Delimiter,
-            Quote,
-            NewRow,
-            NoOp
+            _fields.Add(field);
         }
     }
 }
