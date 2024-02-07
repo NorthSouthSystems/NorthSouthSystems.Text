@@ -1,7 +1,5 @@
 ﻿namespace NorthSouthSystems.Text;
 
-using System.Globalization;
-
 /// <summary>
 /// Extensions for Splitting and Joining delimited sequences of characters (rows) that may possess quoted (surrounded by Quote)
 /// fields in order for them to contain instances of Delimiter.
@@ -64,40 +62,32 @@ public static partial class StringQuotedExtensions
 
     private static string QuoteAndEscapeField(string field, StringQuotedSignals signals, bool forceQuotes)
     {
-        bool containsDelimiter = field.Contains(signals.Delimiter);
-        bool containsQuote = signals.QuoteIsSpecified && field.Contains(signals.Quote);
-        bool containsNewRow = signals.NewRowIsSpecified && field.Contains(signals.NewRow);
-        bool containsEscape = signals.EscapeIsSpecified && field.Contains(signals.Escape);
+        if (ContainsEscape())
+            field = field.Replace(signals.Escape, signals.Escape + signals.Escape);
 
-        bool requiresQuotingOrEscaping = containsDelimiter || containsQuote || containsNewRow || containsEscape;
+        if (forceQuotes || signals.QuoteIsSpecified)
+        {
+            if (ContainsQuote())
+                field = signals.Quote + field.Replace(signals.Quote, (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote) + signals.Quote;
+            else if (forceQuotes || ContainsDelimiter() || ContainsNewRow())
+                field = signals.Quote + field + signals.Quote;
+        }
+        else if (signals.EscapeIsSpecified)
+        {
+            if (ContainsDelimiter())
+                field = field.Replace(signals.Delimiter, signals.Escape + signals.Delimiter);
 
-        if (requiresQuotingOrEscaping && !signals.QuoteIsSpecified && !signals.EscapeIsSpecified)
+            if (ContainsNewRow())
+                field = field.Replace(signals.NewRow, signals.Escape + signals.NewRow);
+        }
+        else if (ContainsDelimiter() || ContainsNewRow())
             throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");
 
-        bool useQuoting = forceQuotes || (requiresQuotingOrEscaping && signals.QuoteIsSpecified);
-        bool useEscaping = !useQuoting && requiresQuotingOrEscaping && signals.EscapeIsSpecified;
+        return field;
 
-        string escapedField = field;
-
-        if (containsEscape)
-            escapedField = escapedField.Replace(signals.Escape, signals.Escape + signals.Escape);
-
-        if (useQuoting)
-        {
-            if (containsQuote)
-                escapedField = escapedField.Replace(signals.Quote, (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote);
-
-            escapedField = string.Format(CultureInfo.InvariantCulture, "{0}{1}{0}", signals.Quote, escapedField);
-        }
-        else if (useEscaping)
-        {
-            if (containsDelimiter)
-                escapedField = escapedField.Replace(signals.Delimiter, signals.Escape + signals.Delimiter);
-
-            if (containsNewRow)
-                escapedField = escapedField.Replace(signals.NewRow, signals.Escape + signals.NewRow);
-        }
-
-        return escapedField;
+        bool ContainsDelimiter() => field.Contains(signals.Delimiter);
+        bool ContainsQuote() => signals.QuoteIsSpecified && field.Contains(signals.Quote);
+        bool ContainsNewRow() => signals.NewRowIsSpecified && field.Contains(signals.NewRow);
+        bool ContainsEscape() => signals.EscapeIsSpecified && field.Contains(signals.Escape);
     }
 }
