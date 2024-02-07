@@ -65,14 +65,24 @@ public static partial class StringQuotedExtensions
         if (ContainsEscape())
             field = field.Replace(signals.Escape, signals.Escape + signals.Escape);
 
-        if (forceQuotes || signals.QuoteIsSpecified)
+        if (signals.QuoteIsSpecified)
+            Quote();
+        else if (signals.EscapeIsSpecified)
+            Escape();
+        else if (ContainsDelimiter() || ContainsNewRow())
+            throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");
+
+        return field;
+
+        void Quote()
         {
             if (ContainsQuote())
-                field = signals.Quote + field.Replace(signals.Quote, (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote) + signals.Quote;
+                field = signals.Quote + field.Replace(signals.Quote, EscapedQuote()) + signals.Quote;
             else if (forceQuotes || ContainsDelimiter() || ContainsNewRow())
                 field = signals.Quote + field + signals.Quote;
         }
-        else if (signals.EscapeIsSpecified)
+
+        void Escape()
         {
             if (ContainsDelimiter())
                 field = field.Replace(signals.Delimiter, signals.Escape + signals.Delimiter);
@@ -80,10 +90,8 @@ public static partial class StringQuotedExtensions
             if (ContainsNewRow())
                 field = field.Replace(signals.NewRow, signals.Escape + signals.NewRow);
         }
-        else if (ContainsDelimiter() || ContainsNewRow())
-            throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");
 
-        return field;
+        string EscapedQuote() => (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote;
 
         bool ContainsDelimiter() => field.Contains(signals.Delimiter);
         bool ContainsQuote() => signals.QuoteIsSpecified && field.Contains(signals.Quote);
