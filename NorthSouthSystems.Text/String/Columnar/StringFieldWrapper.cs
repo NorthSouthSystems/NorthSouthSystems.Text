@@ -20,203 +20,89 @@ public sealed class StringFieldWrapper
 
     public override string ToString() => Value ?? string.Empty;
 
-    public static explicit operator string(StringFieldWrapper field)
-    {
-        if (field == null)
-            return null;
+    private static T Required<T>(StringFieldWrapper field, Func<string, T> convert) =>
+        (field == null || field.Value == null)
+            ? throw new ArgumentNullException(nameof(field))
+            : convert(field.Value);
 
-        return field.Value;
-    }
+    private static T? Optional<T>(StringFieldWrapper field, Func<string, T> convert)
+            where T : struct =>
+        (field == null || string.IsNullOrWhiteSpace(field.Value))
+            ? null
+            : convert(field.Value);
 
-    public static explicit operator bool(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
+    public static explicit operator string(StringFieldWrapper field) =>
+        field?.Value;
 
-        return XmlConvert.ToBoolean(field.Value.ToLower(CultureInfo.InvariantCulture));
-    }
+    public static explicit operator bool(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
 
-    public static explicit operator bool?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (bool?)null;
+    public static explicit operator bool?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
 
-        return XmlConvert.ToBoolean(field.Value.ToLower(CultureInfo.InvariantCulture));
-    }
+    public static explicit operator int(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToInt32(field.Value));
 
-    public static explicit operator int(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
+    public static explicit operator int?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToInt32(field.Value));
 
-        return XmlConvert.ToInt32(field.Value);
-    }
+    public static explicit operator uint(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToUInt32(field.Value));
 
-    public static explicit operator int?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (int?)null;
+    public static explicit operator uint?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToUInt32(field.Value));
 
-        return XmlConvert.ToInt32(field.Value);
-    }
+    public static explicit operator long(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToInt64(field.Value));
 
-    public static explicit operator uint(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
+    public static explicit operator long?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToInt64(field.Value));
 
-        return XmlConvert.ToUInt32(field.Value);
-    }
+    public static explicit operator ulong(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToUInt64(field.Value));
 
-    public static explicit operator uint?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (uint?)null;
+    public static explicit operator ulong?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToUInt64(field.Value));
 
-        return XmlConvert.ToUInt32(field.Value);
-    }
+    public static explicit operator float(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToSingle(field.Value));
 
-    public static explicit operator long(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
+    public static explicit operator float?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToSingle(field.Value));
 
-        return XmlConvert.ToInt64(field.Value);
-    }
+    public static explicit operator double(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToDouble(field.Value));
 
-    public static explicit operator long?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (long?)null;
+    public static explicit operator double?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToDouble(field.Value));
 
-        return XmlConvert.ToInt64(field.Value);
-    }
+    public static explicit operator decimal(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToDecimal(field.Value));
 
-    public static explicit operator ulong(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
+    public static explicit operator decimal?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToDecimal(field.Value));
 
-        return XmlConvert.ToUInt64(field.Value);
-    }
+    public static explicit operator DateTime(StringFieldWrapper field) =>
+        Required(field, value => DateTime.Parse(field.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
 
-    public static explicit operator ulong?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (ulong?)null;
+    public static explicit operator DateTime?(StringFieldWrapper field) =>
+        Optional(field, value => DateTime.Parse(field.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
 
-        return XmlConvert.ToUInt64(field.Value);
-    }
+    public static explicit operator DateTimeOffset(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToDateTimeOffset(field.Value));
 
-    public static explicit operator float(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
+    public static explicit operator DateTimeOffset?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToDateTimeOffset(field.Value));
 
-        return XmlConvert.ToSingle(field.Value);
-    }
+    public static explicit operator TimeSpan(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToTimeSpan(field.Value));
 
-    public static explicit operator float?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (float?)null;
+    public static explicit operator TimeSpan?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToTimeSpan(field.Value));
 
-        return XmlConvert.ToSingle(field.Value);
-    }
+    public static explicit operator Guid(StringFieldWrapper field) =>
+        Required(field, value => XmlConvert.ToGuid(field.Value));
 
-    public static explicit operator double(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
-
-        return XmlConvert.ToDouble(field.Value);
-    }
-
-    public static explicit operator double?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (double?)null;
-
-        return XmlConvert.ToDouble(field.Value);
-    }
-
-    public static explicit operator decimal(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
-
-        return XmlConvert.ToDecimal(field.Value);
-    }
-
-    public static explicit operator decimal?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (decimal?)null;
-
-        return XmlConvert.ToDecimal(field.Value);
-    }
-
-    public static explicit operator DateTime(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
-
-        return DateTime.Parse(field.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-    }
-
-    public static explicit operator DateTime?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (DateTime?)null;
-
-        return DateTime.Parse(field.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
-    }
-
-    public static explicit operator DateTimeOffset(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
-
-        return XmlConvert.ToDateTimeOffset(field.Value);
-    }
-
-    public static explicit operator DateTimeOffset?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (DateTimeOffset?)null;
-
-        return XmlConvert.ToDateTimeOffset(field.Value);
-    }
-
-    public static explicit operator TimeSpan(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
-
-        return XmlConvert.ToTimeSpan(field.Value);
-    }
-
-    public static explicit operator TimeSpan?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (TimeSpan?)null;
-
-        return XmlConvert.ToTimeSpan(field.Value);
-    }
-
-    public static explicit operator Guid(StringFieldWrapper field)
-    {
-        if (field == null || field.Value == null)
-            throw new ArgumentNullException(nameof(field));
-
-        return XmlConvert.ToGuid(field.Value);
-    }
-
-    public static explicit operator Guid?(StringFieldWrapper field)
-    {
-        if (field == null || string.IsNullOrWhiteSpace(field.Value))
-            return (Guid?)null;
-
-        return XmlConvert.ToGuid(field.Value);
-    }
+    public static explicit operator Guid?(StringFieldWrapper field) =>
+        Optional(field, value => XmlConvert.ToGuid(field.Value));
 }
