@@ -56,10 +56,10 @@ public static partial class StringSchemaExtensions
         if (schema == null)
             throw new ArgumentNullException(nameof(schema));
 
-        StringSchemaEntry entry = schema.GetEntryForRow(row);
+        var entry = schema.GetEntryForRow(row);
 
-        using var charEnumerator = row.Substring(entry.Header.Length).GetEnumerator();
+        using var charEnumerator = row.Skip(entry.Header.Length).GetEnumerator();
 
-        return new StringSchemaSplitResult(entry, StringFixedExtensions.SplitFixedImplementation(charEnumerator, entry.Widths, entry.FillCharacter));
+        return new StringSchemaSplitResult(entry, StringFixedExtensions.SplitFixedRowImplementation(charEnumerator, entry.Widths, entry.FillCharacter));
     }
 }

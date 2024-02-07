@@ -74,13 +74,11 @@ public static partial class StringFixedExtensions
 
         VerifyColumnWidths(columnWidths);
 
-        string[] fields;
-
         using var charEnumerator = row.GetEnumerator();
 
-        fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
+        var fields = SplitFixedRowImplementation(charEnumerator, columnWidths, fillCharacter);
 
-        if (fields == null)
+        if (fields.Length == 0)
             throw new ArgumentException("Empty row.", nameof(row));
 
         if (charEnumerator.MoveNext())
@@ -144,21 +142,26 @@ public static partial class StringFixedExtensions
 
         VerifyColumnWidths(columnWidths);
 
+        return SplitFixedRepeatingIterator(rows, columnWidths, fillCharacter);
+    }
+
+    private static IEnumerable<string[]> SplitFixedRepeatingIterator(IEnumerable<char> rows, int[] columnWidths, char fillCharacter)
+    {
         using var charEnumerator = rows.GetEnumerator();
 
         string[] fields = null;
 
         do
         {
-            fields = SplitFixedImplementation(charEnumerator, columnWidths, fillCharacter);
+            fields = SplitFixedRowImplementation(charEnumerator, columnWidths, fillCharacter);
 
-            if (fields != null)
+            if (fields.Length > 0)
                 yield return fields;
         }
-        while (fields != null);
+        while (fields.Length > 0);
     }
 
-    internal static string[] SplitFixedImplementation(IEnumerator<char> charEnumerator, int[] columnWidths, char fillCharacter)
+    internal static string[] SplitFixedRowImplementation(IEnumerator<char> charEnumerator, int[] columnWidths, char fillCharacter)
     {
         string[] fields = new string[columnWidths.Length];
 
@@ -175,7 +178,7 @@ public static partial class StringFixedExtensions
                     charsToTake--;
                 }
                 else if (i == 0 && charsToTake == columnWidths[0]) // Empty enumerator
-                    return null;
+                    return Array.Empty<string>();
                 else
                     throw new ArgumentOutOfRangeException(nameof(charEnumerator), "row length must equal the sum of all column widths.");
             }
