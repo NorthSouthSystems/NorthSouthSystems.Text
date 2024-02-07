@@ -60,7 +60,6 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToInt32(field.Value);
     }
 
-    [CLSCompliant(false)]
     public static explicit operator uint(StringFieldWrapper field)
     {
         if (field == null || field.Value == null)
@@ -69,7 +68,6 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToUInt32(field.Value);
     }
 
-    [CLSCompliant(false)]
     public static explicit operator uint?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field.Value))
@@ -94,7 +92,6 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToInt64(field.Value);
     }
 
-    [CLSCompliant(false)]
     public static explicit operator ulong(StringFieldWrapper field)
     {
         if (field == null || field.Value == null)
@@ -103,7 +100,6 @@ public sealed class StringFieldWrapper
         return XmlConvert.ToUInt64(field.Value);
     }
 
-    [CLSCompliant(false)]
     public static explicit operator ulong?(StringFieldWrapper field)
     {
         if (field == null || string.IsNullOrWhiteSpace(field.Value))
