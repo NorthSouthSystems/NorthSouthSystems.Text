@@ -26,7 +26,7 @@ public sealed class StringSchemaEntry
         StringFixedExtensions.VerifyColumnWidths(columnWidths);
 
         if (columnNames != null && columnNames.Length > 0 && columnNames.Length != columnWidths.Length)
-            throw new ArgumentException("columnNames, if provided, must be the same length as columnWidths.", nameof(columnNames));
+            throw new ArgumentException("Must be the same Length as columnWidths.", nameof(columnNames));
 
         Header = header;
         Widths = columnWidths;
@@ -43,4 +43,7 @@ public sealed class StringSchemaEntry
     internal int[] Widths { get; }
     public char FillCharacter { get; }
     internal StringRowWrapperFactory RowWrapperFactory { get; }
+
+    internal bool HeaderOverlaps(StringSchemaEntry entry) =>
+        Header.StartsWith(entry.Header, StringComparison.Ordinal) || entry.Header.StartsWith(Header, StringComparison.Ordinal);
 }

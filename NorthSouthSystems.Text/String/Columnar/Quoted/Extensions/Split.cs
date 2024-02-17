@@ -114,7 +114,7 @@ public static partial class StringQuotedExtensions
     /// them to be reused. Very likely a premature optimization, but it cost 1 line of code, so we're going to leave it
     /// in for now. (In my defense) Processors were once being reused by a function that has since been YAGNI deleted from the API.
     /// </remarks>
-    private class SplitQuotedProcessor
+    private sealed class SplitQuotedProcessor
     {
         public SplitQuotedProcessor(StringQuotedSignals signals)
         {
@@ -179,13 +179,10 @@ public static partial class StringQuotedExtensions
 
         public IEnumerable<string[]> Process(IEnumerable<char> rows)
         {
-            foreach (char c in rows)
+            foreach (char _ in rows.Where(ProcessReturnsYieldRow))
             {
-                if (Process(c))
-                {
-                    yield return _fields.ToArray();
-                    Reset();
-                }
+                yield return _fields.ToArray();
+                Reset();
             }
 
             FlushField();
@@ -196,7 +193,7 @@ public static partial class StringQuotedExtensions
             Reset();
         }
 
-        private bool Process(char c)
+        private bool ProcessReturnsYieldRow(char c)
         {
             _inRow = true;
             _fieldBuilder.Append(c);
@@ -274,7 +271,7 @@ public static partial class StringQuotedExtensions
             string field = _fieldBuilder.ToString();
 
             // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that the field
-            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder and _inQuotes == false;
+            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with _inQuotes false;
             // therefore, _fieldBuilder will contain an extra Quote. E.G.
             //     a,"",c
             //     a,"""",c

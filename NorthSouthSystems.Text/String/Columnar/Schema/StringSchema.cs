@@ -22,25 +22,15 @@ public sealed class StringSchema
         if (entry == null)
             throw new ArgumentNullException(nameof(entry));
 
-        VerifyEntry(entry);
+        if (_entries.Values.Any(existingEntry => existingEntry.HeaderOverlaps(entry)))
+            throw new ArgumentOutOfRangeException(nameof(entry), entry.Header, "No entry.Header may StartWith any other existing entry.Header.");
+
         _entries.Add(entry.Header, entry);
     }
 
     public StringSchemaEntry this[string header] => _entries[header];
 
-    internal StringSchemaEntry GetEntryForRow(string row)
-    {
-        foreach (StringSchemaEntry entry in _entries.Values)
-            if (row.StartsWith(entry.Header, StringComparison.Ordinal))
-                return entry;
-
-        throw new ArgumentOutOfRangeException(nameof(row), row, "No matching schema definition.");
-    }
-
-    private void VerifyEntry(StringSchemaEntry entry)
-    {
-        foreach (StringSchemaEntry existingEntry in _entries.Values)
-            if (existingEntry.Header.StartsWith(entry.Header, StringComparison.Ordinal) || entry.Header.StartsWith(existingEntry.Header, StringComparison.Ordinal))
-                throw new ArgumentOutOfRangeException(nameof(entry), entry.Header, "No entry.Header may StartWith any other existing entry.Header.");
-    }
+    internal StringSchemaEntry GetEntryForRow(string row) =>
+        _entries.Values.FirstOrDefault(entry => row.StartsWith(entry.Header, StringComparison.Ordinal))
+            ?? throw new ArgumentOutOfRangeException(nameof(row), row, "No matching schema definition.");
 }

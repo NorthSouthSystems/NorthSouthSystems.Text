@@ -12,7 +12,7 @@ public static partial class StringFixedExtensions
         if (columnWidths.Length == 0)
             throw new ArgumentException("Length must be > 0", nameof(columnWidths));
 
-        if (columnWidths.Any(width => width <= 0))
+        if (Array.Exists(columnWidths, width => width <= 0))
             throw new ArgumentOutOfRangeException(nameof(columnWidths), "Each column width must be > 0");
     }
 
