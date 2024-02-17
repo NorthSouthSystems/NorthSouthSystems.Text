@@ -1,6 +1,7 @@
 ﻿namespace NorthSouthSystems.Text;
 
 using System.Globalization;
+using System.Threading;
 
 /// <summary>
 /// StringRowWrapperFactory is the only path for creating StringRowWrappers. Given columnNames, it can then be used
@@ -33,13 +34,17 @@ public sealed class StringRowWrapperFactory
 
     private readonly Dictionary<string, int> _columnNameIndices;
 
+    private int _wrapCounter;
+
     public StringRowWrapper Wrap(string[] fields)
     {
+        int wrapCounter = Interlocked.Increment(ref _wrapCounter);
+
         if (fields == null)
-            throw new ArgumentNullException(nameof(fields));
+            throw new ArgumentNullException(nameof(fields), FormattableString.Invariant($"wrapCounter = {wrapCounter}"));
 
         if (fields.Length > ColumnNames.Length)
-            throw new ArgumentException("The number of fields must be <= the number of columns.");
+            throw new ArgumentException(FormattableString.Invariant($"The number of fields must be <= the number of columns. wrapCounter = {wrapCounter}"));
 
         return new StringRowWrapper(this, fields);
     }

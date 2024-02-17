@@ -30,7 +30,6 @@ public static class WithColumnHeadersExtensions
         IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder)
     {
         StringRowWrapperFactory rowWrapperFactory = null;
-        int rowIndex = 0;
 
         foreach (string[] rowFields in rowsOfFields)
         {
@@ -42,21 +41,7 @@ public static class WithColumnHeadersExtensions
                 rowWrapperFactory = new StringRowWrapperFactory(rowFields);
             }
             else
-            {
-                StringRowWrapper rowWrapper;
-
-                try { rowWrapper = rowWrapperFactory.Wrap(rowFields); }
-                catch (Exception exception)
-                {
-                    throw new ArgumentException(
-                        FormattableString.Invariant($"Error wrapping fields for row with 0-based index {rowIndex}."),
-                        exception);
-                }
-
-                yield return rowWrapper;
-            }
-
-            rowIndex++;
+                yield return rowWrapperFactory.Wrap(rowFields);
         }
     }
 
