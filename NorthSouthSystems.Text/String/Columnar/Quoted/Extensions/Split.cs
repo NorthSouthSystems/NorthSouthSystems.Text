@@ -181,66 +181,10 @@ public static partial class StringQuotedExtensions
         {
             foreach (char c in rows)
             {
-                _inRow = true;
-                _fieldBuilder.Append(c);
-
-                if (_escaped)
+                if (Process(c))
                 {
-                    _escaped = false;
-                    continue;
-                }
-
-                _delimiterTracker.ProcessChar(c);
-                _quoteTracker.ProcessChar(c);
-                _newRowTracker.ProcessChar(c);
-                _escapeTracker.ProcessChar(c);
-
-                _quoteQuoteTracker.ProcessChar(c);
-
-                if (_delimiterTracker.IsTriggered)
-                {
-                    ResetTrackers();
-
-                    if (!_inQuotes)
-                    {
-                        RewindField(_signals.Delimiter.Length);
-                        FlushField();
-                        ResetField();
-                    }
-                }
-                else if (_quoteQuoteTracker.IsTriggered)
-                {
-                    ResetTrackers();
-
-                    _inQuotes = false;
-                }
-                else if (_quoteTracker.IsTriggered)
-                {
-                    ResetTrackers(wasQuoteTrackerTriggered: true);
-                    RewindField(_signals.Quote.Length);
-
-                    _inQuotes = !_inQuotes;
-                    _inQuotesEverCurrentField = true;
-                }
-                else if (_newRowTracker.IsTriggered)
-                {
-                    ResetTrackers();
-
-                    if (!_inQuotes)
-                    {
-                        RewindField(_signals.NewRow.Length);
-                        FlushField();
-                        yield return _fields.ToArray();
-                        Reset();
-                    }
-                }
-                else if (_escapeTracker.IsTriggered)
-                {
-                    ResetTrackers();
-                    RewindField(_signals.Escape.Length);
-
-                    _escaped = true;
-                    _escapedEverCurrentField = true;
+                    yield return _fields.ToArray();
+                    Reset();
                 }
             }
 
@@ -250,6 +194,74 @@ public static partial class StringQuotedExtensions
                 yield return _fields.ToArray();
 
             Reset();
+        }
+
+        private bool Process(char c)
+        {
+            _inRow = true;
+            _fieldBuilder.Append(c);
+
+            if (_escaped)
+            {
+                _escaped = false;
+
+                return false;
+            }
+
+            _delimiterTracker.ProcessChar(c);
+            _quoteTracker.ProcessChar(c);
+            _newRowTracker.ProcessChar(c);
+            _escapeTracker.ProcessChar(c);
+
+            _quoteQuoteTracker.ProcessChar(c);
+
+            if (_delimiterTracker.IsTriggered)
+            {
+                ResetTrackers();
+
+                if (!_inQuotes)
+                {
+                    RewindField(_signals.Delimiter.Length);
+                    FlushField();
+                    ResetField();
+                }
+            }
+            else if (_quoteQuoteTracker.IsTriggered)
+            {
+                ResetTrackers();
+
+                _inQuotes = false;
+            }
+            else if (_quoteTracker.IsTriggered)
+            {
+                ResetTrackers(wasQuoteTrackerTriggered: true);
+                RewindField(_signals.Quote.Length);
+
+                _inQuotes = !_inQuotes;
+                _inQuotesEverCurrentField = true;
+            }
+            else if (_newRowTracker.IsTriggered)
+            {
+                ResetTrackers();
+
+                if (!_inQuotes)
+                {
+                    RewindField(_signals.NewRow.Length);
+                    FlushField();
+
+                    return true;
+                }
+            }
+            else if (_escapeTracker.IsTriggered)
+            {
+                ResetTrackers();
+                RewindField(_signals.Escape.Length);
+
+                _escaped = true;
+                _escapedEverCurrentField = true;
+            }
+
+            return false;
         }
 
         private void RewindField(int length) => _fieldBuilder.Length -= length;
