@@ -68,5 +68,8 @@ public class StringExtensionsTests_NormalizeWhiteSpace
 
         act = () => ((string)null).NormalizeWhiteSpace();
         act.Should().ThrowExactly<ArgumentNullException>();
+
+        act = () => "A".NormalizeWhiteSpace("a");
+        act.Should().ThrowExactly<ArgumentException>();
     }
 }

@@ -51,36 +51,31 @@ public static partial class StringExtensions
             if (char.IsWhiteSpace(c))
             {
                 bufferedSpace = true;
-            }
-            else
-            {
-                if (bufferedNewLine)
-                {
-                    foreach (char newLineChar in respectNewLine)
-                        yield return newLineChar;
 
-                    bufferedNewLine = false;
-                    bufferedSpace = false;
+                newLineTracker.ProcessChar(c);
+
+                if (newLineTracker.IsTriggered)
+                {
+                    newLineTracker.Reset();
+
+                    bufferedNewLine = true;
                 }
 
-                if (bufferedSpace)
-                {
-                    yield return ' ';
-
-                    bufferedSpace = false;
-                }
-
-                yield return c;
+                continue;
             }
 
-            newLineTracker.ProcessChar(c);
-
-            if (newLineTracker.IsTriggered)
+            if (bufferedNewLine)
             {
-                newLineTracker.Reset();
-
-                bufferedNewLine = true;
+                foreach (char newLineChar in respectNewLine)
+                    yield return newLineChar;
             }
+            else if (bufferedSpace)
+                yield return ' ';
+
+            bufferedSpace = false;
+            bufferedNewLine = false;
+
+            yield return c;
         }
     }
 }
