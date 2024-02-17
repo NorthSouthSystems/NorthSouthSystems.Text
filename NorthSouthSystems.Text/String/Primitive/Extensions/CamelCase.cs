@@ -94,15 +94,11 @@ public static partial class StringExtensions
         if (chars == null)
             throw new ArgumentNullException(nameof(chars));
 
-        if (!chars.Any())
-            yield break;
-
         bool first = true;
 
         bool previousIsDigit = false;
         bool previousIsLetter = false;
         bool previousIsLower = false;
-        bool previousIsUpper = false;
 
         foreach (char c in chars)
         {
@@ -119,14 +115,11 @@ public static partial class StringExtensions
             }
             else
             {
-                if (isDigit || isLetter)
+                if ((isLetter && previousIsDigit)
+                    || (isDigit && previousIsLetter)
+                    || (isUpper && previousIsLower))
                 {
-                    if (previousIsDigit && isLetter)
-                        yield return ' ';
-                    else if (previousIsLetter && isDigit)
-                        yield return ' ';
-                    else if (previousIsLower && isUpper)
-                        yield return ' ';
+                    yield return ' ';
                 }
 
                 yield return c;
@@ -135,7 +128,6 @@ public static partial class StringExtensions
             previousIsDigit = isDigit;
             previousIsLetter = isLetter;
             previousIsLower = isLower;
-            previousIsUpper = isUpper;
         }
     }
 }
