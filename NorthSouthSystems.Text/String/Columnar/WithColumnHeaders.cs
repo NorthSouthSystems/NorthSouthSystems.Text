@@ -31,21 +31,7 @@ public static class WithColumnHeadersExtensions
             if (rowWrapperFactory == null)
             {
                 if (expectedColumnNames?.Any() ?? false)
-                    ThrowIfIncorrectColumnNames();
-
-                void ThrowIfIncorrectColumnNames()
-                {
-                    var errors = new List<string>();
-
-                    errors.AddRange(expectedColumnNames.Except(rowFields).Select(c => "Expected: " + c));
-                    errors.AddRange(rowFields.Except(expectedColumnNames).Select(c => "Unexpected: " + c));
-
-                    if (!errors.Any() && enforceExpectedColumnNamesOrder && !rowFields.SequenceEqual(expectedColumnNames))
-                        errors.Add("Column names are not in the expected order.");
-
-                    if (errors.Any())
-                        throw new ArgumentException(string.Join(Environment.NewLine, errors));
-                }
+                    ThrowIfIncorrectColumnNames(rowFields, expectedColumnNames, enforceExpectedColumnNamesOrder);
 
                 rowWrapperFactory = new StringRowWrapperFactory(rowFields);
             }
@@ -66,5 +52,20 @@ public static class WithColumnHeadersExtensions
 
             rowIndex++;
         }
+    }
+
+    private static void ThrowIfIncorrectColumnNames(string[] rowFields,
+        IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder)
+    {
+        var errors = new List<string>();
+
+        errors.AddRange(expectedColumnNames.Except(rowFields).Select(c => "Expected: " + c));
+        errors.AddRange(rowFields.Except(expectedColumnNames).Select(c => "Unexpected: " + c));
+
+        if (errors.Count == 0 && enforceExpectedColumnNamesOrder && !rowFields.SequenceEqual(expectedColumnNames))
+            errors.Add("Column names are not in the expected order.");
+
+        if (errors.Count > 0)
+            throw new ArgumentException(string.Join(Environment.NewLine, errors));
     }
 }
