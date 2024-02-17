@@ -3,7 +3,7 @@
 public static partial class StringExtensions
 {
     /// <inheritdoc cref="ToLowerCamelCase(IEnumerable{char})"/>
-    public static string ToLowerCamelCase(this string value) => ToCamelCaseImplementation(value, true).ToNewString();
+    public static string ToLowerCamelCase(this string value) => ToCamelCase(value, true).ToNewString();
 
     /// <summary>
     /// Process a sequence of characters and returns its lower camel case representation.
@@ -17,10 +17,10 @@ public static partial class StringExtensions
     /// fooBar<br/>
     ///  fooBar<br/>
     /// </example>
-    public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) => ToCamelCaseImplementation(chars, true);
+    public static IEnumerable<char> ToLowerCamelCase(this IEnumerable<char> chars) => ToCamelCase(chars, true);
 
     /// <inheritdoc cref="ToUpperCamelCase(IEnumerable{char})"/>
-    public static string ToUpperCamelCase(this string value) => ToCamelCaseImplementation(value, false).ToNewString();
+    public static string ToUpperCamelCase(this string value) => ToCamelCase(value, false).ToNewString();
 
     /// <summary>
     /// Process a sequence of characters and returns its upper camel case representation.
@@ -34,13 +34,18 @@ public static partial class StringExtensions
     /// FooBar<br/>
     ///  FooBar<br/>
     /// </example>
-    public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) => ToCamelCaseImplementation(chars, false);
+    public static IEnumerable<char> ToUpperCamelCase(this IEnumerable<char> chars) => ToCamelCase(chars, false);
 
-    private static IEnumerable<char> ToCamelCaseImplementation(IEnumerable<char> chars, bool isLower)
+    private static IEnumerable<char> ToCamelCase(IEnumerable<char> chars, bool isLower)
     {
         if (chars == null)
             throw new ArgumentNullException(nameof(chars));
 
+        return ToCamelCaseIterator(chars, isLower);
+    }
+
+    private static IEnumerable<char> ToCamelCaseIterator(IEnumerable<char> chars, bool isLower)
+    {
         bool previousWhiteSpace = true;
         int outputIndex = 0;
 
@@ -94,6 +99,11 @@ public static partial class StringExtensions
         if (chars == null)
             throw new ArgumentNullException(nameof(chars));
 
+        return SpaceCamelCaseIterator(chars);
+    }
+
+    private static IEnumerable<char> SpaceCamelCaseIterator(IEnumerable<char> chars)
+    {
         bool first = true;
 
         bool previousIsDigit = false;

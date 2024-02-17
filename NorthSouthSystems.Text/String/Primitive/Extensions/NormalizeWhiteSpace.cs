@@ -35,6 +35,11 @@ public static partial class StringExtensions
         if (!string.IsNullOrWhiteSpace(respectNewLine))
             throw new ArgumentException("Must only contain WhiteSpace chars.", nameof(respectNewLine));
 
+        return NormalizeWhiteSpaceIterator(chars, respectNewLine);
+    }
+
+    private static IEnumerable<char> NormalizeWhiteSpaceIterator(IEnumerable<char> chars, string respectNewLine)
+    {
         bool bufferedSpace = false;
         bool bufferedNewLine = false;
 

@@ -23,6 +23,12 @@ public static class WithColumnHeadersExtensions
         if (rowsOfFields == null)
             throw new ArgumentNullException(nameof(rowsOfFields));
 
+        return WithColumnHeadersIterator(rowsOfFields, expectedColumnNames, enforceExpectedColumnNamesOrder);
+    }
+
+    private static IEnumerable<StringRowWrapper> WithColumnHeadersIterator(IEnumerable<string[]> rowsOfFields,
+        IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder)
+    {
         StringRowWrapperFactory rowWrapperFactory = null;
         int rowIndex = 0;
 
