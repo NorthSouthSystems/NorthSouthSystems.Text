@@ -16,7 +16,7 @@ public class JoinQuotedRowBenchmarks
             throw new FormatException();
 
         _rowsFields = csvLinuxNewLines
-            .SplitQuotedRows(new(",", "\"", "\n", string.Empty))
+            .SplitQuotedRows(Program.LinuxNewLineCsvSignals)
             .ToArray();
     }
 
@@ -26,13 +26,13 @@ public class JoinQuotedRowBenchmarks
     public void LinuxNewLines()
     {
         foreach (var fields in _rowsFields)
-            fields.JoinQuotedRow(new(",", "\"", "\n", string.Empty));
+            fields.JoinQuotedRow(Program.LinuxNewLineCsvSignals);
     }
 
     [Benchmark]
     public void WindowsNewLines()
     {
         foreach (var fields in _rowsFields)
-            fields.JoinQuotedRow(new(",", "\"", "\r\n", string.Empty));
+            fields.JoinQuotedRow(Program.WindowsNewLineCsvSignals);
     }
 }

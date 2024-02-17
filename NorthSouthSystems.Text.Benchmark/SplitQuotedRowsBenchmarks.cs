@@ -26,11 +26,11 @@ public class SplitQuotedRowsBenchmarks
 
     [Benchmark]
     public void LinuxNewLines() => _csvLinuxNewLines
-        .SplitQuotedRows(new(",", "\"", "\n", string.Empty))
+        .SplitQuotedRows(Program.LinuxNewLineCsvSignals)
         .Consume(_consumer);
 
     [Benchmark]
     public void WindowsNewLines() => _csvWindowsNewLines
-        .SplitQuotedRows(new(",", "\"", "\r\n", string.Empty))
+        .SplitQuotedRows(Program.WindowsNewLineCsvSignals)
         .Consume(_consumer);
 }

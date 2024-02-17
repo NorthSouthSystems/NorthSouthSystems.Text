@@ -62,40 +62,27 @@ public static partial class StringQuotedExtensions
 
     private static string QuoteAndEscapeField(string field, StringQuotedSignals signals, bool forceQuotes)
     {
-        if (ContainsEscape())
-            field = field.Replace(signals.Escape, signals.Escape + signals.Escape);
+        var found = new StringQuotedSignalsFound(signals, field);
+
+        if (found.EscapeFound)
+            field = field.Replace(signals.Escape, signals.EscapedEscape);
 
         if (signals.QuoteIsSpecified)
-            Quote();
+        {
+            if (forceQuotes || found.RequiresQuotingOrEscaping)
+                field = signals.Quote + field.Replace(signals.Quote, signals.EscapedQuote) + signals.Quote;
+        }
         else if (signals.EscapeIsSpecified)
-            Escape();
-        else if (ContainsDelimiter() || ContainsNewRow())
+        {
+            if (found.DelimiterFound)
+                field = field.Replace(signals.Delimiter, signals.EscapedDelimiter);
+
+            if (found.NewRowFound)
+                field = field.Replace(signals.NewRow, signals.EscapedNewRow);
+        }
+        else if (found.RequiresQuotingOrEscaping)
             throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");
 
         return field;
-
-        void Quote()
-        {
-            if (ContainsQuote())
-                field = signals.Quote + field.Replace(signals.Quote, EscapedQuote()) + signals.Quote;
-            else if (forceQuotes || ContainsDelimiter() || ContainsNewRow())
-                field = signals.Quote + field + signals.Quote;
-        }
-
-        void Escape()
-        {
-            if (ContainsDelimiter())
-                field = field.Replace(signals.Delimiter, signals.Escape + signals.Delimiter);
-
-            if (ContainsNewRow())
-                field = field.Replace(signals.NewRow, signals.Escape + signals.NewRow);
-        }
-
-        string EscapedQuote() => (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote;
-
-        bool ContainsDelimiter() => field.Contains(signals.Delimiter);
-        bool ContainsQuote() => signals.QuoteIsSpecified && field.Contains(signals.Quote);
-        bool ContainsNewRow() => signals.NewRowIsSpecified && field.Contains(signals.NewRow);
-        bool ContainsEscape() => signals.EscapeIsSpecified && field.Contains(signals.Escape);
     }
 }

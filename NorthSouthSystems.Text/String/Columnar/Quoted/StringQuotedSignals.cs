@@ -54,6 +54,11 @@ public sealed class StringQuotedSignals
 
         if (ContainsAny(Delimiter, Quote, NewRow, Escape) || ContainsAny(Quote, NewRow, Escape) || ContainsAny(NewRow, Escape))
             throw new ArgumentException("No parameter may be containable within any other.");
+
+        EscapedDelimiter = Escape + Delimiter;
+        EscapedQuote = (EscapeIsSpecified ? Escape : Quote) + Quote;
+        EscapedNewRow = Escape + NewRow;
+        EscapedEscape = Escape + Escape;
     }
 
     private static bool ContainsAny(string source, params string[] compares) =>
@@ -71,4 +76,29 @@ public sealed class StringQuotedSignals
 
     public bool EscapeIsSpecified => !string.IsNullOrEmpty(Escape);
     public string Escape { get; }
+
+    public string EscapedDelimiter { get; }
+    public string EscapedQuote { get; }
+    public string EscapedNewRow { get; }
+    public string EscapedEscape { get; }
+}
+
+internal readonly struct StringQuotedSignalsFound
+{
+    internal StringQuotedSignalsFound(StringQuotedSignals signals, string field)
+    {
+        DelimiterFound = signals.DelimiterIsSpecified && field.Contains(signals.Delimiter);
+        QuoteFound = signals.QuoteIsSpecified && field.Contains(signals.Quote);
+        NewRowFound = signals.NewRowIsSpecified && field.Contains(signals.NewRow);
+        EscapeFound = signals.EscapeIsSpecified && field.Contains(signals.Escape);
+
+        RequiresQuotingOrEscaping = DelimiterFound || QuoteFound || NewRowFound;
+    }
+
+    internal readonly bool DelimiterFound { get; }
+    internal readonly bool QuoteFound { get; }
+    internal readonly bool NewRowFound { get; }
+    internal readonly bool EscapeFound { get; }
+
+    internal readonly bool RequiresQuotingOrEscaping { get; }
 }
