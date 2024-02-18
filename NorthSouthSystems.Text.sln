@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F796CC56-52B2-4B99-83B8-79990399FD71}"
-	ProjectSection(SolutionItems) = preProject
-		CodeAnalysis.CustomDictionary.xml = CodeAnalysis.CustomDictionary.xml
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text", "NorthSouthSystems.Text\NorthSouthSystems.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Test", "NorthSouthSystems.Text.Test\NorthSouthSystems.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
