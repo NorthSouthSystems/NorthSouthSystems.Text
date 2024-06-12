@@ -9,6 +9,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Benchmark", "NorthSouthSystems.Text.Benchmark\NorthSouthSystems.Text.Benchmark.csproj", "{4877B00D-91A0-4195-95B0-B1564399DA01}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github Workflows", "Github Workflows", "{D3DE48DB-00E1-45B7-ABAD-26CB50FACE66}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\BuildTestAnalyze.yml = .github\workflows\BuildTestAnalyze.yml
+		.github\workflows\BuildTestPackagePublish.yml = .github\workflows\BuildTestPackagePublish.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nerdbank.GitVersioning", "Nerdbank.GitVersioning", "{4F460081-DFBD-4C7C-B3B8-96B2AB165F3E}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		version.json = version.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{8C897E58-6DF8-4261-863C-3D4AAB5CAD3A}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
