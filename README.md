@@ -1,8 +1,9 @@
-# What?
+# NorthSouthSystems.Text
+
 This repository hosts a .NET library containing various string utilities. Included in the library are fluent APIs for parsing and creating quoted delimited and fixed-width positional text.  For example, quoted CSV such as that used by Microsoft Excel is supported.
 
-# How?
 ## Quoted Delimited Text (e.g. CSV) Splitting and Joining
+
 **Simple Split**
 {{
 string row = "a,b,c";
@@ -47,7 +48,9 @@ Console.WriteLine(result);
 }}
 Console Output:
 "a,a",b,c
+
 ## Fixed-Width (a.k.a. Positional) Text Splitting and Joining
+
 **Split**
 {{
 string row = "A-B-C";
@@ -81,7 +84,9 @@ Console.WriteLine(row);
 Console Output:
 A B C
 A-B-C
+
 ## Schema Fixed-Width (a.k.a. Positional) Text Splitting and Joining
+
 **Split**
 {{
 var schema = new StringSchema();
@@ -143,21 +148,8 @@ Console Output:
 A123
 B123456
 C1-2-3-
-## Other String Utilities
-**Filter**
-{{
-Console.WriteLine("a1b2c3d".Filter(CharFilters.None));
-Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters));
-Console.WriteLine("a1b2c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
-Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemovePunctuation));
-Console.WriteLine("a1b2-c3d".Filter(CharFilters.RemoveLetters | CharFilters.RemoveDigits));
-}}
-Console Output:
-a1b2c3d
-123
 
-a1b2c3d
--
+## Other String Utilities
 
 **NormalizeWhiteSpace**
 {{
@@ -197,3 +189,18 @@ Console.WriteLine("fooBar".ToUpperCamelCase());
 }}
 Console Output:
 FooBar
+
+**WhereIsInAnyCategory**
+{{
+Console.WriteLine("a1b2c3d".WhereIsInAnyCategory(CharCategories.All));
+Console.WriteLine("a1b2c3d".WhereIsInAnyCategory(CharCategories.Digit));
+Console.WriteLine("a1b2c3d".WhereIsInAnyCategory(CharCategories.Punctuation | CharCategories.WhiteSpace));
+Console.WriteLine("a1b2-c3d".WhereIsInAnyCategory(CharCategories.Digit | CharCategories.Letter));
+Console.WriteLine("a1b2-c3d".WhereIsInAnyCategory(CharCategories.Punctuation));
+}}
+Console Output:
+a1b2c3d
+123
+
+a1b2c3d
+-
