@@ -120,12 +120,12 @@ public static partial class StringQuotedExtensions
         {
             _signals = signals;
 
-            _delimiterTracker = new(_signals.Delimiter);
-            _quoteTracker = new(_signals.Quote);
-            _newRowTracker = new(_signals.NewRow);
-            _escapeTracker = new(_signals.Escape);
+            _delimiterTracker = StringSignalTracker.Create(_signals.Delimiter);
+            _quoteTracker = StringSignalTracker.Create(_signals.Quote);
+            _newRowTracker = StringSignalTracker.Create(_signals.NewRow);
+            _escapeTracker = StringSignalTracker.Create(_signals.Escape);
 
-            _quoteQuoteTracker = new(_signals.Quote + _signals.Quote);
+            _quoteQuoteTracker = StringSignalTracker.Create(_signals.Quote + _signals.Quote);
         }
 
         private bool _inRow = false;
@@ -140,12 +140,12 @@ public static partial class StringQuotedExtensions
 
         private readonly StringQuotedSignals _signals;
 
-        private readonly StringSignalTracker _delimiterTracker;
-        private readonly StringSignalTracker _quoteTracker;
-        private readonly StringSignalTracker _newRowTracker;
-        private readonly StringSignalTracker _escapeTracker;
+        private readonly IStringSignalTracker _delimiterTracker;
+        private readonly IStringSignalTracker _quoteTracker;
+        private readonly IStringSignalTracker _newRowTracker;
+        private readonly IStringSignalTracker _escapeTracker;
 
-        private readonly StringSignalTracker _quoteQuoteTracker;
+        private readonly IStringSignalTracker _quoteQuoteTracker;
 
         private void Reset()
         {

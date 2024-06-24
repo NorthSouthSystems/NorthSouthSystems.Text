@@ -5,20 +5,20 @@ public class StringSignalTrackerTests
     [Fact]
     public void Empty()
     {
-        StringSignalTracker tracker;
+        IStringSignalTracker tracker;
 
-        tracker = new(string.Empty);
+        tracker = StringSignalTracker.Create(string.Empty);
         EmptyBase(tracker);
         tracker.Reset();
         EmptyBase(tracker);
 
-        tracker = new(null);
+        tracker = StringSignalTracker.Create(null);
         EmptyBase(tracker);
         tracker.Reset();
         EmptyBase(tracker);
     }
 
-    private void EmptyBase(StringSignalTracker tracker)
+    private void EmptyBase(IStringSignalTracker tracker)
     {
         tracker.Signal.Should().BeEmpty();
 
@@ -41,15 +41,15 @@ public class StringSignalTrackerTests
     [Fact]
     public void SingleChar()
     {
-        StringSignalTracker tracker;
+        IStringSignalTracker tracker;
 
-        tracker = new("a");
+        tracker = StringSignalTracker.Create("a");
         SingleCharBase(tracker);
         tracker.Reset();
         SingleCharBase(tracker);
     }
 
-    private void SingleCharBase(StringSignalTracker tracker)
+    private void SingleCharBase(IStringSignalTracker tracker)
     {
         tracker.Signal.Should().Be("a");
 
@@ -68,15 +68,15 @@ public class StringSignalTrackerTests
     [Fact]
     public void MultiCharSimple()
     {
-        StringSignalTracker tracker;
+        IStringSignalTracker tracker;
 
-        tracker = new("ab");
+        tracker = StringSignalTracker.Create("ab");
         MultiCharSimpleBase(tracker);
         tracker.Reset();
         MultiCharSimpleBase(tracker);
     }
 
-    private void MultiCharSimpleBase(StringSignalTracker tracker)
+    private void MultiCharSimpleBase(IStringSignalTracker tracker)
     {
         tracker.Signal.Should().Be("ab");
 
@@ -107,15 +107,15 @@ public class StringSignalTrackerTests
     [Fact]
     public void MultiCharComplex()
     {
-        StringSignalTracker tracker;
+        IStringSignalTracker tracker;
 
-        tracker = new("abac");
+        tracker = StringSignalTracker.Create("abac");
         MultiCharComplexBase(tracker);
         tracker.Reset();
         MultiCharComplexBase(tracker);
     }
 
-    private void MultiCharComplexBase(StringSignalTracker tracker)
+    private void MultiCharComplexBase(IStringSignalTracker tracker)
     {
         tracker.Signal.Should().Be("abac");
 
@@ -166,7 +166,7 @@ public class StringSignalTrackerTests
 
         act = () =>
         {
-            var tracker = new StringSignalTracker("a");
+            var tracker = StringSignalTracker.Create("a");
             tracker.ProcessChar('a');
             tracker.ProcessChar(' ');
         };

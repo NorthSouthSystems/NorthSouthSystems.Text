@@ -44,7 +44,7 @@ public static partial class StringExtensions
         bool bufferedNewLine = false;
 
         respectNewLine = respectNewLine.NullToEmpty();
-        var newLineTracker = new StringSignalTracker(respectNewLine);
+        var newLineTracker = StringSignalTracker.Create(respectNewLine);
 
         foreach (char c in chars.SkipWhile(char.IsWhiteSpace))
         {
