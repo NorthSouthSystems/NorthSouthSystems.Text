@@ -1,92 +1,16 @@
 ﻿namespace NorthSouthSystems.Text;
 
-/// <summary>
-/// Tracks an individual signal.
-/// </summary>
-/// <example>
-/// <code>
-/// var tracker = StringSignalTracker.Create("abc");
-/// 
-/// tracker.Process('d');
-/// Console.WriteLine(tracker.IsCounting);
-/// Console.WriteLine(tracker.IsTriggered);
-/// Console.WriteLine();
-/// 
-/// tracker.Process('a');
-/// Console.WriteLine(tracker.IsCounting);
-/// Console.WriteLine(tracker.IsTriggered);
-/// Console.WriteLine();
-/// 
-/// tracker.Process('d');
-/// Console.WriteLine(tracker.IsCounting);
-/// Console.WriteLine(tracker.IsTriggered);
-/// Console.WriteLine();
-/// 
-/// tracker.Process('a');
-/// Console.WriteLine(tracker.IsCounting);
-/// Console.WriteLine(tracker.IsTriggered);
-/// Console.WriteLine();
-/// 
-/// tracker.Process('b');
-/// Console.WriteLine(tracker.IsCounting);
-/// Console.WriteLine(tracker.IsTriggered);
-/// Console.WriteLine();
-/// 
-/// tracker.Process('c');
-/// Console.WriteLine(tracker.IsCounting);
-/// Console.WriteLine(tracker.IsTriggered);
-/// </code>
-/// Console Output:<br/>
-/// False<br/>
-/// False<br/>
-/// <br/>
-/// True<br/>
-/// False<br/>
-/// <br/>
-/// False<br/>
-/// False<br/>
-/// <br/>
-/// True<br/>
-/// False<br/>
-/// <br/>
-/// True<br/>
-/// False<br/>
-/// <br/>
-/// False<br/>
-/// True<br/>
-/// </example>
-public interface IStringSignalTracker
+internal interface IStringSignalTracker
 {
     string Signal { get; }
 
-    /// <summary>
-    /// IsCounting will be true when the Tracker's state represents a partially matched Signal.
-    /// </summary>
-    bool IsCounting { get; }
-
-    /// <summary>
-    /// IsTriggered will be true when the Signal has been matched. No further processing can take place until
-    /// the Tracker has been Reset.
-    /// </summary>
-    bool IsTriggered { get; }
-
-    /// <summary>
-    /// Puts the Tracker in a newly created state.
-    /// </summary>
     void Reset();
-
-    /// <summary>
-    /// Update all state based on the character to Process.
-    /// </summary>
-    void ProcessChar(char value);
+    int ProcessCharReturnsTriggeredLength(char value);
 }
 
-public static class StringSignalTracker
+internal static class StringSignalTracker
 {
-    /// <summary>
-    /// Creates an optimized IStringSignalTracker for Signal based on its Length.
-    /// </summary>
-    public static IStringSignalTracker Create(string signal)
+    internal static IStringSignalTracker Create(string signal)
     {
         if (string.IsNullOrEmpty(signal))
             return _emptyTracker;
@@ -102,12 +26,9 @@ public static class StringSignalTracker
     {
         public string Signal => string.Empty;
 
-        public bool IsCounting => false;
-        public bool IsTriggered => false;
-
         public void Reset() { }
 
-        public void ProcessChar(char value) { }
+        public int ProcessCharReturnsTriggeredLength(char value) => 0;
     }
 
     private class SingleCharTracker : IStringSignalTracker
@@ -123,19 +44,9 @@ public static class StringSignalTracker
         // PERF - Benchmarks show a minor but noticible improvement when storing and using this.
         private readonly char _c;
 
-        public bool IsCounting => false;
-        public bool IsTriggered { get; private set; }
+        public void Reset() { }
 
-        public void Reset() => IsTriggered = false;
-
-        public void ProcessChar(char value)
-        {
-            if (IsTriggered)
-                throw new InvalidOperationException("Cannot process a char when a String Signal Tracker is triggered.");
-
-            if (_c == value)
-                IsTriggered = true;
-        }
+        public int ProcessCharReturnsTriggeredLength(char value) => _c == value ? 1 : 0;
     }
 
     private class MultiCharTracker : IStringSignalTracker
@@ -151,20 +62,10 @@ public static class StringSignalTracker
 
         private readonly List<int> _activeCounters;
 
-        public bool IsCounting => _activeCounters.Count > 0;
-        public bool IsTriggered { get; private set; }
+        public void Reset() => _activeCounters.Clear();
 
-        public void Reset()
+        public int ProcessCharReturnsTriggeredLength(char value)
         {
-            IsTriggered = false;
-            _activeCounters.Clear();
-        }
-
-        public void ProcessChar(char value)
-        {
-            if (IsTriggered)
-                throw new InvalidOperationException("Cannot process a char when a String Signal Tracker is triggered.");
-
             // Iterate backwards because we will be removing from the list during the iteration.
             for (int i = _activeCounters.Count - 1; i >= 0; i--)
             {
@@ -172,9 +73,9 @@ public static class StringSignalTracker
                 {
                     if (_activeCounters[i] == Signal.Length - 1)
                     {
-                        IsTriggered = true;
                         _activeCounters.Clear();
-                        return;
+
+                        return Signal.Length;
                     }
                     else
                         _activeCounters[i]++;
@@ -185,6 +86,8 @@ public static class StringSignalTracker
 
             if (Signal[0] == value)
                 _activeCounters.Add(1);
+
+            return 0;
         }
     }
 }

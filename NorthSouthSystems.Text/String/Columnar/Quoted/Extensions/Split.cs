@@ -205,54 +205,49 @@ public static partial class StringQuotedExtensions
                 return false;
             }
 
-            _delimiterTracker.ProcessChar(c);
-            _quoteTracker.ProcessChar(c);
-            _newRowTracker.ProcessChar(c);
-            _escapeTracker.ProcessChar(c);
+            int triggeredLength;
 
-            _quoteQuoteTracker.ProcessChar(c);
-
-            if (_delimiterTracker.IsTriggered)
+            if ((triggeredLength = _delimiterTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers();
 
                 if (!_inQuotes)
                 {
-                    RewindField(_signals.Delimiter.Length);
+                    RewindField(triggeredLength);
                     FlushField();
                     ResetField();
                 }
             }
-            else if (_quoteQuoteTracker.IsTriggered)
+            else if (_quoteQuoteTracker.ProcessCharReturnsTriggeredLength(c) > 0)
             {
                 ResetTrackers();
 
                 _inQuotes = false;
             }
-            else if (_quoteTracker.IsTriggered)
+            else if ((triggeredLength = _quoteTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers(wasQuoteTrackerTriggered: true);
-                RewindField(_signals.Quote.Length);
+                RewindField(triggeredLength);
 
                 _inQuotes = !_inQuotes;
                 _inQuotesEverCurrentField = true;
             }
-            else if (_newRowTracker.IsTriggered)
+            else if ((triggeredLength = _newRowTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers();
 
                 if (!_inQuotes)
                 {
-                    RewindField(_signals.NewRow.Length);
+                    RewindField(triggeredLength);
                     FlushField();
 
                     return true;
                 }
             }
-            else if (_escapeTracker.IsTriggered)
+            else if ((triggeredLength = _escapeTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers();
-                RewindField(_signals.Escape.Length);
+                RewindField(triggeredLength);
 
                 _escaped = true;
                 _escapedEverCurrentField = true;

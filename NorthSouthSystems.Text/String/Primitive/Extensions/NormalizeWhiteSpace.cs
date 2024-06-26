@@ -52,9 +52,7 @@ public static partial class StringExtensions
             {
                 bufferedSpace = true;
 
-                newLineTracker.ProcessChar(c);
-
-                if (newLineTracker.IsTriggered)
+                if (newLineTracker.ProcessCharReturnsTriggeredLength(c) > 0)
                 {
                     newLineTracker.Reset();
 

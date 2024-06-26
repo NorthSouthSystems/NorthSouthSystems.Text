@@ -22,20 +22,8 @@ public class StringSignalTrackerTests
     {
         tracker.Signal.Should().BeEmpty();
 
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
     }
 
     [Fact]
@@ -53,16 +41,8 @@ public class StringSignalTrackerTests
     {
         tracker.Signal.Should().Be("a");
 
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('b');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeTrue();
+        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(1);
     }
 
     [Fact]
@@ -80,28 +60,11 @@ public class StringSignalTrackerTests
     {
         tracker.Signal.Should().Be("ab");
 
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('b');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('c');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('b');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeTrue();
+        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(2);
     }
 
     [Fact]
@@ -119,57 +82,14 @@ public class StringSignalTrackerTests
     {
         tracker.Signal.Should().Be("abac");
 
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('b');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('c');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('b');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('b');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('a');
-        tracker.IsCounting.Should().BeTrue();
-        tracker.IsTriggered.Should().BeFalse();
-
-        tracker.ProcessChar('c');
-        tracker.IsCounting.Should().BeFalse();
-        tracker.IsTriggered.Should().BeTrue();
-    }
-
-    [Fact]
-    public void Exceptions()
-    {
-        Action act;
-
-        act = () =>
-        {
-            var tracker = StringSignalTracker.Create("a");
-            tracker.ProcessChar('a');
-            tracker.ProcessChar(' ');
-        };
-        act.Should().ThrowExactly<InvalidOperationException>("ProcessCharAlreadyTriggered");
+        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(4);
     }
 }
