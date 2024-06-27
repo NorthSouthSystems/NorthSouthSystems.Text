@@ -1,349 +1,186 @@
 ﻿namespace NorthSouthSystems.Text;
 
+using MoreLinq;
+
 public class StringQuotedExtensionsTests_SplitRow
 {
-    private static string[] Split(string format, StringQuotedSignals signals) =>
-        StringQuotedExtensionsTests_Join.Expected(format, signals)
-            .SplitQuotedRow(signals);
+    private static readonly IEnumerable<StringQuotedSignals> _signals =
+    [
+        StringQuotedSignals.Csv,
+        new("|", "'", Environment.NewLine, string.Empty),
+        new("\t", "~", Environment.NewLine, "\\"),
+        new("DELIMITER", "QUOTE", "NEWLINE", "ESCAPE")
+    ];
 
     [Fact]
-    public void NonQuoted()
+    public void EmptyFields() => _signals.ForEach(signals =>
     {
-        NonQuotedBase(StringQuotedSignals.Csv);
-        NonQuotedBase(StringQuotedSignals.Pipe);
-        NonQuotedBase(StringQuotedSignals.Tab);
-    }
+        string.Empty.SplitQuotedRow(signals)
+            .Length.Should().Be(0);
 
-    private static void NonQuotedBase(StringQuotedSignals signals)
-    {
-        Split(string.Empty, signals).Length.Should().Be(0);
-
-        Split("{0}", signals)
+        signals.Delimiter.SplitQuotedRow(signals)
             .Should().Equal(string.Empty, string.Empty);
 
-        Split("{0}{0}", signals)
+        (signals.Delimiter + signals.Delimiter).SplitQuotedRow(signals)
             .Should().Equal(string.Empty, string.Empty, string.Empty);
-
-        Split("a", signals)
-            .Should().Equal("a");
-
-        Split("a{0}b", signals)
-            .Should().Equal("a", "b");
-
-        Split("a{0}b{0}c", signals)
-            .Should().Equal("a", "b", "c");
-
-        Split("a{0}b{0}", signals)
-            .Should().Equal("a", "b", string.Empty);
-
-        Split("a{0}{0}c", signals)
-            .Should().Equal("a", string.Empty, "c");
-
-        if (signals.NewRowIsSpecified)
-        {
-            Split("{2}", signals)
-                .Should().Equal(string.Empty);
-
-            Split("a{2}", signals)
-                .Should().Equal("a");
-
-            Split("a{0}b{2}", signals)
-                .Should().Equal("a", "b");
-
-            Split("a{0}b{0}c{2}", signals)
-                .Should().Equal("a", "b", "c");
-        }
-    }
+    });
 
     [Fact]
-    public void Quoted()
+    public void FullFuzzing() => _signals.ForEach(signals =>
     {
-        QuotedBase(StringQuotedSignals.Csv);
-        QuotedBase(StringQuotedSignals.Pipe);
-        QuotedBase(StringQuotedSignals.Tab);
-        QuotedBase(new(",", "'", Environment.NewLine, string.Empty));
-    }
+        var pairs = _rawParsedFieldPairs.Where(p => p.IsRelevant(signals));
 
-    private static void QuotedBase(StringQuotedSignals signals)
-    {
-        if (!signals.QuoteIsSpecified)
-            throw new NotSupportedException();
-
-        QuotedBaseQuotingUnnecessary(signals);
-        QuotedBaseQuotingNecessary(signals);
-    }
-
-    private static void QuotedBaseQuotingUnnecessary(StringQuotedSignals signals)
-    {
-        Split("{1}{1}", signals)
-            .Should().Equal(string.Empty);
-
-        Split("{1}a{1}", signals)
-            .Should().Equal("a");
-
-        Split("{1}a{1}{0}{1}b{1}", signals)
-            .Should().Equal("a", "b");
-
-        Split("{1}a{1}{0}{1}b{1}{0}{1}c{1}", signals)
-            .Should().Equal("a", "b", "c");
-
-        Split("{1}a{1}{0}b{0}{1}c{1}", signals)
-            .Should().Equal("a", "b", "c");
-
-        Split("a{0}{1}b{1}{0}c", signals)
-            .Should().Equal("a", "b", "c");
-
-        Split("a{0}{1}{1}{0}c", signals)
-            .Should().Equal("a", string.Empty, "c");
-
-        Split("{1}a{1}{0}{1}b{1}{0}", signals)
-            .Should().Equal("a", "b", string.Empty);
-
-        Split("{1}a{1}{0}{1}b{1}{0}{1}{1}", signals)
-            .Should().Equal("a", "b", string.Empty);
-    }
-
-    private static void QuotedBaseQuotingNecessary(StringQuotedSignals signals)
-    {
-        Split("{1}{1}{1}{1}", signals)
-            .Should().Equal(signals.Quote);
-
-        Split("{1}a{0}{1}", signals)
-            .Should().Equal("a" + signals.Delimiter);
-
-        Split("{1}a{0}a{1}", signals)
-            .Should().Equal("a" + signals.Delimiter + "a");
-
-        Split("{1}a{0}a{1}{0}b", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b");
-
-        Split("{1}a{0}a{1}{0}{1}b{0}{1}", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter);
-
-        Split("{1}a{0}a{1}{0}{1}b{0}b{1}", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b");
-
-        Split("{1}a{0}a{1}{0}{1}b{0}b{1}{0}c", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c");
-
-        Split("{1}a{0}a{1}{0}{1}b{0}b{1}{0}{1}c{0}{1}", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" + signals.Delimiter);
-
-        Split("{1}a{0}a{1}{0}{1}b{0}b{1}{0}{1}c{0}c{1}", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b" + signals.Delimiter + "b", "c" + signals.Delimiter + "c");
-
-        Split("{1}a{0}{1}{0}b{0}c", signals)
-            .Should().Equal("a" + signals.Delimiter, "b", "c");
-
-        Split("a{0}{1}b{0}{1}{0}c", signals)
-            .Should().Equal("a", "b" + signals.Delimiter, "c");
-
-        Split("a{0}b{0}{1}c{0}{1}", signals)
-            .Should().Equal("a", "b", "c" + signals.Delimiter);
-
-        Split("{1}a{0}a{1}{0}b{0}c", signals)
-            .Should().Equal("a" + signals.Delimiter + "a", "b", "c");
-
-        Split("a{0}{1}b{0}b{1}{0}c", signals)
-            .Should().Equal("a", "b" + signals.Delimiter + "b", "c");
-
-        Split("a{0}b{0}{1}c{0}c{1}", signals)
-            .Should().Equal("a", "b", "c" + signals.Delimiter + "c");
-
-        Split("a{0}b{0}c{0}{1}{0}{1}", signals)
-            .Should().Equal("a", "b", "c", signals.Delimiter);
-
-        if (signals.NewRowIsSpecified)
+        foreach (var pair in pairs)
         {
-            Split("{1}a{2}{1}", signals)
-                .Should().Equal("a" + signals.NewRow);
+            if (!string.IsNullOrEmpty(pair.RawFormat))
+            {
+                pair.Raw(signals).SplitQuotedRow(signals)
+                    .Should().Equal(pair.Parsed(signals));
 
-            Split("{1}a{2}a{1}", signals)
-                .Should().Equal("a" + signals.NewRow + "a");
-
-            Split("{1}a{2}a{1}{0}b", signals)
-                .Should().Equal("a" + signals.NewRow + "a", "b");
-
-            Split("{1}a{2}a{1}{0}{1}b{2}{1}", signals)
-                .Should().Equal("a" + signals.NewRow + "a", "b" + signals.NewRow);
-
-            Split("{1}a{2}a{1}{0}{1}b{2}b{1}", signals)
-                .Should().Equal("a" + signals.NewRow + "a", "b" + signals.NewRow + "b");
-
-            Split("{1}a{2}a{1}{0}{1}b{2}b{1}{0}{1}{2}{1}", signals)
-                .Should().Equal("a" + signals.NewRow + "a", "b" + signals.NewRow + "b", signals.NewRow);
-        }
-    }
-
-    [Fact]
-    public void QuotedEscapedQuote()
-    {
-        QuotedEscapedQuoteBase(StringQuotedSignals.Csv);
-        QuotedEscapedQuoteBase(StringQuotedSignals.Pipe);
-        QuotedEscapedQuoteBase(StringQuotedSignals.Tab);
-        QuotedEscapedQuoteBase(new(",", "'", Environment.NewLine, "\\"));
-        QuotedEscapedQuoteBase(new("DELIMITER", "QUOTE", "NEWLINE", "ESCAPE"));
-    }
-
-    private static void QuotedEscapedQuoteBase(StringQuotedSignals signals)
-    {
-        if (!signals.QuoteIsSpecified)
-            throw new NotSupportedException();
-
-        Split("{1}{1}a", signals)
-            .Should().Equal(signals.Quote + "a");
-
-        Split("{1}{1}{1}a{1}", signals)
-            .Should().Equal(signals.Quote + "a");
-
-        Split("{1}{1}{1}{1}a", signals)
-            .Should().Equal(signals.Quote + signals.Quote + "a");
-
-        Split("{1}{1}{1}{1}{1}a{1}", signals)
-            .Should().Equal(signals.Quote + signals.Quote + "a");
-
-        Split("{1}{1}{1}a{1}{1}{1}", signals)
-            .Should().Equal(signals.Quote + "a" + signals.Quote);
-
-        Split("{1}a{1}{1}a{1}{1}a{1}", signals)
-            .Should().Equal("a" + signals.Quote + "a" + signals.Quote + "a");
-
-        Split("{1}a{1}{1}a{1}{1}a{1}{0}b", signals)
-            .Should().Equal("a" + signals.Quote + "a" + signals.Quote + "a", "b");
-
-        Split("a{0}{1}b{1}{1}b{1}{1}b{1}", signals)
-            .Should().Equal("a", "b" + signals.Quote + "b" + signals.Quote + "b");
-
-        Split("a{0}{1}b{1}{1}b{1}{1}b{1}{0}c", signals)
-            .Should().Equal("a", "b" + signals.Quote + "b" + signals.Quote + "b", "c");
-
-        Split("{1}{1}a{0}b", signals)
-            .Should().Equal(signals.Quote + "a", "b");
-
-        Split("{1}{1}{1}a{1}{0}b", signals)
-            .Should().Equal(signals.Quote + "a", "b");
-
-        Split("{1}{1}{1}{1}a{0}b", signals)
-            .Should().Equal(signals.Quote + signals.Quote + "a", "b");
-
-        Split("{1}{1}{1}{1}{1}a{1}{0}b", signals)
-            .Should().Equal(signals.Quote + signals.Quote + "a", "b");
-
-        Split("a{0}{1}{1}b", signals)
-            .Should().Equal("a", signals.Quote + "b");
-
-        Split("a{0}{1}{1}{1}b{1}", signals)
-            .Should().Equal("a", signals.Quote + "b");
-
-        Split("a{0}{1}{1}{1}{1}b", signals)
-            .Should().Equal("a", signals.Quote + signals.Quote + "b");
-
-        Split("a{0}{1}{1}{1}{1}{1}b{1}", signals)
-            .Should().Equal("a", signals.Quote + signals.Quote + "b");
-
-        Split("a{0}{1}{1}b{0}c", signals)
-            .Should().Equal("a", signals.Quote + "b", "c");
-
-        Split("a{0}{1}{1}{1}b{1}{0}c", signals)
-            .Should().Equal("a", signals.Quote + "b", "c");
-
-        Split("a{0}{1}{1}{1}{1}b{0}c", signals)
-            .Should().Equal("a", signals.Quote + signals.Quote + "b", "c");
-
-        Split("a{0}{1}{1}{1}{1}{1}b{1}{0}c", signals)
-            .Should().Equal("a", signals.Quote + signals.Quote + "b", "c");
-
-        Split("{1}{1}a{0}{1}{1}b{0}{1}{1}c", signals)
-            .Should().Equal(signals.Quote + "a", signals.Quote + "b", signals.Quote + "c");
-
-        Split("{1}{1}{1}a{1}{0}{1}{1}{1}b{1}{0}{1}{1}{1}c{1}", signals)
-            .Should().Equal(signals.Quote + "a", signals.Quote + "b", signals.Quote + "c");
-
-        Split("{1}{1}{1}a{0}{1}{0}{1}{1}{1}b{0}{1}{0}{1}{1}{1}c{0}{1}", signals)
-            .Should().Equal(signals.Quote + "a" + signals.Delimiter, signals.Quote + "b" + signals.Delimiter, signals.Quote + "c" + signals.Delimiter);
-
-        if (signals.EscapeIsSpecified)
-        {
-            Split("{3}{1}", signals)
-                .Should().Equal(signals.Quote);
-
-            Split("{1}{3}{1}{1}", signals)
-                .Should().Equal(signals.Quote);
-
-            Split("{3}{1}a", signals)
-                .Should().Equal(signals.Quote + "a");
-
-            Split("{1}{3}{1}a{1}", signals)
-                .Should().Equal(signals.Quote + "a");
-
-            Split("{3}{1}{3}{1}a", signals)
-                .Should().Equal(signals.Quote + signals.Quote + "a");
-
-            Split("{1}{3}{1}{3}{1}a{1}", signals)
-                .Should().Equal(signals.Quote + signals.Quote + "a");
-
-            Split("{1}{3}{1}{3}{1}a{0}{2}{1}{0}b", signals)
-                .Should().Equal(signals.Quote + signals.Quote + "a" + signals.Delimiter + signals.NewRow, "b");
-        }
-    }
-
-    [Fact]
-    public void QuotedEscaped()
-    {
-        QuotedEscapedBase(new(",", "'", Environment.NewLine, "\\"));
-        QuotedEscapedBase(new(",", string.Empty, Environment.NewLine, "\\"));
-        QuotedEscapedBase(new("DELIMITER", "QUOTE", "NEWLINE", "ESCAPE"));
-    }
-
-    private static void QuotedEscapedBase(StringQuotedSignals signals)
-    {
-        if (!signals.EscapeIsSpecified)
-            throw new NotSupportedException();
-
-        Split("{3}", signals)
-            .Should().Equal(string.Empty);
-
-        Split("{3}{0}a", signals)
-            .Should().Equal(signals.Delimiter + "a");
-
-        Split("{3}{0}a{0}b", signals)
-            .Should().Equal(signals.Delimiter + "a", "b");
-
-        Split("{3}{0}a{3}{0}b", signals)
-            .Should().Equal(signals.Delimiter + "a" + signals.Delimiter + "b");
-
-        Split("{3}a{0}{3}b{0}{3}c", signals)
-            .Should().Equal("a", "b", "c");
-
-        Split("a{0}b{0}c{3}{0}", signals)
-            .Should().Equal("a", "b", "c" + signals.Delimiter);
-
-        Split("a{0}b{0}c{3}{0}{0}d", signals)
-            .Should().Equal("a", "b", "c" + signals.Delimiter, "d");
-
-        if (signals.QuoteIsSpecified)
-        {
-            Split("a{0}b{0}c{3}{1}", signals)
-                .Should().Equal("a", "b", "c" + signals.Quote);
-
-            Split("a{0}b{0}c{3}{1}{0}d", signals)
-                .Should().Equal("a", "b", "c" + signals.Quote, "d");
+                if (signals.NewRowIsSpecified && pair.RawFormat != "{e}")
+                {
+                    (pair.Raw(signals) + signals.NewRow).SplitQuotedRow(signals)
+                        .Should().Equal(pair.Parsed(signals));
+                }
+            }
         }
 
-        if (signals.NewRowIsSpecified)
-        {
-            Split("a{0}b{0}c{3}{2}", signals)
-                .Should().Equal("a", "b", "c" + signals.NewRow);
+        new[] { 2, 3 }
+            .SelectMany(subsetSize => pairs.Where(pair => pair.RawFormat != "{e}").Subsets(subsetSize))
+            .SelectMany(subset => subset.Permutations())
+            .Where(subset => subset.All(pair => pair.IsRelevant(signals)))
+            .ForEach(subset =>
+            {
+                string.Join(signals.Delimiter, subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
+                    .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
 
-            Split("a{0}b{0}c{3}{2}{0}d", signals)
-                .Should().Equal("a", "b", "c" + signals.NewRow, "d");
+                if (signals.NewRowIsSpecified)
+                {
+                    string.Join(signals.Delimiter, subset.Select((pair, i) => pair.Raw(signals) + (i == subset.Count - 1 ? signals.NewRow : string.Empty))).SplitQuotedRow(signals)
+                        .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
+                }
+            });
+    });
+
+    private static readonly IEnumerable<RawParsedFieldPair> _rawParsedFieldPairs =
+    [
+        // Simple
+
+        new("", ""),
+        new("a", "a"),
+        new("b", "b"),
+        new("cd", "cd"),
+        new(" a", " a"),
+        new("a ", "a "),
+        new(" a ", " a "),
+
+        // Quoting Unneccessary
+
+        new("{q}{q}", ""),
+        new("{q}a{q}", "a"),
+        new("{q}b{q}", "b"),
+        new("{q}cd{q}", "cd"),
+        new("{q} a{q}", " a"),
+        new("{q}a {q}", "a "),
+        new("{q} a {q}", " a "),
+
+        // Quoting Neccessary
+
+        new("{q}{d}{q}", "{d}"),
+        new("{q}{n}{q}", "{n}"),
+        new("{q}a{d}{q}", "a{d}"),
+        new("{q}a{d}b{q}", "a{d}b"),
+        new("{q}a{n}{q}", "a{n}"),
+        new("{q}a{n}b{q}", "a{n}b"),
+
+        // Quoting Quote Quote
+
+        new("{q}{q}{q}{q}", "{q}"),
+        new("{q}{q}a", "{q}a"),
+        new("{q}{q}{q}a{q}", "{q}a"),
+        new("{q}{q}{q}{q}a", "{q}{q}a"),
+        new("{q}{q}{q}{q}{q}a{q}", "{q}{q}a"),
+        new("{q}{q}{q}a{q}{q}{q}", "{q}a{q}"),
+        new("{q}a{q}{q}a{q}{q}a{q}", "a{q}a{q}a"),
+
+        // Quoting Complex
+
+        new("{q}{q}{q}a{d}{q}", "{q}a{d}"),
+        new("{q}{q}{q}{d}a{q}", "{q}{d}a"),
+        new("{q}{q}{q}a{n}{q}", "{q}a{n}"),
+        new("{q}{q}{q}{n}a{q}", "{q}{n}a"),
+        new("{q}{q}{q}a{d}{n}{q}", "{q}a{d}{n}"),
+        new("{q}{q}{q}{d}{n}a{q}", "{q}{d}{n}a"),
+        new("{q}{q}{q}a{n}{d}{q}", "{q}a{n}{d}"),
+        new("{q}{q}{q}{n}{d}a{q}", "{q}{n}{d}a"),
+
+        // Escaping
+
+        new("{e}", ""),
+        new("{e} ", " "),
+        new("{e}a", "a"),
+        new("{e}{q}", "{q}"),
+        new("{e}{d}", "{d}"),
+        new("{e}{n}", "{n}"),
+        new("{e}{e}", "{e}"),
+        new("{e}{q}a", "{q}a"),
+        new("{e}{d}a", "{d}a"),
+        new("{e}{n}a", "{n}a"),
+        new("{e}{e}a", "{e}a"),
+        new("a{e}{d}", "a{d}"),
+        new("a{e}{n}", "a{n}"),
+        new("a{e}{e}", "a{e}"),
+        new("a{e}{d}b", "a{d}b"),
+        new("a{e}{n}b", "a{n}b"),
+        new("a{e}{e}b", "a{e}b"),
+        new("{e}{d}{e}{d}", "{d}{d}"),
+        new("{e}{d}{e}{d}a", "{d}{d}a"),
+        new("{e}{d}a{e}{d}", "{d}a{d}"),
+
+        // Quoting + Escaping
+
+        new("{e}{q}a", "{q}a"),
+        new("a{e}{q}", "a{q}"),
+        new("{q}{e}{q}{q}", "{q}"),
+        new("{q}{e}{q}a{q}", "{q}a"),
+        new("{e}{q}{e}{q}", "{q}{q}"),
+        new("{e}{q}{e}{q}a", "{q}{q}a"),
+        new("{q}{e}{q}{e}{q}{q}", "{q}{q}"),
+        new("{q}{e}{q}{e}{q}a{q}", "{q}{q}a"),
+        new("{q}{e}{q}a{e}{q}{q}", "{q}a{q}"),
+        new("{q}{e}{q}a{d}{e}{q}{n}{q}", "{q}a{d}{q}{n}"),
+    ];
+
+    private class RawParsedFieldPair
+    {
+        internal RawParsedFieldPair(string rawFormat, string parsedFormat)
+        {
+            RawFormat = rawFormat;
+            ParsedFormat = parsedFormat;
         }
 
-        Split("a{0}b{0}c{3}{3}", signals)
-            .Should().Equal("a", "b", "c" + signals.Escape);
+        internal string RawFormat { get; }
+        internal string ParsedFormat { get; }
 
-        Split("a{0}b{0}c{3}{3}{0}d", signals)
-            .Should().Equal("a", "b", "c" + signals.Escape, "d");
+        internal bool IsRelevant(StringQuotedSignals signals)
+        {
+            return (signals.DelimiterIsSpecified || !Contains("{d}"))
+                && (signals.QuoteIsSpecified || !Contains("{q}"))
+                && (signals.NewRowIsSpecified || !Contains("{n}"))
+                && (signals.EscapeIsSpecified || !Contains("{e}"));
+
+            bool Contains(string format) =>
+                RawFormat.Contains(format) || ParsedFormat.Contains(format);
+        }
+
+        internal string Raw(StringQuotedSignals signals) => Replace(RawFormat, signals);
+        internal string Parsed(StringQuotedSignals signals) => Replace(ParsedFormat, signals);
+
+        private static string Replace(string format, StringQuotedSignals signals) =>
+            format.Replace("{d}", signals.Delimiter)
+                .Replace("{q}", signals.Quote)
+                .Replace("{n}", signals.NewRow)
+                .Replace("{e}", signals.Escape);
     }
 
     [Fact]
