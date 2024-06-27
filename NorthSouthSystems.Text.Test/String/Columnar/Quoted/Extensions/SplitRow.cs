@@ -202,6 +202,21 @@ public class StringQuotedExtensionsTests_SplitRow
         Split("{1}{1}{1}{1}{1}a{1}", signals)
             .Should().Equal(signals.Quote + signals.Quote + "a");
 
+        Split("{1}{1}{1}a{1}{1}{1}", signals)
+            .Should().Equal(signals.Quote + "a" + signals.Quote);
+
+        Split("{1}a{1}{1}a{1}{1}a{1}", signals)
+            .Should().Equal("a" + signals.Quote + "a" + signals.Quote + "a");
+
+        Split("{1}a{1}{1}a{1}{1}a{1}{0}b", signals)
+            .Should().Equal("a" + signals.Quote + "a" + signals.Quote + "a", "b");
+
+        Split("a{0}{1}b{1}{1}b{1}{1}b{1}", signals)
+            .Should().Equal("a", "b" + signals.Quote + "b" + signals.Quote + "b");
+
+        Split("a{0}{1}b{1}{1}b{1}{1}b{1}{0}c", signals)
+            .Should().Equal("a", "b" + signals.Quote + "b" + signals.Quote + "b", "c");
+
         Split("{1}{1}a{0}b", signals)
             .Should().Equal(signals.Quote + "a", "b");
 
