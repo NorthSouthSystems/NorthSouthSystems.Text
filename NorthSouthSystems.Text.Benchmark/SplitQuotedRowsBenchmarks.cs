@@ -11,26 +11,46 @@ public class SplitQuotedRowsBenchmarks
     {
         string realEstateSalesCsvFilepath = Path.Combine(Program.CatalogDataGovDirectory, "Real_Estate_Sales_2001-2020_GL.csv");
 
-        _csvLinuxNewLines = File.ReadAllText(realEstateSalesCsvFilepath);
+        _csvLinuxNewLines = File.ReadAllText(realEstateSalesCsvFilepath).TrimEnd();
 
         if (_csvLinuxNewLines.Contains("\r\n"))
             throw new FormatException();
 
-        _csvWindowsNewLines = _csvLinuxNewLines.Replace("\n", "\r\n");
+        _csvLinuxNewLinesForcedQuotes = ReJoin(Program.LinuxNewLineCsvSignals, true);
+
+        _csvWindowsNewLines = ReJoin(Program.WindowsNewLineCsvSignals, false);
+        _csvWindowsNewLinesForcedQuotes = ReJoin(Program.WindowsNewLineCsvSignals, true);
+
+        string ReJoin(StringQuotedSignals signals, bool forceQuotes) =>
+            string.Join(signals.NewRow,
+                _csvLinuxNewLines.SplitQuotedRows(Program.LinuxNewLineCsvSignals)
+                    .Select(row => row.JoinQuotedRow(signals, forceQuotes)));
     }
 
     private string _csvLinuxNewLines;
+    private string _csvLinuxNewLinesForcedQuotes;
+
     private string _csvWindowsNewLines;
+    private string _csvWindowsNewLinesForcedQuotes;
 
     private readonly Consumer _consumer = new();
 
     [Benchmark]
-    public void LinuxNewLines() => _csvLinuxNewLines
-        .SplitQuotedRows(Program.LinuxNewLineCsvSignals)
-        .Consume(_consumer);
+    public void LinuxNewLines() =>
+        Split(_csvLinuxNewLines, Program.LinuxNewLineCsvSignals);
 
     [Benchmark]
-    public void WindowsNewLines() => _csvWindowsNewLines
-        .SplitQuotedRows(Program.WindowsNewLineCsvSignals)
-        .Consume(_consumer);
+    public void LinuxNewLinesForcedQuotes() =>
+        Split(_csvLinuxNewLinesForcedQuotes, Program.LinuxNewLineCsvSignals);
+
+    [Benchmark]
+    public void WindowsNewLines() =>
+        Split(_csvWindowsNewLines, Program.WindowsNewLineCsvSignals);
+
+    [Benchmark]
+    public void WindowsNewLinesForcedQuotes() =>
+        Split(_csvWindowsNewLinesForcedQuotes, Program.WindowsNewLineCsvSignals);
+
+    private void Split(string value, StringQuotedSignals signals) =>
+        value.SplitQuotedRows(signals).Consume(_consumer);
 }
