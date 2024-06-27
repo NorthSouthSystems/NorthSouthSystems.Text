@@ -133,10 +133,12 @@ public static partial class StringQuotedExtensions
 
         private readonly StringBuilder _fieldBuilder = new();
 
-        private bool _inQuotes = false;
-        private bool _inQuotesEverCurrentField = false;
+        private bool InQuotes => (_quoteAnyCount - (2 * _quoteQuoteCount)) % 2 == 1;
+
+        private int _quoteAnyCount;
+        private int _quoteQuoteCount;
+
         private bool _escaped = false;
-        private bool _escapedEverCurrentField = false;
 
         private readonly StringQuotedSignals _signals;
 
@@ -160,10 +162,10 @@ public static partial class StringQuotedExtensions
         {
             _fieldBuilder.Clear();
 
-            _inQuotes = false;
-            _inQuotesEverCurrentField = false;
+            _quoteAnyCount = 0;
+            _quoteQuoteCount = 0;
+
             _escaped = false;
-            _escapedEverCurrentField = false;
         }
 
         private void ResetTrackers(bool wasQuoteTrackerTriggered = false)
@@ -211,7 +213,7 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                if (!_inQuotes)
+                if (!InQuotes)
                 {
                     RewindField(triggeredLength);
                     FlushField();
@@ -222,21 +224,21 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                _inQuotes = false;
+                _quoteAnyCount++;
+                _quoteQuoteCount++;
             }
             else if ((triggeredLength = _quoteTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers(wasQuoteTrackerTriggered: true);
                 RewindField(triggeredLength);
 
-                _inQuotes = !_inQuotes;
-                _inQuotesEverCurrentField = true;
+                _quoteAnyCount++;
             }
             else if ((triggeredLength = _newRowTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers();
 
-                if (!_inQuotes)
+                if (!InQuotes)
                 {
                     RewindField(triggeredLength);
                     FlushField();
@@ -250,7 +252,6 @@ public static partial class StringQuotedExtensions
                 RewindField(triggeredLength);
 
                 _escaped = true;
-                _escapedEverCurrentField = true;
             }
 
             return false;
@@ -266,24 +267,15 @@ public static partial class StringQuotedExtensions
             string field = _fieldBuilder.ToString();
 
             // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that the field
-            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with _inQuotes false;
+            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with InQuotes false;
             // therefore, _fieldBuilder will contain an extra Quote. E.G.
             //     a,"",c
             //     a,"""",c
             //     a,"""""",c
-            if (_inQuotesEverCurrentField
-                && !_escapedEverCurrentField
-                && (field == _signals.Quote || field.SequenceEqual(RepeatQuote())))
+            if (field.Length > 0 && field.Length == _signals.Quote.Length * _quoteQuoteCount)
             {
                 RewindField(_signals.Quote.Length);
                 field = _fieldBuilder.ToString();
-            }
-
-            IEnumerable<char> RepeatQuote()
-            {
-                for (int i = 0; i < field.Length / _signals.Quote.Length; i++)
-                    foreach (char c in _signals.Quote)
-                        yield return c;
             }
 
             _fields.Add(field);
