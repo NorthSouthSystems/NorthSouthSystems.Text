@@ -7,23 +7,30 @@ public class StringSignalTrackerTests
     {
         IStringSignalTracker tracker;
 
+        tracker = StringSignalTracker.Create();
+        Base();
+        Base();
+
         tracker = StringSignalTracker.Create(string.Empty);
-        EmptyBase(tracker);
-        tracker.Reset();
-        EmptyBase(tracker);
+        Base();
+        Base();
 
         tracker = StringSignalTracker.Create(null);
-        EmptyBase(tracker);
-        tracker.Reset();
-        EmptyBase(tracker);
-    }
+        Base();
+        Base();
 
-    private void EmptyBase(IStringSignalTracker tracker)
-    {
-        tracker.Signal.Should().BeEmpty();
+        tracker = StringSignalTracker.Create(string.Empty, null);
+        Base();
+        Base();
 
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+        void Base()
+        {
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.Reset();
+        }
     }
 
     [Fact]
@@ -32,17 +39,18 @@ public class StringSignalTrackerTests
         IStringSignalTracker tracker;
 
         tracker = StringSignalTracker.Create("a");
-        SingleCharBase(tracker);
-        tracker.Reset();
-        SingleCharBase(tracker);
-    }
+        Base();
+        Base();
 
-    private void SingleCharBase(IStringSignalTracker tracker)
-    {
-        tracker.Signal.Should().Be("a");
+        void Base()
+        {
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(1);
+            tracker.Reset();
 
-        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(1);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(1);
+            tracker.Reset();
+        }
     }
 
     [Fact]
@@ -51,20 +59,22 @@ public class StringSignalTrackerTests
         IStringSignalTracker tracker;
 
         tracker = StringSignalTracker.Create("ab");
-        MultiCharSimpleBase(tracker);
-        tracker.Reset();
-        MultiCharSimpleBase(tracker);
-    }
+        Base();
+        Base();
 
-    private void MultiCharSimpleBase(IStringSignalTracker tracker)
-    {
-        tracker.Signal.Should().Be("ab");
+        void Base()
+        {
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(2);
+            tracker.Reset();
 
-        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(2);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(2);
+            tracker.Reset();
+        }
     }
 
     [Fact]
@@ -73,23 +83,62 @@ public class StringSignalTrackerTests
         IStringSignalTracker tracker;
 
         tracker = StringSignalTracker.Create("abac");
-        MultiCharComplexBase(tracker);
-        tracker.Reset();
-        MultiCharComplexBase(tracker);
+        Base();
+        Base();
+
+        void Base()
+        {
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(4);
+            tracker.Reset();
+
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(4);
+            tracker.Reset();
+        }
     }
 
-    private void MultiCharComplexBase(IStringSignalTracker tracker)
+    [Fact]
+    public void Composite()
     {
-        tracker.Signal.Should().Be("abac");
+        IStringSignalTracker tracker;
 
-        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
-        tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(4);
+        tracker = StringSignalTracker.Create("ab", "b");
+        Base();
+        Base();
+
+        tracker = StringSignalTracker.Create("b", "ab");
+        Base();
+        Base();
+
+        void Base()
+        {
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(1);
+            tracker.Reset();
+
+            tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(1);
+            tracker.Reset();
+
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(2);
+            tracker.Reset();
+
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('c').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('a').Should().Be(0);
+            tracker.ProcessCharReturnsTriggeredLength('b').Should().Be(2);
+            tracker.Reset();
+        }
     }
 }

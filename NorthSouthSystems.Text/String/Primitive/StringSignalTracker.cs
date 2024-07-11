@@ -2,29 +2,37 @@
 
 internal interface IStringSignalTracker
 {
-    string Signal { get; }
-
     void Reset();
     int ProcessCharReturnsTriggeredLength(char value);
 }
 
 internal static class StringSignalTracker
 {
-    internal static IStringSignalTracker Create(string signal)
+    internal static IStringSignalTracker Create(params string[] signals)
+    {
+        if ((signals?.Length ?? 0) == 0)
+            return EmptyTracker.Singleton;
+        else if (signals.Length == 1)
+            return Create(signals[0]);
+        else
+            return new CompositeTracker(signals.OrderByDescending(s => s?.Length ?? 0).Select(Create).ToArray());
+    }
+
+    private static IStringSignalTracker Create(string signal)
     {
         if (string.IsNullOrEmpty(signal))
-            return _emptyTracker;
+            return EmptyTracker.Singleton;
         else if (signal.Length == 1)
             return new SingleCharTracker(signal);
         else
             return new MultiCharTracker(signal);
     }
 
-    private static readonly EmptyTracker _emptyTracker = new();
-
     private class EmptyTracker : IStringSignalTracker
     {
-        public string Signal => string.Empty;
+        internal static EmptyTracker Singleton { get; } = new();
+
+        private EmptyTracker() { }
 
         public void Reset() { }
 
@@ -33,15 +41,9 @@ internal static class StringSignalTracker
 
     private class SingleCharTracker : IStringSignalTracker
     {
-        internal SingleCharTracker(string signal)
-        {
-            Signal = signal;
+        internal SingleCharTracker(string signal) =>
             _c = signal[0];
-        }
 
-        public string Signal { get; }
-
-        // PERF - Benchmarks show a minor but noticible improvement when storing and using this.
         private readonly char _c;
 
         public void Reset() { }
@@ -53,13 +55,11 @@ internal static class StringSignalTracker
     {
         internal MultiCharTracker(string signal)
         {
-            Signal = signal;
-
-            _activeCounters = new List<int>(Signal.Length);
+            _signal = signal;
+            _activeCounters = new List<int>(_signal.Length);
         }
 
-        public string Signal { get; }
-
+        private readonly string _signal;
         private readonly List<int> _activeCounters;
 
         public void Reset() => _activeCounters.Clear();
@@ -69,13 +69,13 @@ internal static class StringSignalTracker
             // Iterate backwards because we will be removing from the list during the iteration.
             for (int i = _activeCounters.Count - 1; i >= 0; i--)
             {
-                if (Signal[_activeCounters[i]] == value)
+                if (_signal[_activeCounters[i]] == value)
                 {
-                    if (_activeCounters[i] == Signal.Length - 1)
+                    if (_activeCounters[i] == _signal.Length - 1)
                     {
                         _activeCounters.Clear();
 
-                        return Signal.Length;
+                        return _signal.Length;
                     }
                     else
                         _activeCounters[i]++;
@@ -84,10 +84,35 @@ internal static class StringSignalTracker
                     _activeCounters.RemoveAt(i);
             }
 
-            if (Signal[0] == value)
+            if (_signal[0] == value)
                 _activeCounters.Add(1);
 
             return 0;
+        }
+    }
+
+    private class CompositeTracker : IStringSignalTracker
+    {
+        internal CompositeTracker(IStringSignalTracker[] trackersLengthDescending) =>
+            _trackers = trackersLengthDescending;
+
+        private readonly IStringSignalTracker[] _trackers;
+
+        public void Reset()
+        {
+            foreach (var tracker in _trackers)
+                tracker.Reset();
+        }
+
+        public int ProcessCharReturnsTriggeredLength(char value)
+        {
+            int length = 0;
+
+            foreach (var tracker in _trackers)
+                if ((length = tracker.ProcessCharReturnsTriggeredLength(value)) > 0)
+                    return length;
+
+            return length;
         }
     }
 }
