@@ -52,7 +52,7 @@ public sealed class StringQuotedSignals
         if (!DelimiterIsSpecified)
             throw new ArgumentException("Delimiter must be non-null and non-empty.");
 
-        if (ContainsAny(Delimiter, Quote, NewRow, Escape) || ContainsAny(Quote, NewRow, Escape) || ContainsAny(NewRow, Escape))
+        if (StringExtensions.AnyPermutationPairContains([Delimiter, Quote, NewRow, Escape]))
             throw new ArgumentException("No parameter may be containable within any other.");
 
         EscapedDelimiter = Escape + Delimiter;
@@ -60,10 +60,6 @@ public sealed class StringQuotedSignals
         EscapedNewRow = Escape + NewRow;
         EscapedEscape = Escape + Escape;
     }
-
-    private static bool ContainsAny(string source, params string[] compares) =>
-        source.Length > 0
-            && compares.Where(compare => compare.Length > 0).Any(compare => source.Contains(compare) || compare.Contains(source));
 
     public bool DelimiterIsSpecified => !string.IsNullOrEmpty(Delimiter);
     public string Delimiter { get; }
