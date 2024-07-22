@@ -79,23 +79,3 @@ public sealed class StringQuotedSignals
     internal string EscapedQuote { get; }
     internal string EscapedEscape { get; }
 }
-
-internal readonly struct StringQuotedSignalsFound
-{
-    internal StringQuotedSignalsFound(StringQuotedSignals signals, string field)
-    {
-        DelimiterFound = signals.Delimiters.Any(field.Contains);
-        NewRowFound = signals.NewRows.Any(field.Contains);
-        QuoteFound = signals.QuoteIsSpecified && field.Contains(signals.Quote);
-        EscapeFound = signals.EscapeIsSpecified && field.Contains(signals.Escape);
-
-        RequiresQuotingOrEscaping = DelimiterFound || QuoteFound || NewRowFound;
-    }
-
-    internal readonly bool DelimiterFound { get; }
-    internal readonly bool NewRowFound { get; }
-    internal readonly bool QuoteFound { get; }
-    internal readonly bool EscapeFound { get; }
-
-    internal readonly bool RequiresQuotingOrEscaping { get; }
-}
