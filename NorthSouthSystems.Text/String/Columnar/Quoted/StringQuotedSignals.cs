@@ -31,69 +31,70 @@
 /// </remarks>
 public sealed class StringQuotedSignals
 {
-    public static StringQuotedSignals Csv { get; } = new(",", "\"", Environment.NewLine, string.Empty);
-    public static StringQuotedSignals Pipe { get; } = new("|", "\"", Environment.NewLine, string.Empty);
-    public static StringQuotedSignals Tab { get; } = new("\t", "\"", Environment.NewLine, string.Empty);
+    public static StringQuotedSignals CsvRFC4180NewRowTolerantWindowsPrimary { get; } =
+        new StringQuotedSignalsBuilder()
+            .Delimiter(",")
+            .NewRowTolerantWindowsPrimary()
+            .Quote("\"")
+            .ToSignals();
 
-    /// <summary>
-    /// Constructor with params for all signal values.
-    /// </summary>
-    /// <param name="delimiter">String used to separate fields of a row. It is the only param that cannot be null or empty.</param>
-    /// <param name="quote">String used to surround (or quote) a field and allow it to contain an instance of Delimiter.</param>
-    /// <param name="newRow">String used to separate rows during serialization.</param>
-    /// <param name="escape">String used to escape the meaning of the immediately following character.</param>
-    public StringQuotedSignals(string delimiter, string quote, string newRow, string escape)
+    internal StringQuotedSignals(string[] delimiters, string[] newRows, string quote, string escape)
     {
-        Delimiter = delimiter.NullToEmpty();
-        Quote = quote.NullToEmpty();
-        NewRow = newRow.NullToEmpty();
-        Escape = escape.NullToEmpty();
+        _delimiters = (delimiters ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
+        Delimiter = _delimiters.FirstOrDefault().NullToEmpty();
 
         if (!DelimiterIsSpecified)
             throw new ArgumentException("Delimiter must be non-null and non-empty.");
 
-        if (StringExtensions.AnyPermutationPairContains([Delimiter, Quote, NewRow, Escape]))
-            throw new ArgumentException("No parameter may be containable within any other.");
+        _newRows = (newRows ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
+        NewRow = _newRows.FirstOrDefault().NullToEmpty();
+
+        Quote = quote.NullToEmpty();
+        Escape = escape.NullToEmpty();
 
         EscapedDelimiter = Escape + Delimiter;
-        EscapedQuote = (EscapeIsSpecified ? Escape : Quote) + Quote;
         EscapedNewRow = Escape + NewRow;
+        EscapedQuote = (EscapeIsSpecified ? Escape : Quote) + Quote;
         EscapedEscape = Escape + Escape;
     }
 
     public bool DelimiterIsSpecified => !string.IsNullOrEmpty(Delimiter);
     public string Delimiter { get; }
+    public IReadOnlyList<string> Delimiters => _delimiters;
+    private readonly string[] _delimiters;
+
+    public bool NewRowIsSpecified => !string.IsNullOrEmpty(NewRow);
+    public string NewRow { get; }
+    public IReadOnlyList<string> NewRows => _newRows;
+    private readonly string[] _newRows;
 
     public bool QuoteIsSpecified => !string.IsNullOrEmpty(Quote);
     public string Quote { get; }
 
-    public bool NewRowIsSpecified => !string.IsNullOrEmpty(NewRow);
-    public string NewRow { get; }
-
     public bool EscapeIsSpecified => !string.IsNullOrEmpty(Escape);
     public string Escape { get; }
 
-    public string EscapedDelimiter { get; }
-    public string EscapedQuote { get; }
-    public string EscapedNewRow { get; }
-    public string EscapedEscape { get; }
+    internal string EscapedDelimiter { get; }
+    internal string EscapedNewRow { get; }
+    internal string EscapedQuote { get; }
+    internal string EscapedEscape { get; }
 }
 
 internal readonly struct StringQuotedSignalsFound
 {
     internal StringQuotedSignalsFound(StringQuotedSignals signals, string field)
     {
-        DelimiterFound = signals.DelimiterIsSpecified && field.Contains(signals.Delimiter);
+        DelimiterFound = signals.Delimiters.Any(field.Contains);
+        NewRowFound = signals.NewRows.Any(field.Contains);
         QuoteFound = signals.QuoteIsSpecified && field.Contains(signals.Quote);
-        NewRowFound = signals.NewRowIsSpecified && field.Contains(signals.NewRow);
         EscapeFound = signals.EscapeIsSpecified && field.Contains(signals.Escape);
 
         RequiresQuotingOrEscaping = DelimiterFound || QuoteFound || NewRowFound;
     }
 
     internal readonly bool DelimiterFound { get; }
-    internal readonly bool QuoteFound { get; }
     internal readonly bool NewRowFound { get; }
+    internal readonly bool QuoteFound { get; }
     internal readonly bool EscapeFound { get; }
 
     internal readonly bool RequiresQuotingOrEscaping { get; }

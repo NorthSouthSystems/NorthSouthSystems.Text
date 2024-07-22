@@ -6,7 +6,7 @@ public class WithColumnHeadersExtensionsTests
     public void Basic()
     {
         List<StringRowWrapper> result;
-        string nr = StringQuotedSignals.Csv.NewRow;
+        string nr = StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow;
 
         result = Result($"A{nr}1", new[] { "A" }, false);
         result.Count.Should().Be(1);
@@ -40,7 +40,7 @@ public class WithColumnHeadersExtensionsTests
     public void Exceptions()
     {
         Action act;
-        string nr = StringQuotedSignals.Csv.NewRow;
+        string nr = StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow;
 
         act = () => ((string[][])null).WithColumnHeaders(new[] { "A" }).ToList();
         act.Should().ThrowExactly<ArgumentNullException>();
@@ -57,7 +57,7 @@ public class WithColumnHeadersExtensionsTests
 
     private static List<StringRowWrapper> Result(string csv,
             IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder) =>
-        csv.SplitQuotedRows(StringQuotedSignals.Csv)
+        csv.SplitQuotedRows(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary)
             .WithColumnHeaders(expectedColumnNames, enforceExpectedColumnNamesOrder)
             .ToList();
 }

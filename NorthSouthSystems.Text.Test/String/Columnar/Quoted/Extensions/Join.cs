@@ -8,11 +8,10 @@ public class StringQuotedExtensionsTests_Join
     [Fact]
     public void Quoting()
     {
-        QuotingBase(StringQuotedSignals.Csv);
-        QuotingBase(StringQuotedSignals.Pipe);
-        QuotingBase(StringQuotedSignals.Tab);
-        QuotingBase(new(",", "'", Environment.NewLine, "\\"));
-        QuotingBase(new("DELIMITER", "QUOTE", "NEWLINE", "ESCAPE"));
+        QuotingBase(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        QuotingBase(new(["\t"], ["\n"], "\"", string.Empty));
+        QuotingBase(new([","], [Environment.NewLine], "'", "\\"));
+        QuotingBase(new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"));
     }
 
     private static void QuotingBase(StringQuotedSignals signals)
@@ -61,10 +60,10 @@ public class StringQuotedExtensionsTests_Join
     [Fact]
     public void Escaping()
     {
-        EscapingBase(new(",", null, Environment.NewLine, "\\"));
-        EscapingBase(new("|", null, Environment.NewLine, "\\"));
-        EscapingBase(new("\t", null, Environment.NewLine, "\\"));
-        EscapingBase(new("DELIMITER", null, "NEWLINE", "ESCAPE"));
+        EscapingBase(new([","], ["\r\n"], null, "\\"));
+        EscapingBase(new(["|"], ["\n"], null, "\\"));
+        EscapingBase(new(["\t"], [Environment.NewLine], null, "\\"));
+        EscapingBase(new(["DELIMITER"], ["NEWLINE"], null, "ESCAPE"));
     }
 
     private static void EscapingBase(StringQuotedSignals signals)
@@ -93,19 +92,19 @@ public class StringQuotedExtensionsTests_Join
     {
         Action act = null;
 
-        act = () => ((string[])null).JoinQuotedRow(StringQuotedSignals.Csv);
+        act = () => ((string[])null).JoinQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
         act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => new[] { "A" }.JoinQuotedRow(null);
         act.Should().ThrowExactly<ArgumentNullException>();
 
-        act = () => new[] { "A" }.JoinQuotedRow(new StringQuotedSignals(",", null, null, null), true);
+        act = () => new[] { "A" }.JoinQuotedRow(new([","], null, null, null), true);
         act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
 
-        act = () => new[] { "A," }.JoinQuotedRow(new StringQuotedSignals(",", null, null, null));
+        act = () => new[] { "A," }.JoinQuotedRow(new([","], null, null, null));
         act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
 
-        act = () => new[] { "A" + Environment.NewLine }.JoinQuotedRow(new StringQuotedSignals(",", null, Environment.NewLine, null));
+        act = () => new[] { "A" + Environment.NewLine }.JoinQuotedRow(new([","], [Environment.NewLine], null, null));
         act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
     }
 }

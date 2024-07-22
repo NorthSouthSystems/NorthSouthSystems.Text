@@ -120,9 +120,9 @@ public static partial class StringQuotedExtensions
         {
             _signals = signals;
 
-            _delimiterTracker = StringSignalTracker.Create(_signals.Delimiter);
+            _delimiterTracker = StringSignalTracker.Create(_signals.Delimiters);
+            _newRowTracker = StringSignalTracker.Create(_signals.NewRows);
             _quoteTracker = StringSignalTracker.Create(_signals.Quote);
-            _newRowTracker = StringSignalTracker.Create(_signals.NewRow);
             _escapeTracker = StringSignalTracker.Create(_signals.Escape);
 
             _quoteQuoteTracker = StringSignalTracker.Create(_signals.Quote + _signals.Quote);
@@ -143,8 +143,8 @@ public static partial class StringQuotedExtensions
         private readonly StringQuotedSignals _signals;
 
         private readonly IStringSignalTracker _delimiterTracker;
-        private readonly IStringSignalTracker _quoteTracker;
         private readonly IStringSignalTracker _newRowTracker;
+        private readonly IStringSignalTracker _quoteTracker;
         private readonly IStringSignalTracker _escapeTracker;
 
         private readonly IStringSignalTracker _quoteQuoteTracker;
@@ -171,8 +171,8 @@ public static partial class StringQuotedExtensions
         private void ResetTrackers(bool wasQuoteTrackerTriggered = false)
         {
             _delimiterTracker.Reset();
-            _quoteTracker.Reset();
             _newRowTracker.Reset();
+            _quoteTracker.Reset();
             _escapeTracker.Reset();
 
             if (!wasQuoteTrackerTriggered)

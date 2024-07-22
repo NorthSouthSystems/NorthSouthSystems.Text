@@ -8,11 +8,14 @@ internal interface IStringSignalTracker
 
 internal static class StringSignalTracker
 {
-    internal static IStringSignalTracker Create(params string[] signals)
+    internal static IStringSignalTracker Create(params string[] signals) =>
+        Create((IReadOnlyList<string>)signals);
+
+    internal static IStringSignalTracker Create(IReadOnlyList<string> signals)
     {
-        if ((signals?.Length ?? 0) == 0)
+        if ((signals?.Count ?? 0) == 0)
             return EmptyTracker.Singleton;
-        else if (signals.Length == 1)
+        else if (signals.Count == 1)
             return Create(signals[0]);
         else
             return new CompositeTracker(signals.OrderByDescending(s => s?.Length ?? 0).Select(Create).ToArray());

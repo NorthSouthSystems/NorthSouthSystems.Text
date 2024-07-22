@@ -6,10 +6,10 @@ public class StringQuotedExtensionsTests_SplitRow
 {
     private static readonly IEnumerable<StringQuotedSignals> _signals =
     [
-        StringQuotedSignals.Csv,
-        new("|", "'", Environment.NewLine, string.Empty),
-        new("\t", "~", Environment.NewLine, "\\"),
-        new("DELIMITER", "QUOTE", "NEWLINE", "ESCAPE")
+        StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary,
+        new(["|"], ["\r\n"], "'", string.Empty),
+        new(["\t"], ["\n"], "~", "\\"),
+        new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE")
     ];
 
     [Fact]
@@ -186,11 +186,11 @@ public class StringQuotedExtensionsTests_SplitRow
     [Fact]
     public void ComplicatedDelimiter()
     {
-        var signals = new StringQuotedSignals("ab", null, null, null);
+        var signals = new StringQuotedSignals(["ab"], null, null, null);
         "1aab2aab3a".SplitQuotedRow(signals)
             .Should().Equal("1a", "2a", "3a");
 
-        signals = new StringQuotedSignals("ababb", null, null, null);
+        signals = new StringQuotedSignals(["ababb"], null, null, null);
         "1abababb2abababb3ab".SplitQuotedRow(signals)
             .Should().Equal("1ab", "2ab", "3ab");
     }
@@ -200,19 +200,19 @@ public class StringQuotedExtensionsTests_SplitRow
     {
         Action act;
 
-        act = () => ((string)null).SplitQuotedRow(StringQuotedSignals.Csv);
+        act = () => ((string)null).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
         act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Empty.SplitQuotedRow(null);
         act.Should().ThrowExactly<ArgumentNullException>();
 
-        act = () => string.Format("a,b,c{0}d", StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
+        act = () => string.Format("a,b,c{0}d", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
-        act = () => string.Format("a,b,c{0}d,e,f", StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
+        act = () => string.Format("a,b,c{0}d,e,f", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
-        act = () => string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.Csv.NewRow).SplitQuotedRow(StringQuotedSignals.Csv);
+        act = () => string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
     }
 }
