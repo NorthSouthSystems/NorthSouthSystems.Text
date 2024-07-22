@@ -4,12 +4,18 @@ using MoreLinq;
 
 public class StringQuotedExtensionsTests_SplitRow
 {
+    private static string Random(IReadOnlyList<string> signals) =>
+        signals.Count > 0 ? signals[_random.Next(signals.Count)] : string.Empty;
+
+    private static readonly Random _random = new(22);
+
     private static readonly IEnumerable<StringQuotedSignals> _signals =
     [
         StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary,
         new(["|"], ["\r\n"], "'", string.Empty),
         new(["\t"], ["\n"], "~", "\\"),
-        new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE")
+        new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),
+        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n"], "\"", null)
     ];
 
     [Fact]
@@ -18,11 +24,14 @@ public class StringQuotedExtensionsTests_SplitRow
         string.Empty.SplitQuotedRow(signals)
             .Length.Should().Be(0);
 
-        signals.Delimiter.SplitQuotedRow(signals)
-            .Should().Equal(string.Empty, string.Empty);
+        foreach (string delimiter in signals.Delimiters)
+        {
+            delimiter.SplitQuotedRow(signals)
+                .Should().Equal(string.Empty, string.Empty);
 
-        (signals.Delimiter + signals.Delimiter).SplitQuotedRow(signals)
-            .Should().Equal(string.Empty, string.Empty, string.Empty);
+            (delimiter + delimiter).SplitQuotedRow(signals)
+                .Should().Equal(string.Empty, string.Empty, string.Empty);
+        }
     });
 
     [Fact]
@@ -39,7 +48,7 @@ public class StringQuotedExtensionsTests_SplitRow
 
                 if (signals.NewRowIsSpecified && pair.RawFormat != "{e}")
                 {
-                    (pair.Raw(signals) + signals.NewRow).SplitQuotedRow(signals)
+                    (pair.Raw(signals) + Random(signals.NewRows)).SplitQuotedRow(signals)
                         .Should().Equal(pair.Parsed(signals));
                 }
             }
@@ -51,12 +60,12 @@ public class StringQuotedExtensionsTests_SplitRow
             .Where(subset => subset.All(pair => pair.IsRelevant(signals)))
             .ForEach(subset =>
             {
-                string.Join(signals.Delimiter, subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
+                string.Join(Random(signals.Delimiters), subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
                     .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
 
                 if (signals.NewRowIsSpecified)
                 {
-                    string.Join(signals.Delimiter, subset.Select((pair, i) => pair.Raw(signals) + (i == subset.Count - 1 ? signals.NewRow : string.Empty))).SplitQuotedRow(signals)
+                    string.Join(Random(signals.Delimiters), subset.Select((pair, i) => pair.Raw(signals) + (i == subset.Count - 1 ? Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
                         .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
                 }
             });
@@ -157,10 +166,31 @@ public class StringQuotedExtensionsTests_SplitRow
         {
             RawFormat = rawFormat;
             ParsedFormat = parsedFormat;
+
+            foreach (var signals in _signals)
+            {
+                string delimiter = Random(signals.Delimiters);
+                string newRow = Random(signals.NewRows);
+
+                _raw.Add(signals, Replace(RawFormat));
+                _parsed.Add(signals, Replace(ParsedFormat));
+
+                string Replace(string format) =>
+                    format.Replace("{d}", delimiter)
+                        .Replace("{n}", newRow)
+                        .Replace("{q}", signals.Quote)
+                        .Replace("{e}", signals.Escape);
+            }
         }
 
         internal string RawFormat { get; }
         internal string ParsedFormat { get; }
+
+        internal string Raw(StringQuotedSignals signals) => _raw[signals];
+        internal string Parsed(StringQuotedSignals signals) => _parsed[signals];
+
+        private readonly Dictionary<StringQuotedSignals, string> _raw = new();
+        private readonly Dictionary<StringQuotedSignals, string> _parsed = new();
 
         internal bool IsRelevant(StringQuotedSignals signals)
         {
@@ -172,15 +202,6 @@ public class StringQuotedExtensionsTests_SplitRow
             bool Contains(string format) =>
                 RawFormat.Contains(format) || ParsedFormat.Contains(format);
         }
-
-        internal string Raw(StringQuotedSignals signals) => Replace(RawFormat, signals);
-        internal string Parsed(StringQuotedSignals signals) => Replace(ParsedFormat, signals);
-
-        private static string Replace(string format, StringQuotedSignals signals) =>
-            format.Replace("{d}", signals.Delimiter)
-                .Replace("{q}", signals.Quote)
-                .Replace("{n}", signals.NewRow)
-                .Replace("{e}", signals.Escape);
     }
 
     [Fact]
