@@ -2,6 +2,31 @@
 
 public class StringQuotedSignalsBuilderTests
 {
+    [Fact]
+    public void NewRowTolerant()
+    {
+        StringQuotedSignals signals;
+
+        signals = NewBuilder().NewRowTolerantEnvironmentPrimary().ToSignals();
+        signals.NewRow.Should().Be(Environment.NewLine);
+        signals.NewRows.First().Should().Be(Environment.NewLine);
+
+        signals = NewBuilder().NewRowTolerantLinuxPrimary().ToSignals();
+        signals.NewRow.Should().Be("\n");
+        signals.NewRows.First().Should().Be("\n");
+        signals.NewRows.Skip(1).Single().Should().Be("\r\n");
+
+        signals = NewBuilder().NewRowTolerantWindowsPrimary().ToSignals();
+        signals.NewRow.Should().Be("\r\n");
+        signals.NewRows.First().Should().Be("\r\n");
+        signals.NewRows.Skip(1).Single().Should().Be("\n");
+
+        StringQuotedSignalsBuilder NewBuilder() =>
+            new StringQuotedSignalsBuilder()
+                .Delimiter(",")
+                .Quote("\"");
+    }
+
     [Theory]
     [InlineData(null, "\n", "\"", "\\")]
     [InlineData(null, "\r", "\"", "\\")]

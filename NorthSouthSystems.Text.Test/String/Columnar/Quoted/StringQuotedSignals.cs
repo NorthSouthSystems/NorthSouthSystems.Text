@@ -19,4 +19,25 @@ public class StringQuotedSignalsTests
         signals.EscapeIsSpecified.Should().BeFalse();
         signals.Escape.Should().BeEmpty();
     }
+
+    [Theory]
+    [InlineData(null, "\"", "\n", "\\")]
+    [InlineData(null, "\"", "\r", "\\")]
+    [InlineData(null, "\"", "\r\n", "\\")]
+    [InlineData("", "\"", "\n", "\\")]
+    [InlineData("", "\"", "\r", "\\")]
+    [InlineData("", "\"", "\r\n", "\\")]
+    public void Exceptions(string delimiter, string quote, string newRow, string escape)
+    {
+        Action act;
+
+        act = () => new StringQuotedSignals([delimiter], [quote], newRow, escape);
+        act.Should().ThrowExactly<ArgumentException>();
+
+        act = () => new StringQuotedSignals([delimiter, null], [quote], newRow, escape);
+        act.Should().ThrowExactly<ArgumentException>();
+
+        act = () => new StringQuotedSignals([delimiter, string.Empty], [quote], newRow, escape);
+        act.Should().ThrowExactly<ArgumentException>();
+    }
 }
