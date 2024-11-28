@@ -31,7 +31,7 @@ internal static class StringSignalTracker
             return new MultiCharTracker(signal);
     }
 
-    private class EmptyTracker : IStringSignalTracker
+    private sealed class EmptyTracker : IStringSignalTracker
     {
         internal static EmptyTracker Singleton { get; } = new();
 
@@ -42,7 +42,7 @@ internal static class StringSignalTracker
         public int ProcessCharReturnsTriggeredLength(char value) => 0;
     }
 
-    private class SingleCharTracker : IStringSignalTracker
+    private sealed class SingleCharTracker : IStringSignalTracker
     {
         internal SingleCharTracker(string signal) =>
             _c = signal[0];
@@ -54,7 +54,7 @@ internal static class StringSignalTracker
         public int ProcessCharReturnsTriggeredLength(char value) => _c == value ? 1 : 0;
     }
 
-    private class MultiCharTracker : IStringSignalTracker
+    private sealed class MultiCharTracker : IStringSignalTracker
     {
         internal MultiCharTracker(string signal)
         {
@@ -94,7 +94,7 @@ internal static class StringSignalTracker
         }
     }
 
-    private class CompositeTracker : IStringSignalTracker
+    private sealed class CompositeTracker : IStringSignalTracker
     {
         internal CompositeTracker(IStringSignalTracker[] trackersLengthDescending) =>
             _trackers = trackersLengthDescending;
