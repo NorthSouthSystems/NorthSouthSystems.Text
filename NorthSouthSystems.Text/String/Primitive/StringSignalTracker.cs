@@ -13,45 +13,45 @@ internal static class StringSignalTracker
 
     internal static IStringSignalTracker Create(IReadOnlyList<string> signals)
     {
-        if ((signals?.Count ?? 0) == 0)
-            return EmptyTracker.Singleton;
-        else if (signals.Count == 1)
-            return Create(signals[0]);
+        if ((signals?.Count ?? 0) <= 1)
+            return CreateCharTracker(signals?.SingleOrDefault());
         else if (signals.Count == 2)
-            return new CompositeDoubleTracker(Trackers());
+            return new TwoCompositeTracker(CreateCharTrackers());
         else
-            return new CompositeManyTracker(Trackers());
+            return new ManyCompositeTracker(CreateCharTrackers());
 
-        IStringSignalTracker[] Trackers() =>
-            signals.OrderByDescending(s => s?.Length ?? 0).Select(Create).ToArray();
+        IStringSignalTracker[] CreateCharTrackers() =>
+            signals.OrderByDescending(s => s?.Length ?? 0).Select(CreateCharTracker).ToArray();
     }
 
-    private static IStringSignalTracker Create(string signal)
+    private static IStringSignalTracker CreateCharTracker(string signal)
     {
         if (string.IsNullOrEmpty(signal))
-            return EmptyTracker.Singleton;
+            return ZeroCharTracker.Singleton;
         else if (signal.Length == 1)
-            return new SingleCharTracker(signal);
+            return new OneCharTracker(signal);
         else if (signal.Length == 2)
-            return new DoubleCharTracker(signal);
+            return new TwoCharTracker(signal);
         else
-            return new MultiCharTracker(signal);
+            return new ManyCharTracker(signal);
     }
 
-    private sealed class EmptyTracker : IStringSignalTracker
-    {
-        internal static EmptyTracker Singleton { get; } = new();
+    #region CharTrackers
 
-        private EmptyTracker() { }
+    private sealed class ZeroCharTracker : IStringSignalTracker
+    {
+        internal static ZeroCharTracker Singleton { get; } = new();
+
+        private ZeroCharTracker() { }
 
         public void Reset() { }
 
         public int ProcessCharReturnsTriggeredLength(char value) => 0;
     }
 
-    private sealed class SingleCharTracker : IStringSignalTracker
+    private sealed class OneCharTracker : IStringSignalTracker
     {
-        internal SingleCharTracker(string signal) =>
+        internal OneCharTracker(string signal) =>
             _c = signal[0];
 
         private readonly char _c;
@@ -61,9 +61,9 @@ internal static class StringSignalTracker
         public int ProcessCharReturnsTriggeredLength(char value) => _c == value ? 1 : 0;
     }
 
-    private sealed class DoubleCharTracker : IStringSignalTracker
+    private sealed class TwoCharTracker : IStringSignalTracker
     {
-        internal DoubleCharTracker(string signal)
+        internal TwoCharTracker(string signal)
         {
             _c0 = signal[0];
             _c1 = signal[1];
@@ -87,9 +87,9 @@ internal static class StringSignalTracker
         }
     }
 
-    private sealed class MultiCharTracker : IStringSignalTracker
+    private sealed class ManyCharTracker : IStringSignalTracker
     {
-        internal MultiCharTracker(string signal)
+        internal ManyCharTracker(string signal)
         {
             _signal = signal;
             _activeCounters = new List<int>(_signal.Length);
@@ -127,9 +127,13 @@ internal static class StringSignalTracker
         }
     }
 
-    private sealed class CompositeDoubleTracker : IStringSignalTracker
+    #endregion
+
+    #region CompositeTrackers
+
+    private sealed class TwoCompositeTracker : IStringSignalTracker
     {
-        internal CompositeDoubleTracker(IStringSignalTracker[] trackersLengthDescending)
+        internal TwoCompositeTracker(IStringSignalTracker[] trackersLengthDescending)
         {
             _tracker0 = trackersLengthDescending[0];
             _tracker1 = trackersLengthDescending[1];
@@ -154,9 +158,9 @@ internal static class StringSignalTracker
         }
     }
 
-    private sealed class CompositeManyTracker : IStringSignalTracker
+    private sealed class ManyCompositeTracker : IStringSignalTracker
     {
-        internal CompositeManyTracker(IStringSignalTracker[] trackersLengthDescending) =>
+        internal ManyCompositeTracker(IStringSignalTracker[] trackersLengthDescending) =>
             _trackers = trackersLengthDescending;
 
         private readonly IStringSignalTracker[] _trackers;
@@ -178,4 +182,6 @@ internal static class StringSignalTracker
             return length;
         }
     }
+
+    #endregion
 }
