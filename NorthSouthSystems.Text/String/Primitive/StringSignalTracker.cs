@@ -17,8 +17,13 @@ internal static class StringSignalTracker
             return EmptyTracker.Singleton;
         else if (signals.Count == 1)
             return Create(signals[0]);
+        else if (signals.Count == 2)
+            return new CompositeDoubleTracker(Trackers());
         else
-            return new CompositeTracker(signals.OrderByDescending(s => s?.Length ?? 0).Select(Create).ToArray());
+            return new CompositeManyTracker(Trackers());
+
+        IStringSignalTracker[] Trackers() =>
+            signals.OrderByDescending(s => s?.Length ?? 0).Select(Create).ToArray();
     }
 
     private static IStringSignalTracker Create(string signal)
@@ -27,6 +32,8 @@ internal static class StringSignalTracker
             return EmptyTracker.Singleton;
         else if (signal.Length == 1)
             return new SingleCharTracker(signal);
+        else if (signal.Length == 2)
+            return new DoubleCharTracker(signal);
         else
             return new MultiCharTracker(signal);
     }
@@ -52,6 +59,32 @@ internal static class StringSignalTracker
         public void Reset() { }
 
         public int ProcessCharReturnsTriggeredLength(char value) => _c == value ? 1 : 0;
+    }
+
+    private sealed class DoubleCharTracker : IStringSignalTracker
+    {
+        internal DoubleCharTracker(string signal)
+        {
+            _c0 = signal[0];
+            _c1 = signal[1];
+        }
+
+        private readonly char _c0;
+        private readonly char _c1;
+
+        private bool _counting;
+
+        public void Reset() => _counting = false;
+
+        public int ProcessCharReturnsTriggeredLength(char value)
+        {
+            if (_counting && _c1 == value)
+                return 2;
+
+            _counting = _c0 == value;
+
+            return 0;
+        }
     }
 
     private sealed class MultiCharTracker : IStringSignalTracker
@@ -94,9 +127,36 @@ internal static class StringSignalTracker
         }
     }
 
-    private sealed class CompositeTracker : IStringSignalTracker
+    private sealed class CompositeDoubleTracker : IStringSignalTracker
     {
-        internal CompositeTracker(IStringSignalTracker[] trackersLengthDescending) =>
+        internal CompositeDoubleTracker(IStringSignalTracker[] trackersLengthDescending)
+        {
+            _tracker0 = trackersLengthDescending[0];
+            _tracker1 = trackersLengthDescending[1];
+        }
+
+        private readonly IStringSignalTracker _tracker0;
+        private readonly IStringSignalTracker _tracker1;
+
+        public void Reset()
+        {
+            _tracker0.Reset();
+            _tracker1.Reset();
+        }
+
+        public int ProcessCharReturnsTriggeredLength(char value)
+        {
+            int length = _tracker0.ProcessCharReturnsTriggeredLength(value);
+
+            return length > 0
+                ? length
+                : _tracker1.ProcessCharReturnsTriggeredLength(value);
+        }
+    }
+
+    private sealed class CompositeManyTracker : IStringSignalTracker
+    {
+        internal CompositeManyTracker(IStringSignalTracker[] trackersLengthDescending) =>
             _trackers = trackersLengthDescending;
 
         private readonly IStringSignalTracker[] _trackers;
