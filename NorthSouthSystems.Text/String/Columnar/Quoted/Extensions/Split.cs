@@ -264,21 +264,16 @@ public static partial class StringQuotedExtensions
             if (!_inRow)
                 return;
 
-            string field = _fieldBuilder.ToString();
-
             // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that the field
             // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with InQuotes false;
             // therefore, _fieldBuilder will contain an extra Quote. E.G.
             //     a,"",c
             //     a,"""",c
             //     a,"""""",c
-            if (field.Length > 0 && field.Length == _signals.Quote.Length * _quoteQuoteCount)
-            {
+            if (_fieldBuilder.Length > 0 && _fieldBuilder.Length == _signals.Quote.Length * _quoteQuoteCount)
                 RewindField(_signals.Quote.Length);
-                field = _fieldBuilder.ToString();
-            }
 
-            _fields.Add(field);
+            _fields.Add(_fieldBuilder.ToString());
         }
     }
 }
