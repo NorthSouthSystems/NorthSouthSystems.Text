@@ -181,10 +181,13 @@ public static partial class StringQuotedExtensions
 
         public IEnumerable<string[]> Process(IEnumerable<char> rows)
         {
-            foreach (char _ in rows.Where(ProcessReturnsYieldRow))
+            foreach (char c in rows)
             {
-                yield return _fields.ToArray();
-                Reset();
+                if (ProcessReturnsYieldRow(c))
+                {
+                    yield return _fields.ToArray();
+                    Reset();
+                }
             }
 
             FlushField();
