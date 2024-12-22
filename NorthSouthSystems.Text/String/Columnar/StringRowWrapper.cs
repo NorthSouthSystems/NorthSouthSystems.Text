@@ -18,6 +18,8 @@ public sealed class StringRowWrapper
     private readonly StringRowWrapperFactory _factory;
     private readonly string[] _fields;
 
+    #region Fields
+
     public StringFieldWrapper this[int index]
     {
         get
@@ -28,7 +30,7 @@ public sealed class StringRowWrapper
             if (index >= _factory.ColumnNames.Length)
                 throw new ArgumentOutOfRangeException(nameof(index), "index must be < the number of columns in the StringRowWrapperFactory.");
 
-            return new StringFieldWrapper(_factory.ColumnNames[index], index < _fields.Length ? _fields[index] : null);
+            return CreateField(index);
         }
     }
 
@@ -39,20 +41,13 @@ public sealed class StringRowWrapper
             if (!_factory.TryGetIndex(columnName, out int index))
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Column not found: {0}.", columnName), nameof(columnName));
 
-            return new StringFieldWrapper(_factory.ColumnNames[index], index < _fields.Length ? _fields[index] : null);
+            return CreateField(index);
         }
     }
 
-    public IEnumerable<StringFieldWrapper> Fields
-    {
-        get
-        {
-            var fillerFields = Enumerable.Range(_fields.Length, Math.Max(0, _factory.ColumnNames.Length - _fields.Length))
-                .Select(fillerFieldIndex => new StringFieldWrapper(_factory.ColumnNames[fillerFieldIndex], null));
+    public IEnumerable<StringFieldWrapper> Fields => Enumerable.Range(0, _factory.ColumnNames.Length).Select(CreateField);
 
-            return Enumerable.Range(0, _fields.Length)
-                .Select(fieldIndex => new StringFieldWrapper(_factory.ColumnNames[fieldIndex], _fields[fieldIndex]))
-                .Concat(fillerFields);
-        }
-    }
+    private StringFieldWrapper CreateField(int index) => new(_factory.ColumnNames[index], index < _fields.Length ? _fields[index] : null);
+
+    #endregion
 }
