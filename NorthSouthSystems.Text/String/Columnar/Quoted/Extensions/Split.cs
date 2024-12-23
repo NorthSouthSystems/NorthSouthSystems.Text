@@ -234,60 +234,72 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                if (!InQuotes)
-                {
+                if (InQuotes)
+                    return false;
+
                     RewindField(triggeredLength);
                     FlushField();
                     ResetField();
+
+                return false;
                 }
-            }
-            else if (_quoteQuoteTracker.ProcessCharReturnsTriggeredLength(c) > 0)
+
+            if (_quoteQuoteTracker.ProcessCharReturnsTriggeredLength(c) > 0)
             {
                 ResetTrackers();
 
                 _quoteAnyCount++;
                 _quoteQuoteCount++;
+
+                return false;
             }
-            else if ((triggeredLength = _quoteTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
+
+            if ((triggeredLength = _quoteTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers(wasQuoteTrackerTriggered: true);
                 RewindField(triggeredLength);
 
                 _quoteAnyCount++;
+
+                return false;
             }
-            else if (_isNewRowTolerant && (c == '\n' || c == '\r'))
+
+            if (_isNewRowTolerant && (c == '\n' || c == '\r'))
             {
                 ResetTrackers();
 
-                if (!InQuotes)
-                {
-                    if (c == '\r')
-                        _newRowTolerantWasCarriageReturn = true;
+                if (InQuotes)
+                    return false;
 
                     RewindField(1);
                     FlushField();
 
+                _newRowTolerantWasCarriageReturn = c == '\r';
+
                     return true;
                 }
-            }
-            else if ((triggeredLength = _newRowTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
+
+            if ((triggeredLength = _newRowTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers();
 
-                if (!InQuotes)
-                {
+                if (InQuotes)
+                    return false;
+
                     RewindField(triggeredLength);
                     FlushField();
 
                     return true;
                 }
-            }
-            else if ((triggeredLength = _escapeTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
+
+            if ((triggeredLength = _escapeTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {
                 ResetTrackers();
                 RewindField(triggeredLength);
 
                 _escaped = true;
+
+                return false;
             }
 
             return false;
