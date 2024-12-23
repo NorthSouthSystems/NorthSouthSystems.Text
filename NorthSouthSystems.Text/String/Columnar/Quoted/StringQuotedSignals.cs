@@ -38,6 +38,8 @@ public sealed class StringQuotedSignals
             .Quote("\"")
             .ToSignals();
 
+    private static readonly IEnumerable<string> _newRowsTolerant = ["\n", "\r", "\r\n"];
+
     internal StringQuotedSignals(string[] delimiters, string[] newRows, string quote, string escape)
     {
         _delimiters = (delimiters ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
@@ -67,6 +69,9 @@ public sealed class StringQuotedSignals
     public string NewRow { get; }
     public IReadOnlyList<string> NewRows => _newRows;
     private readonly string[] _newRows;
+
+    internal bool IsNewRowTolerant =>
+        _newRows?.Length == 3 && _newRows.All(_newRowsTolerant.Contains);
 
     public bool QuoteIsSpecified => !string.IsNullOrEmpty(Quote);
     public string Quote { get; }

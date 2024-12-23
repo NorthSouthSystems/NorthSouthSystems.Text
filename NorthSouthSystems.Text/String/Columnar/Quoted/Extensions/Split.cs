@@ -120,8 +120,10 @@ public static partial class StringQuotedExtensions
         {
             _signals = signals;
 
+            _isNewRowTolerant = signals.IsNewRowTolerant;
+
             _delimiterTracker = StringSignalTracker.Create(_signals.Delimiters);
-            _newRowTracker = StringSignalTracker.Create(_signals.NewRows);
+            _newRowTracker = StringSignalTracker.Create(_isNewRowTolerant ? null : _signals.NewRows);
             _quoteTracker = StringSignalTracker.Create(_signals.Quote);
             _escapeTracker = StringSignalTracker.Create(_signals.Escape);
 
@@ -148,6 +150,12 @@ public static partial class StringQuotedExtensions
         private readonly IStringSignalTracker _escapeTracker;
 
         private readonly IStringSignalTracker _quoteQuoteTracker;
+
+        // Do NOT Reset _newRowTolerantWasCarriageReturn because it needs to survive the "premature"
+        // yielding of rows upon seeing the \r of a \r\n (Windows NewRow) in the case that the \r is
+        // not followed by the \n.
+        private readonly bool _isNewRowTolerant;
+        private bool _newRowTolerantWasCarriageReturn;
 
         private void Reset()
         {
@@ -200,6 +208,16 @@ public static partial class StringQuotedExtensions
 
         private bool ProcessReturnsYieldRow(char c)
         {
+            // Because we immediately yield a row upon seeing a \r, we need to conditionally
+            // ignore the immediately following \n in the case of a Windows NewRow (\r\n).
+            if (_newRowTolerantWasCarriageReturn)
+            {
+                _newRowTolerantWasCarriageReturn = false;
+
+                if (c == '\n')
+                    return false;
+            }
+
             _inRow = true;
             _fieldBuilder.Append(c);
 
@@ -236,6 +254,21 @@ public static partial class StringQuotedExtensions
                 RewindField(triggeredLength);
 
                 _quoteAnyCount++;
+            }
+            else if (_isNewRowTolerant && (c == '\n' || c == '\r'))
+            {
+                ResetTrackers();
+
+                if (!InQuotes)
+                {
+                    if (c == '\r')
+                        _newRowTolerantWasCarriageReturn = true;
+
+                    RewindField(1);
+                    FlushField();
+
+                    return true;
+                }
             }
             else if ((triggeredLength = _newRowTracker.ProcessCharReturnsTriggeredLength(c)) > 0)
             {

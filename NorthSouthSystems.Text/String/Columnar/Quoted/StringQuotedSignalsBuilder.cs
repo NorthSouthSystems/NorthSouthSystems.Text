@@ -14,17 +14,29 @@ public sealed class StringQuotedSignalsBuilder
 
     private string[] _delimiters;
 
+    // We allow NewRowTolerant multi-signals to "starts-with-contains-overlap" (see MultiHelper), unlike Delimiters.
+    // This is because we can safely hardcode this very common case in our SplitQuotedProcessor. Admittedly, the most
+    // common case is the overlap of Linux and Windows NewRows, which could be handled without any special coding;
+    // however, we want to be thorough and additionally handle the case of standalone Carriage Return and Windows NewRows
+    // overlapping. To allows such overlap, we bypass MultiHelper and call Helper directly.
+
     public StringQuotedSignalsBuilder NewRowTolerantEnvironmentPrimary() => Environment.NewLine switch
     {
+        "\r" => NewRowTolerantCarriageReturnPrimary(),
         "\n" => NewRowTolerantLinuxPrimary(),
         "\r\n" => NewRowTolerantWindowsPrimary(),
-        "\r" => NewRow("\r", "\n"),
-        _ => NewRow(Environment.NewLine)
+
+        _ => throw new NotSupportedException(Environment.NewLine)
     };
 
-    public StringQuotedSignalsBuilder NewRowTolerantLinuxPrimary() => NewRow("\n", "\r\n");
+    public StringQuotedSignalsBuilder NewRowTolerantCarriageReturnPrimary() =>
+        Helper(() => _newRows, x => _newRows = x, ["\r", "\n", "\r\n"]);
 
-    public StringQuotedSignalsBuilder NewRowTolerantWindowsPrimary() => NewRow("\r\n", "\n");
+    public StringQuotedSignalsBuilder NewRowTolerantLinuxPrimary() =>
+        Helper(() => _newRows, x => _newRows = x, ["\n", "\r", "\r\n"]);
+
+    public StringQuotedSignalsBuilder NewRowTolerantWindowsPrimary() =>
+        Helper(() => _newRows, x => _newRows = x, ["\r\n", "\n", "\r"]);
 
     /// <summary>
     /// String used to separate rows.

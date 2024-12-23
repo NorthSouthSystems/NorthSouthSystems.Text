@@ -11,15 +11,20 @@ public class StringQuotedSignalsBuilderTests
         signals.NewRow.Should().Be(Environment.NewLine);
         signals.NewRows.First().Should().Be(Environment.NewLine);
 
+        signals = NewBuilder().NewRowTolerantCarriageReturnPrimary().ToSignals();
+        signals.NewRow.Should().Be("\r");
+        signals.NewRows.First().Should().Be("\r");
+        signals.NewRows.Skip(1).Should().BeEquivalentTo(["\n", "\r\n"]);
+
         signals = NewBuilder().NewRowTolerantLinuxPrimary().ToSignals();
         signals.NewRow.Should().Be("\n");
         signals.NewRows.First().Should().Be("\n");
-        signals.NewRows.Skip(1).Single().Should().Be("\r\n");
+        signals.NewRows.Skip(1).Should().BeEquivalentTo(["\r", "\r\n"]);
 
         signals = NewBuilder().NewRowTolerantWindowsPrimary().ToSignals();
         signals.NewRow.Should().Be("\r\n");
         signals.NewRows.First().Should().Be("\r\n");
-        signals.NewRows.Skip(1).Single().Should().Be("\n");
+        signals.NewRows.Skip(1).Should().BeEquivalentTo(["\n", "\r"]);
 
         StringQuotedSignalsBuilder NewBuilder() =>
             new StringQuotedSignalsBuilder()

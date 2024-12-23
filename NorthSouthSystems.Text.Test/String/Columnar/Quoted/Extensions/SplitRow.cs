@@ -15,7 +15,7 @@ public class StringQuotedExtensionsTests_SplitRow
         new(["|"], ["\r\n"], "'", string.Empty),
         new(["\t"], ["\n"], "~", "\\"),
         new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),
-        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n"], "\"", null)
+        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null)
     ];
 
     [Fact]
