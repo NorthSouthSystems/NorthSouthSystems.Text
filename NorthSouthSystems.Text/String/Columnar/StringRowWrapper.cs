@@ -10,9 +10,7 @@ public sealed class StringRowWrapper
     internal StringRowWrapper(StringRowWrapperFactory factory, string[] fields)
     {
         _factory = factory;
-
-        _fields = new string[fields.Length];
-        Array.Copy(fields, _fields, fields.Length);
+        _fields = fields;
     }
 
     private readonly StringRowWrapperFactory _factory;
