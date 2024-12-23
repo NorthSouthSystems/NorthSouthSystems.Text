@@ -5,7 +5,7 @@ using System.Globalization;
 /// <summary>
 /// Wraps the fields in a row and then allows for index or column name based access to them.
 /// </summary>
-public sealed class StringRowWrapper
+public readonly struct StringRowWrapper : IEquatable<StringRowWrapper>
 {
     internal StringRowWrapper(StringRowWrapperFactory factory, string[] fields)
     {
@@ -15,6 +15,25 @@ public sealed class StringRowWrapper
 
     private readonly StringRowWrapperFactory _factory;
     private readonly string[] _fields;
+
+    #region Value Equality
+
+    public override bool Equals(object obj) =>
+        obj is StringRowWrapper wrapper && Equals(wrapper);
+
+    public bool Equals(StringRowWrapper other) =>
+        ReferenceEquals(_factory, other._factory) && ReferenceEquals(_fields, other._fields);
+
+    public static bool operator ==(StringRowWrapper left, StringRowWrapper right) =>
+        left.Equals(right);
+
+    public static bool operator !=(StringRowWrapper left, StringRowWrapper right) =>
+        !left.Equals(right);
+
+    public override int GetHashCode() =>
+        (_factory?.GetHashCode() ?? 0) ^ (_fields?.GetHashCode() ?? 0);
+
+    #endregion
 
     #region Fields
 

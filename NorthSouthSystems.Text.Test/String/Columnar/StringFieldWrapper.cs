@@ -3,6 +3,57 @@
 public class StringFieldWrapperTests
 {
     [Fact]
+    public void Equality()
+    {
+        True(default, default);
+        True(default, new(null, null));
+        True(new(null, null), new(null, null));
+        True(new(string.Empty, null), new(string.Empty, null));
+        True(new(null, string.Empty), new(null, string.Empty));
+        True(new("Foo", null), new("Foo", null));
+        True(new(null, "Bar"), new(null, "Bar"));
+        True(new("Foo", "Bar"), new("Foo", "Bar"));
+
+        False(default, new(string.Empty, null));
+        False(default, new(null, string.Empty));
+        False(default, new("Foo", null));
+        False(default, new(null, "Bar"));
+        False(new("Foo", null), new("Bar", null));
+        False(new("Foo", "Bar"), new("Foo", "Rab"));
+        False(new("Foo", "Bar"), new("Oof", "Bar"));
+
+        static void True(StringFieldWrapper wrapperLeft, StringFieldWrapper wrapperRight)
+        {
+            TrueImpl(wrapperLeft, wrapperRight);
+            TrueImpl(wrapperRight, wrapperLeft);
+        }
+
+        static void TrueImpl(StringFieldWrapper wrapperLeft, StringFieldWrapper wrapperRight)
+        {
+            (wrapperLeft.Equals((object)wrapperRight)).Should().BeTrue();
+            (wrapperLeft.Equals(wrapperRight)).Should().BeTrue();
+            (wrapperLeft == wrapperRight).Should().BeTrue();
+            (wrapperLeft != wrapperRight).Should().BeFalse();
+            wrapperLeft.GetHashCode().Should().Be(wrapperRight.GetHashCode());
+        }
+
+        static void False(StringFieldWrapper wrapperLeft, StringFieldWrapper wrapperRight)
+        {
+            FalseImpl(wrapperLeft, wrapperRight);
+            FalseImpl(wrapperRight, wrapperLeft);
+        }
+
+        static void FalseImpl(StringFieldWrapper wrapperLeft, StringFieldWrapper wrapperRight)
+        {
+            (wrapperLeft.Equals((object)wrapperRight)).Should().BeFalse();
+            (wrapperLeft.Equals(wrapperRight)).Should().BeFalse();
+            (wrapperLeft == wrapperRight).Should().BeFalse();
+            (wrapperLeft != wrapperRight).Should().BeTrue();
+            wrapperLeft.GetHashCode().Should().NotBe(wrapperRight.GetHashCode());
+        }
+    }
+
+    [Fact]
     public void Basic()
     {
         StringFieldWrapper wrapper;
@@ -122,9 +173,9 @@ public class StringFieldWrapperTests
     {
         StringFieldWrapper wrapper;
 
-        wrapper = null;
+        wrapper = default;
         ((string)wrapper).Should().BeNull();
-        ShouldBeNull(null);
+        ShouldBeNull(default);
 
         wrapper = new("A", null);
         ((string)wrapper).Should().BeNull();
@@ -161,46 +212,6 @@ public class StringFieldWrapperTests
     {
         Action act;
         object x;
-
-        // wrapper = null
-
-        act = () => x = (bool)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (int)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (uint)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (long)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (ulong)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (float)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (double)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (decimal)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (DateTime)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (DateTimeOffset)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (TimeSpan)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        act = () => x = (Guid)((StringFieldWrapper)null);
-        act.Should().ThrowExactly<ArgumentNullException>();
-
-        // field = null
 
         act = () => x = (bool)(new StringFieldWrapper("A", null));
         act.Should().ThrowExactly<ArgumentNullException>();

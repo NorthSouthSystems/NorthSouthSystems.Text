@@ -7,7 +7,7 @@ using System.Xml;
 /// Wraps an individual field of a string row and allows for XElement style explicit type conversion
 /// of the contained field.
 /// </summary>
-public sealed class StringFieldWrapper
+public readonly struct StringFieldWrapper : IEquatable<StringFieldWrapper>
 {
     internal StringFieldWrapper(string columnName, string value)
     {
@@ -20,19 +20,44 @@ public sealed class StringFieldWrapper
 
     public override string ToString() => Value ?? string.Empty;
 
+    #region Value Equality
+
+    public override bool Equals(object obj) =>
+        obj is StringFieldWrapper wrapper && Equals(wrapper);
+
+    public bool Equals(StringFieldWrapper other) =>
+        ColumnName == other.ColumnName && Value == other.Value;
+
+    public static bool operator ==(StringFieldWrapper left, StringFieldWrapper right) =>
+        left.Equals(right);
+
+    public static bool operator !=(StringFieldWrapper left, StringFieldWrapper right) =>
+        !left.Equals(right);
+
+    public override int GetHashCode() =>
+        (ColumnName?.GetHashCode() ?? 0) ^ (Value?.GetHashCode() ?? 0);
+
+    #endregion
+
+    #region Operators
+
+    // Operators mimic the behavior of .NET Framework's System.Linq.Xml.XElement's operators.
+    // The rationale was to think of this as LINQ to Text.
+    // https://github.com/microsoft/referencesource/blob/master/System.Xml.Linq/System/Xml/Linq/XLinq.cs
+
     private static T Required<T>(StringFieldWrapper field, Func<string, T> convert) =>
-        (field == null || field.Value == null)
+        field.Value == null
             ? throw new ArgumentNullException(nameof(field))
             : convert(field.Value);
 
     private static T? Optional<T>(StringFieldWrapper field, Func<string, T> convert)
             where T : struct =>
-        (field == null || string.IsNullOrWhiteSpace(field.Value))
+        string.IsNullOrWhiteSpace(field.Value)
             ? null
             : convert(field.Value);
 
     public static explicit operator string(StringFieldWrapper field) =>
-        field?.Value;
+        field.Value;
 
     public static explicit operator bool(StringFieldWrapper field) =>
         Required(field, value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
@@ -105,4 +130,6 @@ public sealed class StringFieldWrapper
 
     public static explicit operator Guid?(StringFieldWrapper field) =>
         Optional(field, value => XmlConvert.ToGuid(field.Value));
+
+    #endregion
 }
