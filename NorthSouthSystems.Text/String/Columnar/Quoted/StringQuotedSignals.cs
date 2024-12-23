@@ -79,6 +79,13 @@ public sealed class StringQuotedSignals
     public bool EscapeIsSpecified => !string.IsNullOrEmpty(Escape);
     public string Escape { get; }
 
+    internal bool IsNewRowTolerantSimple =>
+        Delimiters.Count == 1
+        && Delimiter.Length == 1
+        && IsNewRowTolerant
+        && Quote.Length == 1
+        && !EscapeIsSpecified;
+
     internal string EscapedDelimiter { get; }
     internal string EscapedNewRow { get; }
     internal string EscapedQuote { get; }
