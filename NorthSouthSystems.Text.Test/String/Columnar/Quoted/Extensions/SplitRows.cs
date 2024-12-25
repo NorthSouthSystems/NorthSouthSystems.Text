@@ -3,7 +3,7 @@
 public class StringQuotedExtensionsTests_SplitRows
 {
     private static string[][] Splits(string format, StringQuotedSignals signals) =>
-        StringQuotedExtensionsTests_Join.Expected(format, signals)
+        StringQuotedTestHelper.Replace(format, signals)
             .SplitQuotedRows(signals)
             .ToArray();
 
@@ -16,19 +16,19 @@ public class StringQuotedExtensionsTests_SplitRows
 
         splits.Length.Should().Be(0);
 
-        splits = Splits("{2}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         splits.Length.Should().Be(1);
         splits[0].Length.Should().Be(1);
         splits[0][0].Should().BeEmpty();
 
-        splits = Splits("{1}{1}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("{q}{q}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         splits.Length.Should().Be(1);
         splits[0].Length.Should().Be(1);
         splits[0][0].Should().BeEmpty();
 
-        splits = Splits("{1}{1}{2}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("{q}{q}{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         splits.Length.Should().Be(1);
         splits[0].Length.Should().Be(1);
@@ -38,15 +38,15 @@ public class StringQuotedExtensionsTests_SplitRows
 
         AssertSingleRow();
 
-        splits = Splits("a,b,c{2}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("a,b,c{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         AssertSingleRow();
 
-        splits = Splits("{1}a{1},{1}b{1},{1}c{1}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("{q}a{q},{q}b{q},{q}c{q}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         AssertSingleRow();
 
-        splits = Splits("{1}a{1},{1}b{1},{1}c{1}{2}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("{q}a{q},{q}b{q},{q}c{q}{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         AssertSingleRow();
 
@@ -60,7 +60,7 @@ public class StringQuotedExtensionsTests_SplitRows
             splits[0][2].Should().Be("c");
         }
 
-        splits = Splits("a,b,c{2}d,e,f{2}g,h,i", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        splits = Splits("a,b,c{n}d,e,f{n}g,h,i", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
 
         AssertMultiRow();
 

@@ -2,8 +2,8 @@
 
 public class StringQuotedExtensionsTests_Join
 {
-    internal static string Expected(string format, StringQuotedSignals signals) =>
-        string.Format(format, signals.Delimiter, signals.Quote, signals.NewRow, signals.Escape);
+    private static string Expected(string format, StringQuotedSignals signals) =>
+        StringQuotedTestHelper.Replace(format, signals);
 
     [Fact]
     public void Quoting()
@@ -21,39 +21,39 @@ public class StringQuotedExtensionsTests_Join
 
         new string[] { "a", "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("a{0}b{0}c", signals));
+                Expected("a{d}b{d}c", signals));
 
         new string[] { null, "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("{0}b{0}c", signals));
+                Expected("{d}b{d}c", signals));
 
         new string[] { "a", "b", string.Empty }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("a{0}b{0}", signals));
+                Expected("a{d}b{d}", signals));
 
         new string[] { "aa", "bb", "cc" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("aa{0}bb{0}cc", signals));
+                Expected("aa{d}bb{d}cc", signals));
 
         new string[] { "a" + signals.Delimiter, "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("{1}a{0}{1}{0}b{0}c", signals));
+                Expected("{q}a{d}{q}{d}b{d}c", signals));
 
         new string[] { "a" + signals.Quote, "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
                 Expected(signals.EscapeIsSpecified
-                    ? "{1}a{3}{1}{1}{0}b{0}c"
-                    : "{1}a{1}{1}{1}{0}b{0}c", signals));
+                    ? "{q}a{e}{q}{q}{d}b{d}c"
+                    : "{q}a{q}{q}{q}{d}b{d}c", signals));
 
         new string[] { "aa", "bb", "cc" }.JoinQuotedRow(signals, true)
             .Should().Be(
-                Expected("{1}aa{1}{0}{1}bb{1}{0}{1}cc{1}", signals));
+                Expected("{q}aa{q}{d}{q}bb{q}{d}{q}cc{q}", signals));
 
         if (signals.NewRowIsSpecified)
         {
             new string[] { "a" + signals.NewRow + "a", "b", "c" }.JoinQuotedRow(signals)
                 .Should().Be(
-                    Expected("{1}a{2}a{1}{0}b{0}c", signals));
+                    Expected("{q}a{n}a{q}{d}b{d}c", signals));
         }
     }
 
@@ -73,18 +73,18 @@ public class StringQuotedExtensionsTests_Join
 
         new string[] { "a" + signals.Delimiter, "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("a{3}{0}{0}b{0}c", signals));
+                Expected("a{e}{d}{d}b{d}c", signals));
 
         if (signals.NewRowIsSpecified)
         {
             new string[] { "a" + signals.NewRow, "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("a{3}{2}{0}b{0}c", signals));
+                Expected("a{e}{n}{d}b{d}c", signals));
         }
 
         new string[] { "a" + signals.Escape, "b", "c" }.JoinQuotedRow(signals)
             .Should().Be(
-                Expected("a{3}{3}{0}b{0}c", signals));
+                Expected("a{e}{e}{d}b{d}c", signals));
     }
 
     [Fact]
