@@ -34,13 +34,11 @@ public class StringQuotedExtensionsTests_SplitRow
     });
 
     [Fact]
-    public void Fuzzing() => StringQuotedFixture.Signals.ForEach(signals =>
+    public void FuzzingSingleField() => StringQuotedFixture.Signals.ForEach(signals =>
     {
-        var pairs = StringQuotedRawParsedFieldPair.Fuzzing(signals).ToArray();
-
         // A row with a single empty field results in an empty collection as desired. That special case is addressed
         // in the EmptyFields Fact.
-        foreach (var pair in pairs
+        foreach (var pair in StringQuotedRawParsedFieldPair.Fuzzing(signals)
             .Where(p => !string.IsNullOrEmpty(p.Raw)))
         {
             pair.Raw.SplitQuotedRow(signals)
@@ -52,21 +50,26 @@ public class StringQuotedExtensionsTests_SplitRow
                     .Should().Equal(pair.Parsed);
             }
         }
+    });
 
-        new[] { 2, 3 }
-            .SelectMany(subsetSize => pairs.Subsets(subsetSize))
-            .SelectMany(subset => subset.Permutations())
-            .ForEach(subset =>
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void FuzzingMultiField(int subsetSize) => StringQuotedFixture.Signals.ForEach(signals =>
+    {
+        foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+            .Subsets(subsetSize)
+            .SelectMany(subset => subset.Permutations()))
+        {
+            string.Join(StringQuotedFixture.Random(signals.Delimiters), permutation.Select(pair => pair.Raw)).SplitQuotedRow(signals)
+                .Should().Equal(permutation.Select(pair => pair.Parsed));
+
+            if (signals.NewRowIsSpecified)
             {
-                string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select(pair => pair.Raw)).SplitQuotedRow(signals)
-                    .Should().Equal(subset.Select(pair => pair.Parsed));
-
-                if (signals.NewRowIsSpecified)
-                {
-                    string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select((pair, i) => pair.Raw + (i == subset.Count - 1 ? StringQuotedFixture.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
-                        .Should().Equal(subset.Select(pair => pair.Parsed));
-                }
-            });
+                string.Join(StringQuotedFixture.Random(signals.Delimiters), permutation.Select((pair, i) => pair.Raw + (i == permutation.Count - 1 ? StringQuotedFixture.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
+                    .Should().Equal(permutation.Select(pair => pair.Parsed));
+            }
+        }
     });
 
     [Fact]
