@@ -7,17 +7,30 @@ public class StringQuotedExtensionsTests_SplitRow
     [Fact]
     public void EmptyFields() => StringQuotedTestHelper.Signals.ForEach(signals =>
     {
-        string.Empty.SplitQuotedRow(signals)
-            .Length.Should().Be(0);
+        SplitAndAssert(string.Empty, 0);
 
         foreach (string delimiter in signals.Delimiters)
         {
-            delimiter.SplitQuotedRow(signals)
-                .Should().Equal(string.Empty, string.Empty);
+            SplitAndAssert(delimiter, 2);
+            SplitAndAssert(delimiter + delimiter, 3);
 
-            (delimiter + delimiter).SplitQuotedRow(signals)
-                .Should().Equal(string.Empty, string.Empty, string.Empty);
+            if (signals.QuoteIsSpecified)
+            {
+                string quotedEmpty = signals.Quote + signals.Quote;
+
+                SplitAndAssert(quotedEmpty + delimiter, 2);
+                SplitAndAssert(delimiter + quotedEmpty, 2);
+                SplitAndAssert(quotedEmpty + delimiter + quotedEmpty, 2);
+
+                SplitAndAssert(quotedEmpty + delimiter + delimiter, 3);
+                SplitAndAssert(delimiter + quotedEmpty + delimiter, 3);
+                SplitAndAssert(delimiter + delimiter + quotedEmpty, 3);
+                SplitAndAssert(quotedEmpty + delimiter + quotedEmpty + delimiter + quotedEmpty, 3);
+            }
         }
+
+        void SplitAndAssert(string row, int fieldCount) =>
+            row.SplitQuotedRow(signals).Should().Equal(Enumerable.Repeat(string.Empty, fieldCount));
     });
 
     [Fact]
@@ -43,7 +56,6 @@ public class StringQuotedExtensionsTests_SplitRow
         new[] { 2, 3 }
             .SelectMany(subsetSize => pairs.Where(pair => pair.RawFormat != "{e}").Subsets(subsetSize))
             .SelectMany(subset => subset.Permutations())
-            .Where(subset => subset.All(pair => pair.IsRelevant(signals)))
             .ForEach(subset =>
             {
                 string.Join(StringQuotedTestHelper.Random(signals.Delimiters), subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
