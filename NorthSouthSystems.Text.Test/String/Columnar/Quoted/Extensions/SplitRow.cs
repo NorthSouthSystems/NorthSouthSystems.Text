@@ -61,13 +61,16 @@ public class StringQuotedExtensionsTests_SplitRow
             .Subsets(subsetSize)
             .SelectMany(subset => subset.Permutations()))
         {
-            string.Join(StringQuotedFixture.Random(signals.Delimiters), permutation.Select(pair => pair.Raw)).SplitQuotedRow(signals)
-                .Should().Equal(permutation.Select(pair => pair.Parsed));
+            string row = string.Join(StringQuotedFixture.Random(signals.Delimiters), permutation.Select(pair => pair.Raw));
+            var expectedFields = permutation.Select(pair => pair.Parsed);
+
+            row.SplitQuotedRow(signals)
+                .Should().Equal(expectedFields);
 
             if (signals.NewRowIsSpecified)
             {
-                string.Join(StringQuotedFixture.Random(signals.Delimiters), permutation.Select((pair, i) => pair.Raw + (i == permutation.Count - 1 ? StringQuotedFixture.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
-                    .Should().Equal(permutation.Select(pair => pair.Parsed));
+                (row + StringQuotedFixture.Random(signals.NewRows)).SplitQuotedRow(signals)
+                    .Should().Equal(expectedFields);
             }
         }
     });
