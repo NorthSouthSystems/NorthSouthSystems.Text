@@ -4,6 +4,7 @@ public class StringQuotedExtensionsTests_SplitRows
 {
     private static string[][] Splits(string format, StringQuotedSignals signals) =>
         StringQuotedFixture.Replace(format, signals)
+            .First()
             .SplitQuotedRows(signals)
             .ToArray();
 

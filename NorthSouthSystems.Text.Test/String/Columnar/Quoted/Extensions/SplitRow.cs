@@ -34,37 +34,37 @@ public class StringQuotedExtensionsTests_SplitRow
     });
 
     [Fact]
-    public void FullFuzzing() => StringQuotedFixture.Signals.ForEach(signals =>
+    public void Fuzzing() => StringQuotedFixture.Signals.ForEach(signals =>
     {
-        var pairs = StringQuotedFixture.RawParsedFieldPairs.Where(p => p.IsRelevant(signals));
+        var pairs = StringQuotedRawParsedFieldPair.Fuzzing(signals).ToArray();
 
-        foreach (var pair in pairs)
+        // A row with a single empty field results in an empty collection as desired. That special case is addressed
+        // in the EmptyFields Fact.
+        foreach (var pair in pairs
+            .Where(p => !string.IsNullOrEmpty(p.Raw)))
         {
-            if (!string.IsNullOrEmpty(pair.RawFormat))
-            {
-                pair.Raw(signals).SplitQuotedRow(signals)
-                    .Should().Equal(pair.Parsed(signals));
+            pair.Raw.SplitQuotedRow(signals)
+                .Should().Equal(pair.Parsed);
 
-                if (signals.NewRowIsSpecified && pair.RawFormat != "{e}")
-                {
-                    (pair.Raw(signals) + StringQuotedFixture.Random(signals.NewRows)).SplitQuotedRow(signals)
-                        .Should().Equal(pair.Parsed(signals));
-                }
+            if (signals.NewRowIsSpecified)
+            {
+                (pair.Raw + StringQuotedFixture.Random(signals.NewRows)).SplitQuotedRow(signals)
+                    .Should().Equal(pair.Parsed);
             }
         }
 
         new[] { 2, 3 }
-            .SelectMany(subsetSize => pairs.Where(pair => pair.RawFormat != "{e}").Subsets(subsetSize))
+            .SelectMany(subsetSize => pairs.Subsets(subsetSize))
             .SelectMany(subset => subset.Permutations())
             .ForEach(subset =>
             {
-                string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
-                    .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
+                string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select(pair => pair.Raw)).SplitQuotedRow(signals)
+                    .Should().Equal(subset.Select(pair => pair.Parsed));
 
                 if (signals.NewRowIsSpecified)
                 {
-                    string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select((pair, i) => pair.Raw(signals) + (i == subset.Count - 1 ? StringQuotedFixture.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
-                        .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
+                    string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select((pair, i) => pair.Raw + (i == subset.Count - 1 ? StringQuotedFixture.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
+                        .Should().Equal(subset.Select(pair => pair.Parsed));
                 }
             });
     });

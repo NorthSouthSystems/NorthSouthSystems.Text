@@ -2,8 +2,12 @@
 
 internal static class StringQuotedFixture
 {
-    internal static string Replace(string format, StringQuotedSignals signals) =>
-        Replace(format, signals.Delimiter, signals.NewRow, signals.Quote, signals.Escape);
+    internal static IEnumerable<string> Replace(string format, StringQuotedSignals signals)
+    {
+        foreach (string delimiter in signals.Delimiters)
+            foreach (string newRow in signals.NewRows.DefaultIfEmpty(string.Empty))
+                yield return Replace(format, signals.Delimiter, signals.NewRow, signals.Quote, signals.Escape);
+    }
 
     internal static string Replace(string format,
             string delimiter, string newRow, string quote, string escape) =>
@@ -25,8 +29,28 @@ internal static class StringQuotedFixture
         new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),
         new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null)
     ];
+}
 
-    internal static IEnumerable<StringQuotedRawParsedFieldPair> RawParsedFieldPairs { get; } =
+internal class StringQuotedRawParsedFieldPair
+{
+    internal static IEnumerable<(string Raw, string Parsed)> Fuzzing(StringQuotedSignals signals)
+    {
+        // A standalone escape character in a field causes the SplitQuotedProcessor to ignore the following
+        // delimiter and breaks all such Fuzzing tests as expected. Therefore, we ignore it for Fuzzing tests.
+        foreach (var pair in _pairs
+            .Where(p => p.IsRelevant(signals))
+            .Where(p => p._rawFormat != "{e}"))
+        {
+            string delimiter = StringQuotedFixture.Random(signals.Delimiters);
+            string newRow = StringQuotedFixture.Random(signals.NewRows);
+
+            yield return (
+                StringQuotedFixture.Replace(pair._rawFormat, delimiter, newRow, signals.Quote, signals.Escape),
+                StringQuotedFixture.Replace(pair._parsedFormat, delimiter, newRow, signals.Quote, signals.Escape));
+        }
+    }
+
+    private static readonly IEnumerable<StringQuotedRawParsedFieldPair> _pairs =
     [
         // Simple
 
@@ -114,33 +138,15 @@ internal static class StringQuotedFixture
         new("{q}{e}{q}a{e}{q}{q}", "{q}a{q}"),
         new("{q}{e}{q}a{d}{e}{q}{n}{q}", "{q}a{d}{q}{n}"),
     ];
-}
 
-internal class StringQuotedRawParsedFieldPair
-{
-    internal StringQuotedRawParsedFieldPair(string rawFormat, string parsedFormat)
+    private StringQuotedRawParsedFieldPair(string rawFormat, string parsedFormat)
     {
-        RawFormat = rawFormat;
-        ParsedFormat = parsedFormat;
-
-        foreach (var signals in StringQuotedFixture.Signals)
-        {
-            string delimiter = StringQuotedFixture.Random(signals.Delimiters);
-            string newRow = StringQuotedFixture.Random(signals.NewRows);
-
-            _raw.Add(signals, StringQuotedFixture.Replace(RawFormat, delimiter, newRow, signals.Quote, signals.Escape));
-            _parsed.Add(signals, StringQuotedFixture.Replace(ParsedFormat, delimiter, newRow, signals.Quote, signals.Escape));
-        }
+        _rawFormat = rawFormat;
+        _parsedFormat = parsedFormat;
     }
 
-    internal string RawFormat { get; }
-    internal string ParsedFormat { get; }
-
-    internal string Raw(StringQuotedSignals signals) => _raw[signals];
-    internal string Parsed(StringQuotedSignals signals) => _parsed[signals];
-
-    private readonly Dictionary<StringQuotedSignals, string> _raw = new();
-    private readonly Dictionary<StringQuotedSignals, string> _parsed = new();
+    internal string _rawFormat { get; }
+    internal string _parsedFormat { get; }
 
     internal bool IsRelevant(StringQuotedSignals signals)
     {
@@ -150,6 +156,6 @@ internal class StringQuotedRawParsedFieldPair
             && (signals.EscapeIsSpecified || !Contains("{e}"));
 
         bool Contains(string format) =>
-            RawFormat.Contains(format) || ParsedFormat.Contains(format);
+            _rawFormat.Contains(format) || _parsedFormat.Contains(format);
     }
 }
