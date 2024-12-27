@@ -1,6 +1,6 @@
 ﻿namespace NorthSouthSystems.Text;
 
-internal static class StringQuotedTestHelper
+internal static class StringQuotedFixture
 {
     internal static string Replace(string format, StringQuotedSignals signals) =>
         Replace(format, signals.Delimiter, signals.NewRow, signals.Quote, signals.Escape);
@@ -123,13 +123,13 @@ internal class StringQuotedRawParsedFieldPair
         RawFormat = rawFormat;
         ParsedFormat = parsedFormat;
 
-        foreach (var signals in StringQuotedTestHelper.Signals)
+        foreach (var signals in StringQuotedFixture.Signals)
         {
-            string delimiter = StringQuotedTestHelper.Random(signals.Delimiters);
-            string newRow = StringQuotedTestHelper.Random(signals.NewRows);
+            string delimiter = StringQuotedFixture.Random(signals.Delimiters);
+            string newRow = StringQuotedFixture.Random(signals.NewRows);
 
-            _raw.Add(signals, StringQuotedTestHelper.Replace(RawFormat, delimiter, newRow, signals.Quote, signals.Escape));
-            _parsed.Add(signals, StringQuotedTestHelper.Replace(ParsedFormat, delimiter, newRow, signals.Quote, signals.Escape));
+            _raw.Add(signals, StringQuotedFixture.Replace(RawFormat, delimiter, newRow, signals.Quote, signals.Escape));
+            _parsed.Add(signals, StringQuotedFixture.Replace(ParsedFormat, delimiter, newRow, signals.Quote, signals.Escape));
         }
     }
 

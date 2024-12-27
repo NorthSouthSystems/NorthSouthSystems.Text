@@ -5,7 +5,7 @@ using MoreLinq;
 public class StringQuotedExtensionsTests_SplitRow
 {
     [Fact]
-    public void EmptyFields() => StringQuotedTestHelper.Signals.ForEach(signals =>
+    public void EmptyFields() => StringQuotedFixture.Signals.ForEach(signals =>
     {
         SplitAndAssert(string.Empty, 0);
 
@@ -34,9 +34,9 @@ public class StringQuotedExtensionsTests_SplitRow
     });
 
     [Fact]
-    public void FullFuzzing() => StringQuotedTestHelper.Signals.ForEach(signals =>
+    public void FullFuzzing() => StringQuotedFixture.Signals.ForEach(signals =>
     {
-        var pairs = StringQuotedTestHelper.RawParsedFieldPairs.Where(p => p.IsRelevant(signals));
+        var pairs = StringQuotedFixture.RawParsedFieldPairs.Where(p => p.IsRelevant(signals));
 
         foreach (var pair in pairs)
         {
@@ -47,7 +47,7 @@ public class StringQuotedExtensionsTests_SplitRow
 
                 if (signals.NewRowIsSpecified && pair.RawFormat != "{e}")
                 {
-                    (pair.Raw(signals) + StringQuotedTestHelper.Random(signals.NewRows)).SplitQuotedRow(signals)
+                    (pair.Raw(signals) + StringQuotedFixture.Random(signals.NewRows)).SplitQuotedRow(signals)
                         .Should().Equal(pair.Parsed(signals));
                 }
             }
@@ -58,12 +58,12 @@ public class StringQuotedExtensionsTests_SplitRow
             .SelectMany(subset => subset.Permutations())
             .ForEach(subset =>
             {
-                string.Join(StringQuotedTestHelper.Random(signals.Delimiters), subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
+                string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select(pair => pair.Raw(signals))).SplitQuotedRow(signals)
                     .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
 
                 if (signals.NewRowIsSpecified)
                 {
-                    string.Join(StringQuotedTestHelper.Random(signals.Delimiters), subset.Select((pair, i) => pair.Raw(signals) + (i == subset.Count - 1 ? StringQuotedTestHelper.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
+                    string.Join(StringQuotedFixture.Random(signals.Delimiters), subset.Select((pair, i) => pair.Raw(signals) + (i == subset.Count - 1 ? StringQuotedFixture.Random(signals.NewRows) : string.Empty))).SplitQuotedRow(signals)
                         .Should().Equal(subset.Select(pair => pair.Parsed(signals)));
                 }
             });

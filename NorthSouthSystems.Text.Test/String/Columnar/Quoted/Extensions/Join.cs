@@ -3,7 +3,7 @@
 public class StringQuotedExtensionsTests_Join
 {
     private static string Expected(string format, StringQuotedSignals signals) =>
-        StringQuotedTestHelper.Replace(format, signals);
+        StringQuotedFixture.Replace(format, signals);
 
     [Fact]
     public void Quoting()

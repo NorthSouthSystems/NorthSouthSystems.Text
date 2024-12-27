@@ -3,7 +3,7 @@
 public class StringQuotedExtensionsTests_SplitRows
 {
     private static string[][] Splits(string format, StringQuotedSignals signals) =>
-        StringQuotedTestHelper.Replace(format, signals)
+        StringQuotedFixture.Replace(format, signals)
             .SplitQuotedRows(signals)
             .ToArray();
 
