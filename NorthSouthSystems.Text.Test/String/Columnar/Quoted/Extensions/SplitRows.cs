@@ -1,90 +1,83 @@
 ﻿namespace NorthSouthSystems.Text;
 
+using MoreLinq;
+using System.Text;
+
 public class StringQuotedExtensionsTests_SplitRows
 {
-    private static string[][] Splits(string format, StringQuotedSignals signals) =>
-        StringQuotedFixture.Replace(format, signals)
-            .First()
-            .SplitQuotedRows(signals)
-            .ToArray();
-
     [Fact]
-    public void Basic()
+    public void EmptyRows() => StringQuotedFixture.Signals.ForEach(signals =>
     {
-        string[][] splits;
+        SplitAndAssert(string.Empty, 0);
 
-        splits = Splits(string.Empty, StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        splits.Length.Should().Be(0);
-
-        splits = Splits("{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        splits.Length.Should().Be(1);
-        splits[0].Length.Should().Be(1);
-        splits[0][0].Should().BeEmpty();
-
-        splits = Splits("{q}{q}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        splits.Length.Should().Be(1);
-        splits[0].Length.Should().Be(1);
-        splits[0][0].Should().BeEmpty();
-
-        splits = Splits("{q}{q}{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        splits.Length.Should().Be(1);
-        splits[0].Length.Should().Be(1);
-        splits[0][0].Should().BeEmpty();
-
-        splits = Splits("a,b,c", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        AssertSingleRow();
-
-        splits = Splits("a,b,c{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        AssertSingleRow();
-
-        splits = Splits("{q}a{q},{q}b{q},{q}c{q}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        AssertSingleRow();
-
-        splits = Splits("{q}a{q},{q}b{q},{q}c{q}{n}", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        AssertSingleRow();
-
-        void AssertSingleRow()
+        foreach (string newRow in signals.NewRows)
         {
-            splits.Length.Should().Be(1);
+            SplitAndAssert(newRow, 1);
+            SplitAndAssert(newRow + newRow, 2);
+            SplitAndAssert(newRow + newRow + newRow, 3);
 
-            splits[0].Length.Should().Be(3);
-            splits[0][0].Should().Be("a");
-            splits[0][1].Should().Be("b");
-            splits[0][2].Should().Be("c");
+            if (signals.QuoteIsSpecified)
+            {
+                string quotedEmpty = signals.Quote + signals.Quote;
+
+                SplitAndAssert(quotedEmpty, 1);
+                SplitAndAssert(quotedEmpty + newRow, 1);
+
+                SplitAndAssert(newRow + quotedEmpty, 2);
+                SplitAndAssert(newRow + quotedEmpty + newRow, 2);
+
+                SplitAndAssert(newRow + quotedEmpty + newRow + newRow, 3);
+                SplitAndAssert(newRow + quotedEmpty + newRow + quotedEmpty, 3);
+            }
         }
 
-        splits = Splits("a,b,c{n}d,e,f{n}g,h,i", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
-
-        AssertMultiRow();
-
-        void AssertMultiRow()
+        void SplitAndAssert(string rows, int rowCount)
         {
-            splits.Length.Should().Be(3);
+            var expectedRows = Enumerable.Repeat(string.Empty, rowCount);
 
-            splits[0].Length.Should().Be(3);
-            splits[0][0].Should().Be("a");
-            splits[0][1].Should().Be("b");
-            splits[0][2].Should().Be("c");
-
-            splits[1].Length.Should().Be(3);
-            splits[1][0].Should().Be("d");
-            splits[1][1].Should().Be("e");
-            splits[1][2].Should().Be("f");
-
-            splits[2].Length.Should().Be(3);
-            splits[2][0].Should().Be("g");
-            splits[2][1].Should().Be("h");
-            splits[2][2].Should().Be("i");
+            rows.SplitQuotedRows(signals).Select(split => split.Single())
+                .Should().Equal(expectedRows);
         }
-    }
+    });
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    public void FuzzingSingleFieldRows(int rowCount) => StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).ForEach(signals =>
+    {
+        var rowsBuilder = new StringBuilder();
+
+        // We ignore string.Empty because of the Fuzzing difficulties caused by \r, \n, and \r\n
+        // each representing a single NewRow in the case of IsNewRowTolerant. A string.Empty row
+        // followed by a random NewRow can inadvertently create a single NewRow when two were expected.
+        foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+            .Where(pair => pair.Raw != string.Empty)
+            .Subsets(rowCount)
+            .SelectMany(subset => subset.Permutations()))
+        {
+            rowsBuilder.Clear();
+
+            permutation.ForEach((pair, index) =>
+            {
+                if (index > 0)
+                    rowsBuilder.Append(StringQuotedFixture.Random(signals.NewRows));
+
+                rowsBuilder.Append(pair.Raw);
+            });
+
+            string rows = rowsBuilder.ToString();
+            var expectedRows = permutation.Select(pair => pair.Parsed);
+
+            rows.SplitQuotedRows(signals).Select(split => split.Single())
+                .Should().Equal(expectedRows);
+
+            foreach (string newRow in signals.NewRows)
+            {
+                (rows + newRow).SplitQuotedRows(signals).Select(split => split.Single())
+                    .Should().Equal(expectedRows);
+            }
+        }
+    });
 
     [Fact]
     public void Exceptions()
