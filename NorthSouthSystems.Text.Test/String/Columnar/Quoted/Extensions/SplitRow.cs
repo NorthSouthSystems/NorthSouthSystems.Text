@@ -1,6 +1,7 @@
 ﻿namespace NorthSouthSystems.Text;
 
 using MoreLinq;
+using System.Text;
 
 public class StringQuotedExtensionsTests_SplitRow
 {
@@ -83,13 +84,25 @@ public class StringQuotedExtensionsTests_SplitRow
     [Theory]
     [InlineData(2)]
     [InlineData(3)]
-    public void FuzzingMultiField(int subsetSize) => StringQuotedFixture.Signals.ForEach(signals =>
+    public void FuzzingMultiField(int fieldCount) => StringQuotedFixture.Signals.ForEach(signals =>
     {
+        var rowBuilder = new StringBuilder();
+
         foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
-            .Subsets(subsetSize)
+            .Subsets(fieldCount)
             .SelectMany(subset => subset.Permutations()))
         {
-            string row = string.Join(StringQuotedFixture.Random(signals.Delimiters), permutation.Select(pair => pair.Raw));
+            rowBuilder.Clear();
+
+            permutation.ForEach((pair, index) =>
+            {
+                if (index > 0)
+                    rowBuilder.Append(StringQuotedFixture.Random(signals.Delimiters));
+
+                rowBuilder.Append(pair.Raw);
+            });
+
+            string row = rowBuilder.ToString();
             var expectedFields = permutation.Select(pair => pair.Parsed);
 
             row.SplitQuotedRow(signals)
