@@ -46,7 +46,7 @@ public class StringQuotedExtensionsTests_SplitRow
     {
         // A row with a single empty field results in an empty collection as desired. That special case is addressed
         // in the EmptyFields Fact.
-        foreach (var pair in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+        foreach (var pair in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
             .Where(p => !string.IsNullOrEmpty(p.Raw)))
         {
             pair.Raw.SplitQuotedRow(signals)
@@ -88,7 +88,7 @@ public class StringQuotedExtensionsTests_SplitRow
     {
         var rowBuilder = new StringBuilder();
 
-        foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+        foreach (var permutation in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
             .Subsets(fieldCount)
             .SelectMany(subset => subset.Permutations()))
         {

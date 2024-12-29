@@ -51,7 +51,7 @@ public class StringQuotedExtensionsTests_SplitRows
         // We ignore string.Empty because of the Fuzzing difficulties caused by \r, \n, and \r\n
         // each representing a single NewRow in the case of IsNewRowTolerant. A string.Empty row
         // followed by a random NewRow can inadvertently create a single NewRow when two were expected.
-        foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+        foreach (var permutation in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
             .Where(pair => pair.Raw != string.Empty)
             .Subsets(rowCount)
             .SelectMany(subset => subset.Permutations()))
@@ -96,7 +96,7 @@ public class StringQuotedExtensionsTests_SplitRows
         int rowLength;
 
         // See FuzzingSingleFieldRows comment about ignoring string.Empty.
-        foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+        foreach (var permutation in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
             .Where(pair => pair.Raw != string.Empty)
             .Subsets(totalFieldCount)
             .SelectMany(subset => subset.Permutations())

@@ -35,7 +35,7 @@ internal static class StringQuotedFixture
     ];
 }
 
-internal class StringQuotedRawParsedFieldPair
+internal class SplitQuotedRawParsedFieldPair
 {
     internal static IEnumerable<(string Raw, string Parsed)> Fuzzing(StringQuotedSignals signals)
     {
@@ -60,7 +60,7 @@ internal class StringQuotedRawParsedFieldPair
         }
     }
 
-    private static readonly IEnumerable<StringQuotedRawParsedFieldPair> _pairs =
+    private static readonly IEnumerable<SplitQuotedRawParsedFieldPair> _pairs =
     [
         // Simple
 
@@ -149,7 +149,7 @@ internal class StringQuotedRawParsedFieldPair
         new("{q}{e}{q}a{d}{e}{q}{n}{q}", "{q}a{d}{q}{n}"),
     ];
 
-    private StringQuotedRawParsedFieldPair(string rawFormat, string parsedFormat)
+    private SplitQuotedRawParsedFieldPair(string rawFormat, string parsedFormat)
     {
         _rawFormat = rawFormat;
         _parsedFormat = parsedFormat;
