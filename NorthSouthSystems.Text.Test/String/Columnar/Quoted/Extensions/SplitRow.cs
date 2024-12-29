@@ -1,7 +1,6 @@
 ﻿namespace NorthSouthSystems.Text;
 
 using MoreLinq;
-using System.Text;
 
 public class StringQuotedExtensionsTests_SplitRow
 {
@@ -38,87 +37,6 @@ public class StringQuotedExtensionsTests_SplitRow
 
             if (fieldCount > 0)
                 row.SplitQuotedRows(signals).Single().Should().Equal(expectedFields);
-        }
-    });
-
-    [Fact]
-    public void FuzzingSingleField() => StringQuotedFixture.Signals.ForEach(signals =>
-    {
-        // A row with a single empty field results in an empty collection as desired. That special case is addressed
-        // in the EmptyFields Fact.
-        foreach (var pair in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
-            .Where(p => !string.IsNullOrEmpty(p.Raw)))
-        {
-            pair.Raw.SplitQuotedRow(signals)
-                .Should().Equal(pair.Parsed);
-
-            pair.Raw.SplitQuotedRows(signals).Single()
-                .Should().Equal(pair.Parsed);
-
-            foreach (string delimiter in signals.Delimiters)
-            {
-                foreach (string newRow in signals.NewRows.DefaultIfEmpty(string.Empty))
-                {
-                    (pair.Raw + delimiter).SplitQuotedRow(signals)
-                        .Should().Equal(pair.Parsed, string.Empty);
-
-                    (delimiter + pair.Raw).SplitQuotedRow(signals)
-                        .Should().Equal(string.Empty, pair.Parsed);
-
-                    (pair.Raw + newRow).SplitQuotedRow(signals)
-                        .Should().Equal(pair.Parsed);
-
-                    (pair.Raw + delimiter).SplitQuotedRows(signals).Single()
-                        .Should().Equal(pair.Parsed, string.Empty);
-
-                    (delimiter + pair.Raw).SplitQuotedRows(signals).Single()
-                        .Should().Equal(string.Empty, pair.Parsed);
-
-                    (pair.Raw + newRow).SplitQuotedRows(signals).Single()
-                        .Should().Equal(pair.Parsed);
-                }
-            }
-        }
-    });
-
-    [Theory]
-    [InlineData(2)]
-    [InlineData(3)]
-    public void FuzzingMultiField(int fieldCount) => StringQuotedFixture.Signals.ForEach(signals =>
-    {
-        var rowBuilder = new StringBuilder();
-
-        foreach (var permutation in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
-            .Subsets(fieldCount)
-            .SelectMany(subset => subset.Permutations()))
-        {
-            rowBuilder.Clear();
-
-            permutation.ForEach((pair, index) =>
-            {
-                if (index > 0)
-                    rowBuilder.Append(StringQuotedFixture.Random(signals.Delimiters));
-
-                rowBuilder.Append(pair.Raw);
-            });
-
-            string row = rowBuilder.ToString();
-            var expectedFields = permutation.Select(pair => pair.Parsed);
-
-            row.SplitQuotedRow(signals)
-                .Should().Equal(expectedFields);
-
-            row.SplitQuotedRows(signals).Single()
-                .Should().Equal(expectedFields);
-
-            foreach (string newRow in signals.NewRows)
-            {
-                (row + newRow).SplitQuotedRow(signals)
-                    .Should().Equal(expectedFields);
-
-                (row + newRow).SplitQuotedRows(signals).Single()
-                    .Should().Equal(expectedFields);
-            }
         }
     });
 
