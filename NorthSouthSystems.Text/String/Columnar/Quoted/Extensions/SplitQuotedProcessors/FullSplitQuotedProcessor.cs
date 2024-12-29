@@ -20,17 +20,15 @@ public static partial class StringQuotedExtensions
             _quoteQuoteTracker = StringSignalTracker.Create(_signals.Quote + _signals.Quote);
         }
 
-        private bool _inRow = false;
+        private bool _inRow;
         private readonly List<string> _fields = new();
 
         private readonly StringBuilder _fieldBuilder = new();
 
-        private bool InQuotes => (_quoteAnyCount - (2 * _quoteQuoteCount)) % 2 == 1;
-
-        private int _quoteAnyCount;
+        private bool _quoteInQuotes;
         private int _quoteQuoteCount;
 
-        private bool _escaped = false;
+        private bool _escaped;
 
         private readonly StringQuotedSignals _signals;
 
@@ -60,7 +58,7 @@ public static partial class StringQuotedExtensions
         {
             _fieldBuilder.Clear();
 
-            _quoteAnyCount = 0;
+            _quoteInQuotes = false;
             _quoteQuoteCount = 0;
 
             _escaped = false;
@@ -124,7 +122,7 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                if (InQuotes)
+                if (_quoteInQuotes)
                     return false;
 
                 RewindField(triggeredLength);
@@ -138,7 +136,7 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                _quoteAnyCount++;
+                _quoteInQuotes = !_quoteInQuotes;
                 _quoteQuoteCount++;
 
                 return false;
@@ -149,7 +147,7 @@ public static partial class StringQuotedExtensions
                 ResetTrackers(wasQuoteTrackerTriggered: true);
                 RewindField(triggeredLength);
 
-                _quoteAnyCount++;
+                _quoteInQuotes = !_quoteInQuotes;
 
                 return false;
             }
@@ -158,7 +156,7 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                if (InQuotes)
+                if (_quoteInQuotes)
                     return false;
 
                 RewindField(1);
@@ -173,7 +171,7 @@ public static partial class StringQuotedExtensions
             {
                 ResetTrackers();
 
-                if (InQuotes)
+                if (_quoteInQuotes)
                     return false;
 
                 RewindField(triggeredLength);

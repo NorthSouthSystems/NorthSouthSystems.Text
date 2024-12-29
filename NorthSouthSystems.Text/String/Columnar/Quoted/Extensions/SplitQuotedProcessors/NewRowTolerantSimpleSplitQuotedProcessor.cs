@@ -13,19 +13,17 @@ public static partial class StringQuotedExtensions
             _escape = signals.Escape.SingleOrDefault();
         }
 
-        private bool _inRow = false;
+        private bool _inRow;
         private readonly List<string> _fields = new();
 
         private readonly StringBuilder _fieldBuilder = new();
 
-        private bool InQuotes => (_quoteAnyCount - (2 * _quoteQuoteCount)) % 2 == 1;
-
         private bool _quoteWasTriggered;
 
-        private int _quoteAnyCount;
+        private bool _quoteInQuotes;
         private int _quoteQuoteCount;
 
-        private bool _escaped = false;
+        private bool _escaped;
 
         private readonly char _delimiter;
         private readonly char _quote;
@@ -50,7 +48,7 @@ public static partial class StringQuotedExtensions
 
             _quoteWasTriggered = false;
 
-            _quoteAnyCount = 0;
+            _quoteInQuotes = false;
             _quoteQuoteCount = 0;
 
             _escaped = false;
@@ -101,7 +99,7 @@ public static partial class StringQuotedExtensions
             {
                 _quoteWasTriggered = false;
 
-                if (InQuotes)
+                if (_quoteInQuotes)
                     return false;
 
                 RewindField(1);
@@ -115,7 +113,7 @@ public static partial class StringQuotedExtensions
             {
                 _quoteWasTriggered = false;
 
-                _quoteAnyCount++;
+                _quoteInQuotes = !_quoteInQuotes;
                 _quoteQuoteCount++;
 
                 return false;
@@ -127,7 +125,7 @@ public static partial class StringQuotedExtensions
 
                 RewindField(1);
 
-                _quoteAnyCount++;
+                _quoteInQuotes = !_quoteInQuotes;
 
                 return false;
             }
@@ -136,7 +134,7 @@ public static partial class StringQuotedExtensions
             {
                 _quoteWasTriggered = false;
 
-                if (InQuotes)
+                if (_quoteInQuotes)
                     return false;
 
                 RewindField(1);
