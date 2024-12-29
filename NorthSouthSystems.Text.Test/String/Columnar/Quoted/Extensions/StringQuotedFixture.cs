@@ -25,10 +25,13 @@ internal static class StringQuotedFixture
     [
         StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary,
         new([","], ["\r\n", "\n", "\r"], "\"", "\\"),
-        new(["|"], ["\r\n"], "'", string.Empty),
-        new(["\t"], ["\n"], "~", "\\"),
+        new(["|"], ["\r\n"], "'", null),
+        new(["\t"], ["\n"], null, "\\"),
         new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),
-        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null)
+        new(["DELIMITER"], ["NEWLINE"], "QUOTE", null),
+        new(["DELIMITER"], ["NEWLINE"], null, "ESCAPE"),
+        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null),
+        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], null, "\\")
     ];
 }
 

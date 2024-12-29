@@ -63,22 +63,25 @@ public static partial class StringQuotedExtensions
     private static string QuoteAndEscapeField(string field, StringQuotedSignals signals, bool forceQuotes)
     {
         var found = new StringQuotedSignalsFound(signals, field);
+        var escaping = signals.Escaping.Value;
 
         if (found.EscapeFound)
-            field = field.Replace(signals.Escape, signals.EscapedEscape);
+            field = field.Replace(signals.Escape, escaping.EscapedEscape);
 
         if (signals.QuoteIsSpecified)
         {
             if (forceQuotes || found.RequiresQuotingOrEscaping)
-                field = signals.Quote + field.Replace(signals.Quote, signals.EscapedQuote) + signals.Quote;
+                field = signals.Quote + field.Replace(signals.Quote, escaping.EscapedQuote) + signals.Quote;
         }
         else if (signals.EscapeIsSpecified)
         {
             if (found.DelimiterFound)
-                field = field.Replace(signals.Delimiter, signals.EscapedDelimiter);
+                foreach (var escapedDelimiter in escaping.EscapedDelimiters)
+                    field = field.Replace(escapedDelimiter.ReplaceOld, escapedDelimiter.ReplaceNew);
 
             if (found.NewRowFound)
-                field = field.Replace(signals.NewRow, signals.EscapedNewRow);
+                foreach (var escapedNewRow in escaping.EscapedNewRows)
+                    field = field.Replace(escapedNewRow.ReplaceOld, escapedNewRow.ReplaceNew);
         }
         else if (found.RequiresQuotingOrEscaping)
             throw new ArgumentException("Quoting or Escaping is required; therefore, either signals.Quote or signals.Escape must not be null or empty.");

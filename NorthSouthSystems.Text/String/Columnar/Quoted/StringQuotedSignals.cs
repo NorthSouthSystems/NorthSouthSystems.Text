@@ -42,36 +42,32 @@ public sealed class StringQuotedSignals
 
     internal StringQuotedSignals(string[] delimiters, string[] newRows, string quote, string escape)
     {
-        _delimiters = (delimiters ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
-        Delimiter = _delimiters.FirstOrDefault().NullToEmpty();
+        Delimiters = (delimiters ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
+        Delimiter = Delimiters.Count > 0 ? Delimiters[0].NullToEmpty() : string.Empty;
 
         if (!DelimiterIsSpecified)
             throw new ArgumentException("Delimiter must be non-null and non-empty.");
 
-        _newRows = (newRows ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
-        NewRow = _newRows.FirstOrDefault().NullToEmpty();
+        NewRows = (newRows ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
+        NewRow = NewRows.Count > 0 ? NewRows[0].NullToEmpty() : string.Empty;
 
         Quote = quote.NullToEmpty();
         Escape = escape.NullToEmpty();
 
-        EscapedDelimiter = Escape + Delimiter;
-        EscapedNewRow = Escape + NewRow;
-        EscapedQuote = (EscapeIsSpecified ? Escape : Quote) + Quote;
-        EscapedEscape = Escape + Escape;
+        Escaping = new(() => new(this));
     }
 
     public bool DelimiterIsSpecified => !string.IsNullOrEmpty(Delimiter);
     public string Delimiter { get; }
-    public IReadOnlyList<string> Delimiters => _delimiters;
-    private readonly string[] _delimiters;
+    public IReadOnlyList<string> Delimiters { get; }
 
     public bool NewRowIsSpecified => !string.IsNullOrEmpty(NewRow);
     public string NewRow { get; }
-    public IReadOnlyList<string> NewRows => _newRows;
-    private readonly string[] _newRows;
+    public IReadOnlyList<string> NewRows { get; }
 
+    // StringQuotedSignalsBuilder calls Distinct.
     internal bool IsNewRowTolerant =>
-        _newRows?.Length == 3 && _newRows.All(_newRowsTolerant.Contains);
+        NewRows.Count == 3 && NewRows.All(_newRowsTolerant.Contains);
 
     public bool QuoteIsSpecified => !string.IsNullOrEmpty(Quote);
     public string Quote { get; }
@@ -91,8 +87,45 @@ public sealed class StringQuotedSignals
         && (!QuoteIsSpecified || Quote.Length == 1)
         && (!EscapeIsSpecified || Escape.Length == 1);
 
-    internal string EscapedDelimiter { get; }
-    internal string EscapedNewRow { get; }
+    internal Lazy<StringQuotedSignalsEscaping> Escaping { get; }
+}
+
+internal sealed class StringQuotedSignalsEscaping
+{
+    internal StringQuotedSignalsEscaping(StringQuotedSignals signals)
+    {
+        EscapedDelimiters = Construct(signals.Escape, signals.Delimiters);
+        EscapedNewRows = Construct(signals.Escape, signals.NewRows);
+        EscapedQuote = (signals.EscapeIsSpecified ? signals.Escape : signals.Quote) + signals.Quote;
+        EscapedEscape = signals.Escape + signals.Escape;
+    }
+
+    private static IReadOnlyList<(string ReplaceOld, string ReplaceNew)>
+        Construct(string escape, IReadOnlyList<string> multiSignal)
+    {
+        if (multiSignal.Count == 0)
+            return [];
+
+        if (multiSignal.Count == 1)
+            return [(multiSignal[0], escape + multiSignal[0])];
+
+        var replacements = new List<(string ReplaceOld, string ReplaceNew)>(multiSignal.Count);
+
+        foreach (string signal in multiSignal.OrderBy(s => s.Length))
+        {
+            string replaceOld = signal;
+
+            foreach (var replacement in replacements)
+                replaceOld = replaceOld.Replace(replacement.ReplaceOld, replacement.ReplaceNew);
+
+            replacements.Add((replaceOld, escape + signal));
+        }
+
+        return replacements.ToArray();
+    }
+
+    internal IReadOnlyList<(string ReplaceOld, string ReplaceNew)> EscapedDelimiters { get; }
+    internal IReadOnlyList<(string ReplaceOld, string ReplaceNew)> EscapedNewRows { get; }
     internal string EscapedQuote { get; }
     internal string EscapedEscape { get; }
 }
