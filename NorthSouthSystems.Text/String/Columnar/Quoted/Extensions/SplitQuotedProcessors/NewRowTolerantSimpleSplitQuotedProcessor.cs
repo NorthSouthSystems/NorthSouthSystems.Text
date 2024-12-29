@@ -9,7 +9,8 @@ public static partial class StringQuotedExtensions
         internal NewRowTolerantSimpleSplitQuotedProcessor(StringQuotedSignals signals)
         {
             _delimiter = signals.Delimiters.Single().Single();
-            _quote = signals.Quote.Single();
+            _quote = signals.Quote.SingleOrDefault();
+            _escape = signals.Escape.SingleOrDefault();
         }
 
         private bool _inRow = false;
@@ -24,8 +25,11 @@ public static partial class StringQuotedExtensions
         private int _quoteAnyCount;
         private int _quoteQuoteCount;
 
+        private bool _escaped = false;
+
         private readonly char _delimiter;
         private readonly char _quote;
+        private readonly char _escape;
 
         // Do NOT Reset _newRowTolerantWasCarriageReturn because it needs to survive the "premature"
         // yielding of rows upon seeing the \r of a \r\n (Windows NewRow) in the case that the \r is
@@ -48,6 +52,8 @@ public static partial class StringQuotedExtensions
 
             _quoteAnyCount = 0;
             _quoteQuoteCount = 0;
+
+            _escaped = false;
         }
 
         public IEnumerable<string[]> Process(IEnumerable<char> rows)
@@ -83,6 +89,13 @@ public static partial class StringQuotedExtensions
 
             _inRow = true;
             _fieldBuilder.Append(c);
+
+            if (_escaped)
+            {
+                _escaped = false;
+
+                return false;
+            }
 
             if (c == _delimiter)
             {
@@ -132,6 +145,17 @@ public static partial class StringQuotedExtensions
                 _newRowTolerantWasCarriageReturn = (c == '\r');
 
                 return true;
+            }
+
+            if (c == _escape)
+            {
+                _quoteWasTriggered = false;
+
+                RewindField(1);
+
+                _escaped = true;
+
+                return false;
             }
 
             _quoteWasTriggered = false;

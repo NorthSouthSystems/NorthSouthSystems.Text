@@ -24,6 +24,7 @@ internal static class StringQuotedFixture
     internal static IEnumerable<StringQuotedSignals> Signals { get; } =
     [
         StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary,
+        new([","], ["\r\n", "\n", "\r"], "\"", "\\"),
         new(["|"], ["\r\n"], "'", string.Empty),
         new(["\t"], ["\n"], "~", "\\"),
         new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),
@@ -37,12 +38,18 @@ internal class StringQuotedRawParsedFieldPair
     {
         // A standalone escape character in a field causes the SplitQuotedProcessor to ignore the following
         // delimiter and breaks all such Fuzzing tests as expected. Therefore, we ignore it for Fuzzing tests.
+        //
+        // An escaped Windows newRow cannot be used when signals.NewRows contains \n because the \r will become
+        // escaped but the \n will still trigger the new row.
         foreach (var pair in _pairs
             .Where(p => p.IsRelevant(signals))
             .Where(p => p._rawFormat != "{e}"))
         {
             string delimiter = StringQuotedFixture.Random(signals.Delimiters);
             string newRow = StringQuotedFixture.Random(signals.NewRows);
+
+            if (newRow == "\r\n" && pair._rawFormat.Contains("{e}{n}") && signals.NewRows.Contains("\n"))
+                continue;
 
             yield return (
                 StringQuotedFixture.Replace(pair._rawFormat, delimiter, newRow, signals.Quote, signals.Escape),

@@ -83,8 +83,8 @@ public sealed class StringQuotedSignals
         Delimiters.Count == 1
         && Delimiter.Length == 1
         && IsNewRowTolerant
-        && Quote.Length == 1
-        && !EscapeIsSpecified;
+        && (!QuoteIsSpecified || Quote.Length == 1)
+        && (!EscapeIsSpecified || Escape.Length == 1);
 
     internal string EscapedDelimiter { get; }
     internal string EscapedNewRow { get; }
