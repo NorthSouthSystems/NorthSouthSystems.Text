@@ -43,7 +43,8 @@ public class StringQuotedExtensionsTests_SplitRows
     [Theory]
     [InlineData(2)]
     [InlineData(3)]
-    public void FuzzingSingleFieldRows(int rowCount) => StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).ForEach(signals =>
+    public void FuzzingSingleFieldRows(int rowCount) =>
+        StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).ForEach(signals =>
     {
         var rowsBuilder = new StringBuilder();
 
@@ -66,15 +67,86 @@ public class StringQuotedExtensionsTests_SplitRows
             });
 
             string rows = rowsBuilder.ToString();
-            var expectedRows = permutation.Select(pair => pair.Parsed);
 
-            rows.SplitQuotedRows(signals).Select(split => split.Single())
-                .Should().Equal(expectedRows);
+            SplitAndAssert(rows);
 
             foreach (string newRow in signals.NewRows)
+                SplitAndAssert(rows + newRow);
+
+            void SplitAndAssert(string s)
             {
-                (rows + newRow).SplitQuotedRows(signals).Select(split => split.Single())
+                var expectedRows = permutation.Select(pair => pair.Parsed);
+
+                s.SplitQuotedRows(signals).Select(split => split.Single())
                     .Should().Equal(expectedRows);
+            }
+        }
+    });
+
+    [Theory]
+    [InlineData(3, 1.00)]
+    [InlineData(4, 0.05)]
+    public void FuzzingMultiFieldRows(int totalFieldCount, double samplingPercentage) =>
+        StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).ForEach(signals =>
+    {
+        var random = new Random(839);
+
+        var rowsBuilder = new StringBuilder();
+        var rowLengths = new List<int>();
+        int rowLength;
+
+        // See FuzzingSingleFieldRows comment about ignoring string.Empty.
+        foreach (var permutation in StringQuotedRawParsedFieldPair.Fuzzing(signals)
+            .Where(pair => pair.Raw != string.Empty)
+            .Subsets(totalFieldCount)
+            .SelectMany(subset => subset.Permutations())
+            .Where(_ => random.NextDouble() < samplingPercentage))
+        {
+            rowsBuilder.Clear();
+            rowLengths.Clear();
+            rowLength = 0;
+
+            permutation.ForEach(pair =>
+            {
+                if (rowLength > 0)
+                {
+                    // Coin-flip
+                    if (random.Next(2) == 0)
+                    {
+                        rowsBuilder.Append(StringQuotedFixture.Random(signals.NewRows));
+                        rowLengths.Add(rowLength);
+                        rowLength = 0;
+                    }
+                    else
+                        rowsBuilder.Append(StringQuotedFixture.Random(signals.Delimiters));
+                }
+
+                rowsBuilder.Append(pair.Raw);
+                rowLength++;
+            });
+
+            rowLengths.Add(rowLength);
+
+            string rows = rowsBuilder.ToString();
+
+            SplitAndAssert(rows);
+
+            foreach (string newRow in signals.NewRows)
+                SplitAndAssert(rows + newRow);
+
+            void SplitAndAssert(string s)
+            {
+                int skip = 0;
+
+                s.SplitQuotedRows(signals).ForEach((actualRow, index) =>
+                {
+                    int expectedRowLength = rowLengths[index];
+                    var expectedRow = permutation.Skip(skip).Take(expectedRowLength).Select(pair => pair.Parsed);
+
+                    actualRow.Should().Equal(expectedRow);
+
+                    skip += expectedRowLength;
+                });
             }
         }
     });
