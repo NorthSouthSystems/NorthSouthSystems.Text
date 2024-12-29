@@ -107,7 +107,9 @@ public static partial class StringQuotedExtensions
     private static ISplitQuotedProcessor CreateSplitQuotedProcessor(StringQuotedSignals signals) =>
         signals.IsNewRowTolerantSimple
             ? new NewRowTolerantSimpleSplitQuotedProcessor(signals)
-            : new FullSplitQuotedProcessor(signals);
+            : (signals.IsSimple
+                ? new SimpleSplitQuotedProcessor(signals)
+                : new FullSplitQuotedProcessor(signals));
 
     private interface ISplitQuotedProcessor { IEnumerable<string[]> Process(IEnumerable<char> rows); }
 }
