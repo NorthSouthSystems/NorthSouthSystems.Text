@@ -65,7 +65,8 @@ public static partial class StringQuotedExtensions
                 }
             }
 
-            FlushField();
+            if (_inRow)
+                FlushField();
 
             if (_fields.Count > 0)
                 yield return _fields.ToArray();
@@ -165,16 +166,13 @@ public static partial class StringQuotedExtensions
 
         private void FlushField()
         {
-            if (!_inRow)
-                return;
-
             // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that the field
             // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with InQuotes false;
             // therefore, _fieldBuilder will contain an extra Quote. E.G.
             //     a,"",c
             //     a,"""",c
             //     a,"""""",c
-            if (_fieldBuilder.Length > 0 && _fieldBuilder.Length == _quoteQuoteCount)
+            if (_quoteQuoteCount > 0 && _fieldBuilder.Length == _quoteQuoteCount)
                 RewindField(1);
 
             _fields.Add(_fieldBuilder.ToString());
