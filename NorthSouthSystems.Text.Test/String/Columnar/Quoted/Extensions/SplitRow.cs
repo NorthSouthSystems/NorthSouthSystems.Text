@@ -29,8 +29,15 @@ public class StringQuotedExtensionsTests_SplitRow
             }
         }
 
-        void SplitAndAssert(string row, int fieldCount) =>
-            row.SplitQuotedRow(signals).Should().Equal(Enumerable.Repeat(string.Empty, fieldCount));
+        void SplitAndAssert(string row, int fieldCount)
+        {
+            var expectedFields = Enumerable.Repeat(string.Empty, fieldCount);
+
+            row.SplitQuotedRow(signals).Should().Equal(expectedFields);
+
+            if (fieldCount > 0)
+                row.SplitQuotedRows(signals).Single().Should().Equal(expectedFields);
+        }
     });
 
     [Fact]
@@ -44,10 +51,31 @@ public class StringQuotedExtensionsTests_SplitRow
             pair.Raw.SplitQuotedRow(signals)
                 .Should().Equal(pair.Parsed);
 
-            if (signals.NewRowIsSpecified)
+            pair.Raw.SplitQuotedRows(signals).Single()
+                .Should().Equal(pair.Parsed);
+
+            foreach (string delimiter in signals.Delimiters)
             {
-                (pair.Raw + StringQuotedFixture.Random(signals.NewRows)).SplitQuotedRow(signals)
-                    .Should().Equal(pair.Parsed);
+                foreach (string newRow in signals.NewRows.DefaultIfEmpty(string.Empty))
+                {
+                    (pair.Raw + delimiter).SplitQuotedRow(signals)
+                        .Should().Equal(pair.Parsed, string.Empty);
+
+                    (delimiter + pair.Raw).SplitQuotedRow(signals)
+                        .Should().Equal(string.Empty, pair.Parsed);
+
+                    (pair.Raw + newRow).SplitQuotedRow(signals)
+                        .Should().Equal(pair.Parsed);
+
+                    (pair.Raw + delimiter).SplitQuotedRows(signals).Single()
+                        .Should().Equal(pair.Parsed, string.Empty);
+
+                    (delimiter + pair.Raw).SplitQuotedRows(signals).Single()
+                        .Should().Equal(string.Empty, pair.Parsed);
+
+                    (pair.Raw + newRow).SplitQuotedRows(signals).Single()
+                        .Should().Equal(pair.Parsed);
+                }
             }
         }
     });
@@ -67,9 +95,15 @@ public class StringQuotedExtensionsTests_SplitRow
             row.SplitQuotedRow(signals)
                 .Should().Equal(expectedFields);
 
-            if (signals.NewRowIsSpecified)
+            row.SplitQuotedRows(signals).Single()
+                .Should().Equal(expectedFields);
+
+            foreach (string newRow in signals.NewRows)
             {
-                (row + StringQuotedFixture.Random(signals.NewRows)).SplitQuotedRow(signals)
+                (row + newRow).SplitQuotedRow(signals)
+                    .Should().Equal(expectedFields);
+
+                (row + newRow).SplitQuotedRows(signals).Single()
                     .Should().Equal(expectedFields);
             }
         }
