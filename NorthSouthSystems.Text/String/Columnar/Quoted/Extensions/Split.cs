@@ -53,13 +53,17 @@ public static partial class StringQuotedExtensions
         if (signals == null)
             throw new ArgumentNullException(nameof(signals));
 
-        var processor = CreateSplitQuotedProcessor(signals);
-        string[][] rowsFields = processor.Process(row).Take(2).ToArray();
+        string[] fields = null;
 
-        if (rowsFields.Length > 1)
-            throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", nameof(row));
+        foreach (string[] fieldsTemp in CreateSplitQuotedProcessor(signals).Process(row))
+        {
+            if (fields != null)
+                throw new ArgumentException("A NewRow signal is not allowed outside of Quotes.", nameof(row));
 
-        return rowsFields.Length == 0 ? Array.Empty<string>() : rowsFields[0];
+            fields = fieldsTemp;
+        }
+
+        return fields ?? [];
     }
 
     /// <summary>
@@ -100,8 +104,7 @@ public static partial class StringQuotedExtensions
         if (signals == null)
             throw new ArgumentNullException(nameof(signals));
 
-        var processor = CreateSplitQuotedProcessor(signals);
-        return processor.Process(rows);
+        return CreateSplitQuotedProcessor(signals).Process(rows);
     }
 
     private static ISplitQuotedProcessor CreateSplitQuotedProcessor(StringQuotedSignals signals) =>
