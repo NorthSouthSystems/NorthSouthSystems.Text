@@ -6,7 +6,7 @@ using System.Text;
 public class StringQuotedExtensionsTests_Fuzzing
 {
     [Fact]
-    public void SingleFieldSingleRow() => StringQuotedFixture.Signals.ForEach(signals =>
+    public void SingleFieldSingleRow() => StringQuotedFixture.Signals.AsParallel().ForAll(signals =>
     {
         // A row with a single empty field results in an empty collection as desired. That special case is addressed
         // in the EmptyFields Fact.
@@ -44,7 +44,7 @@ public class StringQuotedExtensionsTests_Fuzzing
     [Theory]
     [InlineData(2)]
     [InlineData(3)]
-    public void MultiFieldSingleRow(int fieldCount) => StringQuotedFixture.Signals.ForEach(signals =>
+    public void MultiFieldSingleRow(int fieldCount) => StringQuotedFixture.Signals.AsParallel().ForAll(signals =>
     {
         foreach (var permutation in SplitQuotedRawParsedFieldPair.Fuzzing(signals)
             .Subsets(fieldCount)
@@ -88,7 +88,7 @@ public class StringQuotedExtensionsTests_Fuzzing
     [InlineData(2)]
     [InlineData(3)]
     public void SingleFieldMultiRows(int rowCount) =>
-        StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).ForEach(signals =>
+        StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).AsParallel().ForAll(signals =>
         {
             // We ignore string.Empty because of the Fuzzing difficulties caused by \r, \n, and \r\n
             // each representing a single NewRow in the case of IsNewRowTolerant. A string.Empty row
@@ -134,7 +134,7 @@ public class StringQuotedExtensionsTests_Fuzzing
     [InlineData(3, 1.00)]
     [InlineData(4, 0.05)]
     public void MultiFieldMultiRows(int totalFieldCount, double samplingPercentage) =>
-        StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).ForEach(signals =>
+        StringQuotedFixture.Signals.Where(signals => signals.NewRowIsSpecified).AsParallel().ForAll(signals =>
         {
             var random = new Random(839);
 
