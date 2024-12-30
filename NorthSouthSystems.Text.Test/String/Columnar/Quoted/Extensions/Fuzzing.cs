@@ -26,18 +26,18 @@ public class StringQuotedExtensionsTests_Fuzzing
             }
         }
 
-        void ActAndAssert(string arrangeRow, params string[] shouldEqualFields)
+        void ActAndAssert(string row, params string[] expectedFields)
         {
-            var actualFields = arrangeRow.SplitQuotedRow(signals);
-            actualFields.Should().Equal(shouldEqualFields);
+            row.SplitQuotedRow(signals)
+                .Should().Equal(expectedFields);
 
-            actualFields = arrangeRow.SplitQuotedRows(signals).Single();
-            actualFields.Should().Equal(shouldEqualFields);
+            row.SplitQuotedRows(signals).Single()
+                .Should().Equal(expectedFields);
 
-            bool shouldBeEmpty = shouldEqualFields.Length == 1 && string.IsNullOrEmpty(shouldEqualFields[0]);
+            bool expectEmpty = expectedFields.Length == 1 && string.IsNullOrEmpty(expectedFields[0]);
 
-            actualFields = actualFields.JoinQuotedRow(signals).SplitQuotedRow(signals);
-            actualFields.Should().Equal(shouldBeEmpty ? [] : shouldEqualFields);
+            row.SplitQuotedRow(signals).JoinQuotedRow(signals).SplitQuotedRow(signals)
+                .Should().Equal(expectEmpty ? [] : expectedFields);
         }
     });
 
@@ -69,18 +69,18 @@ public class StringQuotedExtensionsTests_Fuzzing
                 ActAndAssert(row + newRow, expectedFields);
         }
 
-        void ActAndAssert(string arrangeRow, string[] shouldEqualFields)
+        void ActAndAssert(string row, string[] expectedFields)
         {
-            var actualFields = arrangeRow.SplitQuotedRow(signals);
-            actualFields.Should().Equal(shouldEqualFields);
+            row.SplitQuotedRow(signals)
+                .Should().Equal(expectedFields);
 
-            actualFields = arrangeRow.SplitQuotedRows(signals).Single();
-            actualFields.Should().Equal(shouldEqualFields);
+            row.SplitQuotedRows(signals).Single()
+                .Should().Equal(expectedFields);
 
-            bool shouldBeEmpty = shouldEqualFields.Length == 1 && string.IsNullOrEmpty(shouldEqualFields[0]);
+            bool expectEmpty = expectedFields.Length == 1 && string.IsNullOrEmpty(expectedFields[0]);
 
-            actualFields = actualFields.JoinQuotedRow(signals).SplitQuotedRow(signals);
-            actualFields.Should().Equal(shouldBeEmpty ? [] : shouldEqualFields);
+            row.SplitQuotedRow(signals).JoinQuotedRow(signals).SplitQuotedRow(signals)
+                .Should().Equal(expectEmpty ? [] : expectedFields);
         }
     });
 
@@ -109,25 +109,24 @@ public class StringQuotedExtensionsTests_Fuzzing
                 });
 
                 string rows = rowsBuilder.ToString();
-                var expectedRows = permutation.Select(pair => pair.Parsed).ToArray();
+                var expectedRowsOfSingleField = permutation.Select(pair => pair.Parsed).ToArray();
 
-                ActAndAssert(rows, expectedRows);
+                ActAndAssert(rows, expectedRowsOfSingleField);
 
                 foreach (string newRow in signals.NewRows)
-                    ActAndAssert(rows + newRow, expectedRows);
+                    ActAndAssert(rows + newRow, expectedRowsOfSingleField);
             }
 
-            void ActAndAssert(string arrangeRows, string[] shouldEqualRowsOfSingleField)
+            void ActAndAssert(string rows, string[] expectedRowsOfSingleField)
             {
-                var actualRowsOfSingleField = arrangeRows.SplitQuotedRows(signals).Select(fields => fields.Single()).ToArray();
-                actualRowsOfSingleField.Should().Equal(shouldEqualRowsOfSingleField);
+                rows.SplitQuotedRows(signals).Select(fields => fields.Single())
+                    .Should().Equal(expectedRowsOfSingleField);
 
-                bool shouldSkipLastRow = string.IsNullOrEmpty(shouldEqualRowsOfSingleField.Last());
+                bool skipLastRow = string.IsNullOrEmpty(expectedRowsOfSingleField.Last());
 
-                actualRowsOfSingleField = string.Join(signals.NewRow, actualRowsOfSingleField.Select(field => new[] { field }.JoinQuotedRow(signals)))
-                    .SplitQuotedRows(signals).Select(field => field.Single()).ToArray();
-
-                actualRowsOfSingleField.Should().Equal(shouldSkipLastRow ? shouldEqualRowsOfSingleField.SkipLast(1) : shouldEqualRowsOfSingleField);
+                string.Join(signals.NewRow, rows.SplitQuotedRows(signals).Select(fields => fields.JoinQuotedRow(signals)))
+                    .SplitQuotedRows(signals).Select(field => field.Single())
+                    .Should().Equal(expectedRowsOfSingleField.SkipLast(skipLastRow ? 1 : 0));
             }
         });
 
@@ -147,55 +146,50 @@ public class StringQuotedExtensionsTests_Fuzzing
                 .Where(_ => random.NextDouble() < samplingPercentage))
             {
                 var rowsBuilder = new StringBuilder();
-                var expectedRows = new List<string[]>();
-                var expectedRow = new List<string>();
+                var expectedRowsOfFields = new List<string[]>();
+                var expectedFields = new List<string>();
 
                 permutation.ForEach(pair =>
                 {
-                    if (expectedRow.Count > 0)
+                    if (expectedFields.Count > 0)
                     {
                         // Coin-flip
                         if (random.Next(2) == 0)
                         {
                             rowsBuilder.Append(StringQuotedFixture.Random(signals.NewRows));
-                            expectedRows.Add(expectedRow.ToArray());
-                            expectedRow.Clear();
+                            expectedRowsOfFields.Add(expectedFields.ToArray());
+                            expectedFields.Clear();
                         }
                         else
                             rowsBuilder.Append(StringQuotedFixture.Random(signals.Delimiters));
                     }
 
                     rowsBuilder.Append(pair.Raw);
-                    expectedRow.Add(pair.Parsed);
+                    expectedFields.Add(pair.Parsed);
                 });
 
-                expectedRows.Add(expectedRow.ToArray());
+                expectedRowsOfFields.Add(expectedFields.ToArray());
 
                 string rows = rowsBuilder.ToString();
 
-                ActAndAssert(rows, expectedRows);
+                ActAndAssert(rows, expectedRowsOfFields);
 
                 foreach (string newRow in signals.NewRows)
-                    ActAndAssert(rows + newRow, expectedRows);
+                    ActAndAssert(rows + newRow, expectedRowsOfFields);
             }
 
-            void ActAndAssert(string arrangeRows, List<string[]> shouldEqualRowsOfFields)
+            void ActAndAssert(string rows, List<string[]> expectedRowsOfFields)
             {
-                var actualRowsOfFields = arrangeRows.SplitQuotedRows(signals).ToArray();
-                actualRowsOfFields.Length.Should().Be(shouldEqualRowsOfFields.Count);
+                rows.SplitQuotedRows(signals)
+                    .EquiZip(expectedRowsOfFields, (fields, expectedFields) => fields.Should().Equal(expectedFields))
+                    .Consume();
 
-                for (int i = 0; i < actualRowsOfFields.Length; i++)
-                    actualRowsOfFields[i].Should().Equal(shouldEqualRowsOfFields[i]);
+                bool skipLastRow = expectedRowsOfFields.Last().Length == 1 && string.IsNullOrEmpty(expectedRowsOfFields.Last()[0]);
 
-                bool shouldSkipLastRow = shouldEqualRowsOfFields.Last().Length == 1 && string.IsNullOrEmpty(shouldEqualRowsOfFields.Last()[0]);
-
-                actualRowsOfFields = string.Join(signals.NewRow, actualRowsOfFields.Select(s => s.JoinQuotedRow(signals)))
-                    .SplitQuotedRows(signals).ToArray();
-
-                actualRowsOfFields.Length.Should().Be(shouldEqualRowsOfFields.Count - (shouldSkipLastRow ? 1 : 0));
-
-                for (int i = 0; i < actualRowsOfFields.Length; i++)
-                    actualRowsOfFields[i].Should().Equal(shouldEqualRowsOfFields[i]);
+                string.Join(signals.NewRow, rows.SplitQuotedRows(signals).Select(fields => fields.JoinQuotedRow(signals)))
+                    .SplitQuotedRows(signals)
+                    .EquiZip(expectedRowsOfFields.SkipLast(skipLastRow ? 1 : 0), (fields, expectedFields) => fields.Should().Equal(expectedFields))
+                    .Consume();
             }
         });
 }

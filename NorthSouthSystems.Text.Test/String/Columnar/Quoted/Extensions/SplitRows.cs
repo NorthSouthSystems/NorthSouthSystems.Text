@@ -30,12 +30,12 @@ public class StringQuotedExtensionsTests_SplitRows
             }
         }
 
-        void SplitAndAssert(string arrangeRows, int shouldEqualRowCount)
+        void SplitAndAssert(string rows, int expectedRowCount)
         {
-            var shouldEqualRowsOfSingleField = Enumerable.Repeat(string.Empty, shouldEqualRowCount);
+            var expectedRowsOfSingleField = Enumerable.Repeat(string.Empty, expectedRowCount);
 
-            arrangeRows.SplitQuotedRows(signals).Select(fields => fields.Single())
-                .Should().Equal(shouldEqualRowsOfSingleField);
+            rows.SplitQuotedRows(signals).Select(fields => fields.Single())
+                .Should().Equal(expectedRowsOfSingleField);
         }
     });
 
