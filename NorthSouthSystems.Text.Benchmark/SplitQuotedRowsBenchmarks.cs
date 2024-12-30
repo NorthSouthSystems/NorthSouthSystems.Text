@@ -44,8 +44,8 @@ public class SplitQuotedRowsBenchmarks
 
         var signals = NewRow switch
         {
-            NewRowType.Linux => IsNewRowTolerant ? StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180 : Program.LinuxNewLineCsvSignals,
-            NewRowType.Windows => IsNewRowTolerant ? StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180 : Program.WindowsNewLineCsvSignals,
+            NewRowType.Linux => IsNewRowTolerant ? StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180 : StringQuotedSignals.CsvNewRowLinux,
+            NewRowType.Windows => IsNewRowTolerant ? StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180 : StringQuotedSignals.CsvNewRowWindows,
 
             _ => throw new NotImplementedException(NewRow.ToString())
         };

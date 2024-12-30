@@ -31,6 +31,20 @@
 /// </remarks>
 public sealed class StringQuotedSignals
 {
+    public static StringQuotedSignals CsvNewRowLinux { get; } =
+        new StringQuotedSignalsBuilder()
+            .Delimiter(",")
+            .NewRow("\n")
+            .Quote("\"")
+            .ToSignals();
+
+    public static StringQuotedSignals CsvNewRowWindows { get; } =
+        new StringQuotedSignalsBuilder()
+            .Delimiter(",")
+            .NewRow("\r\n")
+            .Quote("\"")
+            .ToSignals();
+
     public static StringQuotedSignals CsvNewRowTolerantWindowsPrimaryRFC4180 { get; } =
         new StringQuotedSignalsBuilder()
             .Delimiter(",")

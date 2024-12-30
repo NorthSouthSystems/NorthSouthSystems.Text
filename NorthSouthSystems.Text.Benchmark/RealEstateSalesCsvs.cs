@@ -13,14 +13,14 @@ internal static class RealEstateSalesCsvs
         if (LinuxNewLines.Contains("\r\n"))
             throw new FormatException();
 
-        LinuxNewLinesForcedQuotes = ReJoin(Program.LinuxNewLineCsvSignals, true);
+        LinuxNewLinesForcedQuotes = ReJoin(StringQuotedSignals.CsvNewRowLinux, true);
 
-        WindowsNewLines = ReJoin(Program.WindowsNewLineCsvSignals, false);
-        WindowsNewLinesForcedQuotes = ReJoin(Program.WindowsNewLineCsvSignals, true);
+        WindowsNewLines = ReJoin(StringQuotedSignals.CsvNewRowWindows, false);
+        WindowsNewLinesForcedQuotes = ReJoin(StringQuotedSignals.CsvNewRowWindows, true);
 
         string ReJoin(StringQuotedSignals signals, bool forceQuotes) =>
             string.Join(signals.NewRow,
-                LinuxNewLines.SplitQuotedRows(Program.LinuxNewLineCsvSignals)
+                LinuxNewLines.SplitQuotedRows(StringQuotedSignals.CsvNewRowLinux)
                     .Select(row => row.JoinQuotedRow(signals, forceQuotes)));
     }
 

@@ -6,7 +6,7 @@ public class JoinQuotedRowBenchmarks
     [GlobalSetup]
     public void GlobalSetup() =>
         _rowsFields = RealEstateSalesCsvs.LinuxNewLines
-            .SplitQuotedRows(Program.LinuxNewLineCsvSignals)
+            .SplitQuotedRows(StringQuotedSignals.CsvNewRowLinux)
             .ToArray();
 
     private string[][] _rowsFields;
@@ -15,13 +15,13 @@ public class JoinQuotedRowBenchmarks
     public void LinuxNewLines()
     {
         foreach (var fields in _rowsFields)
-            fields.JoinQuotedRow(Program.LinuxNewLineCsvSignals);
+            fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowLinux);
     }
 
     [Benchmark]
     public void WindowsNewLines()
     {
         foreach (var fields in _rowsFields)
-            fields.JoinQuotedRow(Program.WindowsNewLineCsvSignals);
+            fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowWindows);
     }
 }
