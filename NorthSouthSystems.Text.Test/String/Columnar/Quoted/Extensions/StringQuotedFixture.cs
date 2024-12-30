@@ -23,7 +23,7 @@ internal static class StringQuotedFixture
 
     internal static IEnumerable<StringQuotedSignals> Signals { get; } =
     [
-        StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary,
+        StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180,
         new([","], ["\r\n", "\n", "\r"], "\"", "\\"),
         new(["|"], ["\r\n"], "'", null),
         new(["\t"], ["\n"], null, "\\"),

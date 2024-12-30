@@ -83,7 +83,7 @@ public class StringQuotedExtensionsTests_Join
     {
         Action act = null;
 
-        act = () => ((string[])null).JoinQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        act = () => ((string[])null).JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => new[] { "A" }.JoinQuotedRow(null);

@@ -44,7 +44,7 @@ public class StringQuotedExtensionsTests_SplitRows
     {
         Action act;
 
-        act = () => ((string)null).SplitQuotedRows(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary).ToArray();
+        act = () => ((string)null).SplitQuotedRows(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180).ToArray();
         act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Empty.SplitQuotedRows(null).ToArray();

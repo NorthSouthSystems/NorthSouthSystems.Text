@@ -31,7 +31,7 @@
 /// </remarks>
 public sealed class StringQuotedSignals
 {
-    public static StringQuotedSignals CsvRFC4180NewRowTolerantWindowsPrimary { get; } =
+    public static StringQuotedSignals CsvNewRowTolerantWindowsPrimaryRFC4180 { get; } =
         new StringQuotedSignalsBuilder()
             .Delimiter(",")
             .NewRowTolerantWindowsPrimary()

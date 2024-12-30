@@ -57,19 +57,19 @@ public class StringQuotedExtensionsTests_SplitRow
     {
         Action act;
 
-        act = () => ((string)null).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        act = () => ((string)null).SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => string.Empty.SplitQuotedRow(null);
         act.Should().ThrowExactly<ArgumentNullException>();
 
-        act = () => string.Format("a,b,c{0}d", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        act = () => string.Format("a,b,c{0}d", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180.NewRow).SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
-        act = () => string.Format("a,b,c{0}d,e,f", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        act = () => string.Format("a,b,c{0}d,e,f", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180.NewRow).SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
-        act = () => string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary.NewRow).SplitQuotedRow(StringQuotedSignals.CsvRFC4180NewRowTolerantWindowsPrimary);
+        act = () => string.Format("a,b,c{0}d,e,f{0}g,h,i", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180.NewRow).SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
     }
 }
