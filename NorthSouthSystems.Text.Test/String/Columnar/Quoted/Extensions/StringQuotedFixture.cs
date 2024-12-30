@@ -155,8 +155,8 @@ internal class SplitQuotedRawParsedFieldPair
         _parsedFormat = parsedFormat;
     }
 
-    internal string _rawFormat { get; }
-    internal string _parsedFormat { get; }
+    private readonly string _rawFormat;
+    private readonly string _parsedFormat;
 
     internal bool IsRelevant(StringQuotedSignals signals)
     {
