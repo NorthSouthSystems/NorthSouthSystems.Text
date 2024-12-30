@@ -29,14 +29,14 @@ public class StringQuotedExtensionsTests_SplitRow
             }
         }
 
-        void SplitAndAssert(string row, int fieldCount)
+        void SplitAndAssert(string arrangeRow, int shouldEqualFieldCount)
         {
-            var expectedFields = Enumerable.Repeat(string.Empty, fieldCount);
+            var shouldEqualFields = Enumerable.Repeat(string.Empty, shouldEqualFieldCount);
 
-            row.SplitQuotedRow(signals).Should().Equal(expectedFields);
+            arrangeRow.SplitQuotedRow(signals).Should().Equal(shouldEqualFields);
 
-            if (fieldCount > 0)
-                row.SplitQuotedRows(signals).Single().Should().Equal(expectedFields);
+            if (shouldEqualFieldCount > 0)
+                arrangeRow.SplitQuotedRows(signals).Single().Should().Equal(shouldEqualFields);
         }
     });
 

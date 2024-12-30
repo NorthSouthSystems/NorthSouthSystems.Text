@@ -26,18 +26,18 @@ public class StringQuotedExtensionsTests_Fuzzing
             }
         }
 
-        void ActAndAssert(string arrange, params string[] shouldEqual)
+        void ActAndAssert(string arrangeRow, params string[] shouldEqualFields)
         {
-            var actual = arrange.SplitQuotedRow(signals);
-            actual.Should().Equal(shouldEqual);
+            var actualFields = arrangeRow.SplitQuotedRow(signals);
+            actualFields.Should().Equal(shouldEqualFields);
 
-            actual = arrange.SplitQuotedRows(signals).Single();
-            actual.Should().Equal(shouldEqual);
+            actualFields = arrangeRow.SplitQuotedRows(signals).Single();
+            actualFields.Should().Equal(shouldEqualFields);
 
-            bool shouldBeEmpty = shouldEqual.Length == 1 && string.IsNullOrEmpty(shouldEqual[0]);
+            bool shouldBeEmpty = shouldEqualFields.Length == 1 && string.IsNullOrEmpty(shouldEqualFields[0]);
 
-            actual = actual.JoinQuotedRow(signals).SplitQuotedRow(signals);
-            actual.Should().Equal(shouldBeEmpty ? [] : shouldEqual);
+            actualFields = actualFields.JoinQuotedRow(signals).SplitQuotedRow(signals);
+            actualFields.Should().Equal(shouldBeEmpty ? [] : shouldEqualFields);
         }
     });
 
@@ -69,18 +69,18 @@ public class StringQuotedExtensionsTests_Fuzzing
                 ActAndAssert(row + newRow, expectedFields);
         }
 
-        void ActAndAssert(string arrange, string[] shouldEqual)
+        void ActAndAssert(string arrangeRow, string[] shouldEqualFields)
         {
-            var actual = arrange.SplitQuotedRow(signals);
-            actual.Should().Equal(shouldEqual);
+            var actualFields = arrangeRow.SplitQuotedRow(signals);
+            actualFields.Should().Equal(shouldEqualFields);
 
-            actual = arrange.SplitQuotedRows(signals).Single();
-            actual.Should().Equal(shouldEqual);
+            actualFields = arrangeRow.SplitQuotedRows(signals).Single();
+            actualFields.Should().Equal(shouldEqualFields);
 
-            bool shouldBeEmpty = shouldEqual.Length == 1 && string.IsNullOrEmpty(shouldEqual[0]);
+            bool shouldBeEmpty = shouldEqualFields.Length == 1 && string.IsNullOrEmpty(shouldEqualFields[0]);
 
-            actual = actual.JoinQuotedRow(signals).SplitQuotedRow(signals);
-            actual.Should().Equal(shouldBeEmpty ? [] : shouldEqual);
+            actualFields = actualFields.JoinQuotedRow(signals).SplitQuotedRow(signals);
+            actualFields.Should().Equal(shouldBeEmpty ? [] : shouldEqualFields);
         }
     });
 
@@ -117,17 +117,17 @@ public class StringQuotedExtensionsTests_Fuzzing
                     ActAndAssert(rows + newRow, expectedRows);
             }
 
-            void ActAndAssert(string arrange, string[] shouldEqual)
+            void ActAndAssert(string arrangeRows, string[] shouldEqualRowsOfSingleField)
             {
-                var actual = arrange.SplitQuotedRows(signals).Select(split => split.Single()).ToArray();
-                actual.Should().Equal(shouldEqual);
+                var actualRowsOfSingleField = arrangeRows.SplitQuotedRows(signals).Select(fields => fields.Single()).ToArray();
+                actualRowsOfSingleField.Should().Equal(shouldEqualRowsOfSingleField);
 
-                bool shouldSkipLast1 = string.IsNullOrEmpty(shouldEqual.Last());
+                bool shouldSkipLastRow = string.IsNullOrEmpty(shouldEqualRowsOfSingleField.Last());
 
-                actual = string.Join(signals.NewRow, actual.Select(s => new[] { s }.JoinQuotedRow(signals)))
-                    .SplitQuotedRows(signals).Select(split => split.Single()).ToArray();
+                actualRowsOfSingleField = string.Join(signals.NewRow, actualRowsOfSingleField.Select(field => new[] { field }.JoinQuotedRow(signals)))
+                    .SplitQuotedRows(signals).Select(field => field.Single()).ToArray();
 
-                actual.Should().Equal(shouldSkipLast1 ? shouldEqual.SkipLast(1) : shouldEqual);
+                actualRowsOfSingleField.Should().Equal(shouldSkipLastRow ? shouldEqualRowsOfSingleField.SkipLast(1) : shouldEqualRowsOfSingleField);
             }
         });
 
@@ -179,23 +179,23 @@ public class StringQuotedExtensionsTests_Fuzzing
                     ActAndAssert(rows + newRow, expectedRows);
             }
 
-            void ActAndAssert(string arrange, List<string[]> shouldEqual)
+            void ActAndAssert(string arrangeRows, List<string[]> shouldEqualRowsOfFields)
             {
-                var actual = arrange.SplitQuotedRows(signals).ToArray();
-                actual.Length.Should().Be(shouldEqual.Count);
+                var actualRowsOfFields = arrangeRows.SplitQuotedRows(signals).ToArray();
+                actualRowsOfFields.Length.Should().Be(shouldEqualRowsOfFields.Count);
 
-                for (int i = 0; i < actual.Length; i++)
-                    actual[i].Should().Equal(shouldEqual[i]);
+                for (int i = 0; i < actualRowsOfFields.Length; i++)
+                    actualRowsOfFields[i].Should().Equal(shouldEqualRowsOfFields[i]);
 
-                bool shouldSkipLast1 = actual.Last().Length == 1 && string.IsNullOrEmpty(actual.Last()[0]);
+                bool shouldSkipLastRow = shouldEqualRowsOfFields.Last().Length == 1 && string.IsNullOrEmpty(shouldEqualRowsOfFields.Last()[0]);
 
-                actual = string.Join(signals.NewRow, actual.Select(s => s.JoinQuotedRow(signals)))
+                actualRowsOfFields = string.Join(signals.NewRow, actualRowsOfFields.Select(s => s.JoinQuotedRow(signals)))
                     .SplitQuotedRows(signals).ToArray();
 
-                actual.Length.Should().Be(shouldEqual.Count - (shouldSkipLast1 ? 1 : 0));
+                actualRowsOfFields.Length.Should().Be(shouldEqualRowsOfFields.Count - (shouldSkipLastRow ? 1 : 0));
 
-                for (int i = 0; i < actual.Length; i++)
-                    actual[i].Should().Equal(shouldEqual[i]);
+                for (int i = 0; i < actualRowsOfFields.Length; i++)
+                    actualRowsOfFields[i].Should().Equal(shouldEqualRowsOfFields[i]);
             }
         });
 }
