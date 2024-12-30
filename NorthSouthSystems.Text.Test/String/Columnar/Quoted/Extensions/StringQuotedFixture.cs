@@ -21,7 +21,7 @@ internal static class StringQuotedFixture
 
     private static readonly Random _random = new(22);
 
-    internal static IEnumerable<StringQuotedSignals> Signals { get; } =
+    internal static IReadOnlyList<StringQuotedSignals> Signals { get; } =
     [
         StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180,
         new([","], ["\r\n", "\n", "\r"], "\"", "\\"),
@@ -60,7 +60,7 @@ internal class SplitQuotedRawParsedFieldPair
         }
     }
 
-    private static readonly IEnumerable<SplitQuotedRawParsedFieldPair> _pairs =
+    private static readonly IReadOnlyList<SplitQuotedRawParsedFieldPair> _pairs =
     [
         // Simple
 

@@ -73,7 +73,7 @@ public class StringQuotedExtensionsTests_FuzzingSingleRow
     }
 }
 
-public class StringQuotedExtensionsTests_FuzzingMultiRow
+public class StringQuotedExtensionsTests_FuzzingSingleFieldMultiRows
 {
     [Theory]
     [InlineData(2)]
@@ -109,6 +109,12 @@ public class StringQuotedExtensionsTests_FuzzingMultiRow
         }
     });
 
+    private static void ActAndAssert(StringQuotedSignals signals, string rows, IEnumerable<string[]> expectedRowsOfFields) =>
+        StringQuotedExtensionsTests_FuzzingMultiFieldMultiRows.ActAndAssert(signals, rows, expectedRowsOfFields);
+}
+
+public class StringQuotedExtensionsTests_FuzzingMultiFieldMultiRows
+{
     [Theory]
     [InlineData(3, 1.00)]
     [InlineData(4, 0.05)]
@@ -158,7 +164,7 @@ public class StringQuotedExtensionsTests_FuzzingMultiRow
         }
     });
 
-    private static void ActAndAssert(StringQuotedSignals signals, string rows, IEnumerable<string[]> expectedRowsOfFields)
+    internal static void ActAndAssert(StringQuotedSignals signals, string rows, IEnumerable<string[]> expectedRowsOfFields)
     {
         rows.SplitQuotedRows(signals)
             .EquiZip(expectedRowsOfFields, (fields, expectedFields) => fields.Should().Equal(expectedFields))
