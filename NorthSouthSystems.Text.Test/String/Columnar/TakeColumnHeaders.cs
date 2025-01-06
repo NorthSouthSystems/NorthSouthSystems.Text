@@ -1,6 +1,6 @@
 ﻿namespace NorthSouthSystems.Text;
 
-public class WithColumnHeadersExtensionsTests
+public class TakeColumnHeadersExtensionsTests
 {
     [Fact]
     public void Basic()
@@ -42,7 +42,7 @@ public class WithColumnHeadersExtensionsTests
         Action act;
         string nr = StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180.NewRow;
 
-        act = () => ((string[][])null).WithColumnHeaders(new[] { "A" }).ToList();
+        act = () => ((string[][])null).TakeColumnHeaders(new[] { "A" }).ToList();
         act.Should().ThrowExactly<ArgumentNullException>();
 
         act = () => Result($"A{nr}1", new[] { "A", "B" }, false);
@@ -58,6 +58,6 @@ public class WithColumnHeadersExtensionsTests
     private static List<StringRowWrapper> Result(string csv,
             IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder) =>
         csv.SplitQuotedRows(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
-            .WithColumnHeaders(expectedColumnNames, enforceExpectedColumnNamesOrder)
+            .TakeColumnHeaders(expectedColumnNames, enforceExpectedColumnNamesOrder)
             .ToList();
 }

@@ -1,10 +1,10 @@
 ﻿namespace NorthSouthSystems.Text;
 
-public static class WithColumnHeadersExtensions
+public static class TakeColumnHeadersExtensions
 {
     /// <summary>
     /// Provides an extension method for converting rows of fields (IEnumerable<string[]>) to
-    /// StringRowWrappers (IEnumerable<StringRowWrapper) by using the first row to construct
+    /// StringRowWrappers (IEnumerable<StringRowWrapper) by taking the first row to construct
     /// a StringRowWrapperFactory used to wrap subsequent rows. This is intended to be used fluently
     /// after a call to any of the Split*Rows extensions methods.
     /// </summary>
@@ -17,16 +17,16 @@ public static class WithColumnHeadersExtensions
     /// specified by expectedColumnNames. (default = false)</param>
     /// <returns>The rows of fields converted to StringRowWrappers excluding the first row representing
     /// column headers.</returns>
-    public static IEnumerable<StringRowWrapper> WithColumnHeaders(this IEnumerable<string[]> rowsOfFields,
+    public static IEnumerable<StringRowWrapper> TakeColumnHeaders(this IEnumerable<string[]> rowsOfFields,
         IEnumerable<string> expectedColumnNames = null, bool enforceExpectedColumnNamesOrder = false)
     {
         if (rowsOfFields == null)
             throw new ArgumentNullException(nameof(rowsOfFields));
 
-        return WithColumnHeadersIterator(rowsOfFields, expectedColumnNames, enforceExpectedColumnNamesOrder);
+        return TakeColumnHeadersIterator(rowsOfFields, expectedColumnNames, enforceExpectedColumnNamesOrder);
     }
 
-    private static IEnumerable<StringRowWrapper> WithColumnHeadersIterator(IEnumerable<string[]> rowsOfFields,
+    private static IEnumerable<StringRowWrapper> TakeColumnHeadersIterator(IEnumerable<string[]> rowsOfFields,
         IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder)
     {
         StringRowWrapperFactory rowWrapperFactory = null;
