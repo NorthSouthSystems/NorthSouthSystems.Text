@@ -23,15 +23,25 @@ internal static class StringQuotedFixture
 
     internal static IReadOnlyList<StringQuotedSignals> Signals { get; } =
     [
-        StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180,
-        new([","], ["\r\n", "\n", "\r"], "\"", "\\"),
-        new(["|"], ["\r\n"], "'", null),
-        new(["\t"], ["\n"], null, "\\"),
-        new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),
-        new(["DELIMITER"], ["NEWLINE"], "QUOTE", null),
-        new(["DELIMITER"], ["NEWLINE"], null, "ESCAPE"),
-        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null),
-        new([",", "|", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], null, "\\")
+        new([","], ["\r\n", "\n", "\r"], null, null),                    // IsNewRowTolerantSimple (no quote, no escape)
+        new([","], ["\r\n", "\n", "\r"], null, "\\"),                    // IsNewRowTolerantSimple (no quote, escape)
+        StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180,      // IsNewRowTolerantSimple (quote, no escape)
+        new([","], ["\r\n", "\n", "\r"], "\"", "\\"),                    // IsNewRowTolerantSimple (quote, escape)
+                                                                         
+        new(["\t"], ["\n"], null, null),                                 // IsSimple (no quote, no escape)
+        new(["\t"], ["\n"], null, "\\"),                                 // IsSimple (no quote, escape)
+        new(["\t"], ["\n"], "'", null),                                  // IsSimple (quote, no escape)
+        new(["\t"], ["\n"], "'", "\\"),                                  // IsSimple (quote, escape)
+                                                                         
+        new(["DELIMITER"], ["NEWLINE"], null, null),                     // Full (no quote, no escape)
+        new(["DELIMITER"], ["NEWLINE"], null, "ESCAPE"),                 // Full (no quote, escape)
+        new(["DELIMITER"], ["NEWLINE"], "QUOTE", null),                  // Full (quote, no escape)
+        new(["DELIMITER"], ["NEWLINE"], "QUOTE", "ESCAPE"),              // Full (quote, escape)
+
+        new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], null, null), // Full (no quote, no escape)
+        new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], null, "\\"), // Full (no quote, escape)
+        new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null), // Full (quote, no escape)
+        new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", "\\")  // Full (quote, escape)
     ];
 }
 
