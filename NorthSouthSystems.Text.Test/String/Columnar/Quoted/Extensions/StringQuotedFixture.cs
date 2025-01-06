@@ -41,7 +41,10 @@ internal static class StringQuotedFixture
         new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], null, null), // Full (no quote, no escape)
         new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], null, "\\"), // Full (no quote, escape)
         new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", null), // Full (quote, no escape)
-        new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", "\\")  // Full (quote, escape)
+        new([",", "\t", "DELIMITER"], ["\r\n", "\n", "\r"], "\"", "\\"), // Full (quote, escape)
+
+        StringQuotedSignals.CsvNewRowLinux,                              // IsSimple (quote, no escape)
+        StringQuotedSignals.CsvNewRowWindows                             // Full (quote, no escape)
     ];
 }
 
