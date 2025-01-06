@@ -16,6 +16,11 @@ jobs:
               dotnet-version: 8.0.x
               
         - run: dotnet restore
+  
+        - run: |
+              $version = & nbgv get-version --variable NuGetPackageVersion
+              $version = "v" + $version
+              Write-Output "VNUGETPACKAGEVERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
           
         - run: dotnet build --no-restore --configuration Release
           
@@ -24,3 +29,15 @@ jobs:
         - run: dotnet pack --no-build --configuration Release NorthSouthSystems.Text\NorthSouthSystems.Text.csproj
   
         - run: dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_APIKEY}} "NorthSouthSystems.Text\bin\Release\*.nupkg"
+  
+        - uses: actions/github-script@v7
+          with:
+              script: |
+                  const { VNUGETPACKAGEVERSION } = process.env
+
+                  github.rest.git.createRef({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      ref: `refs/tags/${VNUGETPACKAGEVERSION}`,
+                      sha: context.sha
+                  })
