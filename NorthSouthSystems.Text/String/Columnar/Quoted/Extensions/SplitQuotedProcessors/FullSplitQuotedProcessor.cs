@@ -199,7 +199,7 @@ public static partial class StringQuotedExtensions
         private void FlushField()
         {
             // An empty field that is Quoted or a Quoted field containing only Quotes will never properly detect that the field
-            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with InQuotes false;
+            // itself is Quoted because two consecutive quotes results in a Quote at the end of _fieldBuilder with _quoteInQuotes false;
             // therefore, _fieldBuilder will contain an extra Quote. E.G.
             //     a,"",c
             //     a,"""",c

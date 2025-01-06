@@ -114,7 +114,7 @@ internal sealed class StringQuotedSignalsEscaping
         EscapedEscape = signals.Escape + signals.Escape;
     }
 
-    private static IReadOnlyList<(string ReplaceOld, string ReplaceNew)>
+    private static (string ReplaceOld, string ReplaceNew)[]
         Construct(string escape, IReadOnlyList<string> multiSignal)
     {
         if (multiSignal.Count == 0)
