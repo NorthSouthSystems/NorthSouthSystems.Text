@@ -33,6 +33,25 @@ public readonly struct StringRowWrapper : IEquatable<StringRowWrapper>
     public override int GetHashCode() =>
         (_factory?.GetHashCode() ?? 0) ^ (_fields?.GetHashCode() ?? 0);
 
+    // We protect from the "missing" compiler warning when comparing StringRowWrapper to null. This
+    // issue only occurs because operator ==(StringRowWrapper, StringRowWrapper) is overloaded which causes
+    // the compiler to automatically generate the lifted operator ==(StringRowWrapper?, StringRowWrapper?).
+    //
+    // https://stackoverflow.com/questions/1972262/c-sharp-okay-with-comparing-value-types-to-null
+    //
+    // Overloading operator ==(StringRowWrapper, object) would result in library consumer compiler errors
+    // due to ambiguity. Those compiler errors would prevent the library consumer from using the valid
+    // lifted operator ==(StringRowWrapper?, StringRowWrapper?). We have instead arbitrarily chosen to use
+    // operator ==(StringRowWrapper, string) to detect and prevent the comparison to null.
+
+    [Obsolete("Comparing a struct to null always returns false.", true)]
+    public static bool operator ==(StringRowWrapper left, string right) =>
+        left.Equals(right);
+
+    [Obsolete("Comparing a struct to null always returns false.", true)]
+    public static bool operator !=(StringRowWrapper left, string right) =>
+        !left.Equals(right);
+
     #endregion
 
     #region Fields
