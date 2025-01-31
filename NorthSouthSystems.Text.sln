@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8C897E58-6DF8-42
 		.github\workflows\BuildTestAnalyze.yml = .github\workflows\BuildTestAnalyze.yml
 		.github\workflows\BuildTestPackagePublish.yml = .github\workflows\BuildTestPackagePublish.yml
 		Directory.Build.props = Directory.Build.props
+		Icon.png = Icon.png
 		LICENSE = LICENSE
 		README.md = README.md
 		version.json = version.json

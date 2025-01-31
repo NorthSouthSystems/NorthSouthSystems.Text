@@ -1,18 +1,18 @@
 # NorthSouthSystems.Text
 
-This repository hosts a .NET library containing various string utilities. Included in the library are fluent APIs for parsing and creating quoted delimited and fixed-width positional text.  For example, quoted CSV such as that used by Microsoft Excel is supported.
+This .NET library contains string utilities including fluent APIs for splitting and joining quoted delimited text (e.g. CSV used by Microsoft Excel) and fixed-width positional text.
 
-## Quoted Delimited Text (e.g. CSV) Splitting and Joining
+## Quoted Delimited Text (e.g. CSV used by Microsoft Excel) Splitting and Joining
 
 **Simple Split**
 ```csharp
 string row = "a,b,c";
-string[]() fields = row.SplitQuotedRow(StringQuotedSignals.Csv);
+string[]() fields = row.SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
 
 foreach(string field in fields);
     Console.WriteLine(field);
 ```
-```
+```console
 Console Output:
 a
 b
@@ -22,24 +22,28 @@ c
 **Simple Join**
 ```csharp
 string[]()() fields = new string[]()() { "a", "b", "c" };
-string result = fields.JoinQuotedRow(StringQuotedSignals.Csv);
+string result = fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
 Console.WriteLine(result);
 ```
-```
+```console
 Console Output:
 a,b,c
 ```
 
 **Quoted Split**
 ```csharp
-StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+var signals = new StringQuotedSignalsBuilder()
+    .Delimiter(",")
+    .NewRowTolerantEnvironmentPrimary()
+    .Quote("'")
+    .ToSignals();
 string row = "'a,a',b,c";
 string[]() fields = row.SplitQuotedRow(signals);
 
 foreach(string field in fields);
     Console.WriteLine(field);
 ```
-```
+```console
 Console Output:
 a,a
 b
@@ -49,10 +53,10 @@ c
 **Quoted Join**
 ```csharp
 string[]()() fields = new string[]()() { "a,a", "b", "c" };
-string result = fields.JoinQuotedRow(StringQuotedSignals.Csv);
+string result = fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
 Console.WriteLine(result);
 ```
-```
+```console
 Console Output:
 "a,a",b,c
 ```
@@ -72,7 +76,7 @@ fields = row.SplitFixedRow(new []() { 2, 2, 1 }, '-');
 foreach(string field in fields)
     Console.WriteLine(field);
 ```
-```
+```console
 Console Output:
 A-
 B-
@@ -91,7 +95,7 @@ Console.WriteLine(row);
 row = fields.JoinFixedRow(new []() { 2, 2, 1 }, '-', false);
 Console.WriteLine(row);
 ```
-```
+```console
 Console Output:
 A B C
 A-B-C
@@ -124,7 +128,7 @@ Console.WriteLine(split.Entry.Header);
 foreach(StringFieldWrapper field in split.Result.Fields)
     Console.WriteLine(field);
 ```
-```
+```console
 Console Output:
 A
 1
@@ -158,7 +162,7 @@ fields = new[]() { "1", "2", "3" };
 join = fields.JoinSchemaRow(c);
 Console.WriteLine(join);
 ```
-```
+```console
 Console Output:
 A123
 B123456
@@ -172,7 +176,7 @@ C1-2-3-
 Console.WriteLine(" A  B C   D   ".NormalizeWhiteSpace());
 Console.WriteLine(("Lots\tOf" + Environment.NewLine + "Changes").NormalizeWhiteSpace());
 ```
-```
+```console
 Console Output:
 A B C D
 Lots Of
@@ -187,7 +191,7 @@ Console.WriteLine("123a".SpaceCamelCase());
 Console.WriteLine("A123".SpaceCamelCase());
 Console.WriteLine("A123A".SpaceCamelCase());
 ```
-```
+```console
 Console Output:
 Foo Bar Foo Foo Bar Foo
 123 A
@@ -200,7 +204,7 @@ A 123 A
 ```csharp
 Console.WriteLine("FooBar".ToLowerCamelCase());
 ```
-```
+```console
 Console Output:
 fooBar
 ```
@@ -209,7 +213,7 @@ fooBar
 ```csharp
 Console.WriteLine("fooBar".ToUpperCamelCase());
 ```
-```
+```console
 Console Output:
 FooBar
 ```
@@ -222,7 +226,7 @@ Console.WriteLine("a1b2c3d".WhereIsInAnyCategory(CharCategories.Punctuation | Ch
 Console.WriteLine("a1b2-c3d".WhereIsInAnyCategory(CharCategories.Digit | CharCategories.Letter));
 Console.WriteLine("a1b2-c3d".WhereIsInAnyCategory(CharCategories.Punctuation));
 ```
-```
+```console
 Console Output:
 a1b2c3d
 123

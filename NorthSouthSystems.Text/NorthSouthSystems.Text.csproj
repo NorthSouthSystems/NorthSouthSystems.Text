@@ -5,8 +5,12 @@
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
         <ImplicitUsings>disable</ImplicitUsings>
+
+        <Description>This .NET library contains string utilities including fluent APIs for splitting and joining quoted delimited text (e.g. CSV used by Microsoft Excel) and fixed-width positional text.</Description>
+        <PackageIcon>Icon.png</PackageIcon>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/NorthSouthSystems/NorthSouthSystems.Text.git</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,6 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\Icon.png" Pack="true" PackagePath="" />
         <None Include="..\LICENSE" Pack="true" PackagePath="" />
         <None Include="..\README.md" Pack="true" PackagePath="" />
     </ItemGroup>

@@ -11,7 +11,7 @@ public static partial class StringQuotedExtensions
     /// <example>
     /// <code>
     /// string row = "a,b,c";
-    /// string[] fields = row.SplitQuotedRow(StringQuotedSignals.Csv);
+    /// string[] fields = row.SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
     /// 
     /// foreach(string field in fields);
     ///     Console.WriteLine(field);
@@ -21,7 +21,11 @@ public static partial class StringQuotedExtensions
     /// b<br/>
     /// c<br/>
     /// <code>
-    /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+    /// var signals = new StringQuotedSignalsBuilder()
+    ///     .Delimiter(",")
+    ///     .NewRowTolerantEnvironmentPrimary()
+    ///     .Quote("'")
+    ///     .ToSignals();
     /// string row = "'a,a',b,c";
     /// string[] fields = row.SplitQuotedRow(signals);
     /// 
@@ -33,7 +37,11 @@ public static partial class StringQuotedExtensions
     /// b<br/>
     /// c<br/>
     /// <code>
-    /// StringQuotedSignals signals = new StringQuotedSignals(",", "'", Environment.NewLine, null);
+    /// var signals = new StringQuotedSignalsBuilder()
+    ///     .Delimiter(",")
+    ///     .NewRowTolerantLinuxPrimary()
+    ///     .Quote("'")
+    ///     .ToSignals();
     /// string row = "a''a,b,c";
     /// string[] fields = row.SplitQuotedRow(signals);
     /// 
@@ -76,7 +84,7 @@ public static partial class StringQuotedExtensions
     /// <example>
     /// <code>
     /// string rows = "a,b,c" + Environment.NewLine + "d,e,f";
-    /// var rowsFields = rows.SplitQuotedRows(StringQuotedSignals.Csv);
+    /// var rowsFields = rows.SplitQuotedRows(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
     /// 
     /// foreach(string[] rowFields in rowsFields)
     /// {

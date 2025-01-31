@@ -35,21 +35,21 @@ public static partial class StringQuotedExtensions
     /// <example>
     /// <code>
     /// string[] fields = new string[] { "a", "b", "c" };
-    /// string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, false);
+    /// string result = fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180, false);
     /// Console.WriteLine(result);
     /// </code>
     /// Console Output:<br/>
     /// a,b,c<br/>
     /// <code>
     /// string[] fields = new string[] { "a,a", "b", "c" };
-    /// string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, false);
+    /// string result = fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180, false);
     /// Console.WriteLine(result);
     /// </code>
     /// Console Output:<br/>
     /// "a,a",b,c<br/>
     /// <code>
     /// string[] fields = new string[] { "a", "b" + Environment.NewLine + "b", "c" };
-    /// string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, true);
+    /// string result = fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180, true);
     /// Console.WriteLine(result);
     /// </code>
     /// Console Output:<br/>
@@ -57,7 +57,7 @@ public static partial class StringQuotedExtensions
     /// b","c"<br/>
     /// <code>
     /// string[] fields = new string[] { "a\"a", "b", "c" };
-    /// string result = fields.JoinQuotedRow(StringQuotedSignals.Csv, false);
+    /// string result = fields.JoinQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180, false);
     /// Console.WriteLine(result);
     /// </code>
     /// Console Output:<br/>
