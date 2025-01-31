@@ -172,7 +172,8 @@ public class StringQuotedExtensionsTests_FuzzingMultiFieldMultiRows
 
         bool skipLastRow = expectedRowsOfFields.Last().Length == 1 && string.IsNullOrEmpty(expectedRowsOfFields.Last()[0]);
 
-        string.Join(signals.NewRow, rows.SplitQuotedRows(signals).Select(fields => fields.JoinQuotedRow(signals)))
+        rows.SplitQuotedRows(signals)
+            .JoinQuotedRows(signals)
             .SplitQuotedRows(signals)
             .EquiZip(expectedRowsOfFields.SkipLast(skipLastRow ? 1 : 0), (fields, expectedFields) => fields.Should().Equal(expectedFields))
             .Consume();

@@ -1,59 +1,31 @@
-﻿using MoreLinq;
+﻿namespace NorthSouthSystems.Text;
 
-namespace NorthSouthSystems.Text;
+using MoreLinq;
 
 public class StringQuotedExtensionsTests_Join
 {
-    private static string Expected(string format, StringQuotedSignals signals) =>
-        StringQuotedFixture.Replace(format, signals).First();
-
-    private static string Expected(string format, StringQuotedSignals signals, string delimiterOverride, string newRowOverride) =>
-        Expected(format, signals)
-            .Replace("{do}", delimiterOverride ?? signals.Delimiter)
-            .Replace("{no}", newRowOverride ?? signals.NewRow);
-
     [Fact]
     public void Quoting() =>
         StringQuotedFixture.Signals.Where(signals => signals.QuoteIsSpecified).ForEach(signals =>
     {
-        new string[] { "a", "b", "c" }.JoinQuotedRow(signals)
-            .Should().Be(
-                Expected("a{d}b{d}c", signals));
-
-        new string[] { null, "b", "c" }.JoinQuotedRow(signals)
-            .Should().Be(
-                Expected("{d}b{d}c", signals));
-
-        new string[] { "a", "b", string.Empty }.JoinQuotedRow(signals)
-            .Should().Be(
-                Expected("a{d}b{d}", signals));
-
-        new string[] { "aa", "bb", "cc" }.JoinQuotedRow(signals)
-            .Should().Be(
-                Expected("aa{d}bb{d}cc", signals));
+        JoinAndAssert(["a", "b", "c"], signals, false, "a{d}b{d}c");
+        JoinAndAssert([null, "b", "c"], signals, false, "{d}b{d}c");
+        JoinAndAssert(["a", "b", string.Empty], signals, false, "a{d}b{d}");
+        JoinAndAssert(["aa", "bb", "cc"], signals, false, "aa{d}bb{d}cc");
 
         foreach (string delimiter in signals.Delimiters)
-            new string[] { "a" + delimiter, "b", "c" }.JoinQuotedRow(signals)
-                .Should().Be(
-                    Expected("{q}a{do}{q}{d}b{d}c", signals, delimiter, null));
-
-        new string[] { "a" + signals.Quote, "b", "c" }.JoinQuotedRow(signals)
-            .Should().Be(
-                Expected(signals.EscapeIsSpecified
-                    ? "{q}a{e}{q}{q}{d}b{d}c"
-                    : "{q}a{q}{q}{q}{d}b{d}c", signals));
-
-        new string[] { "aa", "bb", "cc" }.JoinQuotedRow(signals, true)
-            .Should().Be(
-                Expected("{q}aa{q}{d}{q}bb{q}{d}{q}cc{q}", signals));
+            JoinAndAssert(["a" + delimiter, "b", "c"], signals, false, "{q}a{do}{q}{d}b{d}c", expectedDelimiterOverride: delimiter);
 
         if (signals.NewRowIsSpecified)
-        {
             foreach (string newRow in signals.NewRows)
-                new string[] { "a" + newRow + "a", "b", "c" }.JoinQuotedRow(signals)
-                    .Should().Be(
-                        Expected("{q}a{no}a{q}{d}b{d}c", signals, null, newRow));
-        }
+                JoinAndAssert(["a" + newRow + "a", "b", "c"], signals, false, "{q}a{no}a{q}{d}b{d}c", expectedNewRowOverride: newRow);
+
+        JoinAndAssert(["a" + signals.Quote, "b", "c"], signals, false,
+            signals.EscapeIsSpecified
+                ? "{q}a{e}{q}{q}{d}b{d}c"
+                : "{q}a{q}{q}{q}{d}b{d}c");
+
+        JoinAndAssert(["aa", "bb", "cc"], signals, true, "{q}aa{q}{d}{q}bb{q}{d}{q}cc{q}");
     });
 
     [Fact]
@@ -61,25 +33,60 @@ public class StringQuotedExtensionsTests_Join
         StringQuotedFixture.Signals.Where(signals => signals.EscapeIsSpecified && !signals.QuoteIsSpecified).ForEach(signals =>
     {
         foreach (string delimiter in signals.Delimiters)
-            new string[] { "a" + delimiter, "b", "c" }.JoinQuotedRow(signals)
-                .Should().Be(
-                    Expected("a{e}{do}{d}b{d}c", signals, delimiter, null));
+            JoinAndAssert(["a" + delimiter, "b", "c"], signals, false, "a{e}{do}{d}b{d}c", expectedDelimiterOverride: delimiter);
+
+        if (signals.NewRowIsSpecified)
+            foreach (string newRow in signals.NewRows)
+                JoinAndAssert(["a" + newRow, "b", "c"], signals, false, "a{e}{no}{d}b{d}c", expectedNewRowOverride: newRow);
+
+        JoinAndAssert(["a" + signals.Escape, "b", "c"], signals, false, "a{e}{e}{d}b{d}c");
+    });
+
+    private static void JoinAndAssert(string[] actualFields, StringQuotedSignals signals, bool forceQuotes,
+        string expectedFormat, string expectedDelimiterOverride = null, string expectedNewRowOverride = null)
+    {
+        actualFields.JoinQuotedRow(signals, forceQuotes)
+            .Should().Be(Expected(expectedFormat));
 
         if (signals.NewRowIsSpecified)
         {
-            foreach (string newRow in signals.NewRows)
-                new string[] { "a" + newRow, "b", "c" }.JoinQuotedRow(signals)
-                    .Should().Be(
-                        Expected("a{e}{no}{d}b{d}c", signals, null, newRow));
+            new[] { actualFields }.JoinQuotedRows(signals, forceQuotes)
+                .Should().Be(Expected(expectedFormat));
+
+            new[] { actualFields, actualFields }.JoinQuotedRows(signals, forceQuotes)
+                .Should().Be(Expected(expectedFormat + signals.NewRow + expectedFormat));
+
+            new[] { actualFields, actualFields, actualFields }.JoinQuotedRows(signals, forceQuotes)
+                .Should().Be(Expected(expectedFormat + signals.NewRow + expectedFormat + signals.NewRow + expectedFormat));
         }
 
-        new string[] { "a" + signals.Escape, "b", "c" }.JoinQuotedRow(signals)
-            .Should().Be(
-                Expected("a{e}{e}{d}b{d}c", signals));
-    });
+        string Expected(string format) =>
+            StringQuotedFixture.Replace(format, signals)
+                .First()
+                .Replace("{do}", expectedDelimiterOverride ?? signals.Delimiter)
+                .Replace("{no}", expectedNewRowOverride ?? signals.NewRow);
+    }
 
     [Fact]
-    public void Exceptions()
+    public void ExceptionsRows()
+    {
+        Action act = null;
+
+        act = () => ((string[][])null).JoinQuotedRows(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
+        act.Should().ThrowExactly<ArgumentNullException>();
+
+        act = () => new[] { new[] { "A" } }.JoinQuotedRows(null);
+        act.Should().ThrowExactly<ArgumentNullException>();
+
+        act = () => new[] { new[] { "A" } }.JoinQuotedRows(new([","], null, "\"", null));
+        act.Should().ThrowExactly<ArgumentException>("NewRowNotSpecified");
+
+        act = () => new[] { new[] { "A" } }.JoinQuotedRows(new([","], ["\n"], null, null), true);
+        act.Should().ThrowExactly<ArgumentException>("QuoteNotSpecified");
+    }
+
+    [Fact]
+    public void ExceptionsRow()
     {
         Action act = null;
 

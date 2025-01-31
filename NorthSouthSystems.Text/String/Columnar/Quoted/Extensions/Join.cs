@@ -6,6 +6,23 @@
 /// </summary>
 public static partial class StringQuotedExtensions
 {
+    public static string JoinQuotedRows(this IEnumerable<IEnumerable<string>> rowsOfFields, StringQuotedSignals signals, bool forceQuotes = false)
+    {
+        if (rowsOfFields == null)
+            throw new ArgumentNullException(nameof(rowsOfFields));
+
+        if (signals == null)
+            throw new ArgumentNullException(nameof(signals));
+
+        if (!signals.NewRowIsSpecified)
+            throw new ArgumentException("signals.NewRow must not be null or empty.");
+
+        if (forceQuotes && !signals.QuoteIsSpecified)
+            throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");
+
+        return string.Join(signals.NewRow, rowsOfFields.Select(fields => JoinQuotedRowImpl(fields, signals, forceQuotes)));
+    }
+
     /// <summary>
     /// Joins a sequence of fields, separates them with Delimiter, and allows for instances of Delimiter (or the NewRow signal)
     /// to occur within individual fields.  Such fields will be quoted (surrounded by Quote) to allow for this behavior. Instances
@@ -48,14 +65,19 @@ public static partial class StringQuotedExtensions
     /// </example>
     public static string JoinQuotedRow(this IEnumerable<string> fields, StringQuotedSignals signals, bool forceQuotes = false)
     {
-        if (fields == null)
-            throw new ArgumentNullException(nameof(fields));
-
         if (signals == null)
             throw new ArgumentNullException(nameof(signals));
 
         if (forceQuotes && !signals.QuoteIsSpecified)
             throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");
+
+        return JoinQuotedRowImpl(fields, signals, forceQuotes);
+    }
+
+    private static string JoinQuotedRowImpl(IEnumerable<string> fields, StringQuotedSignals signals, bool forceQuotes)
+    {
+        if (fields == null)
+            throw new ArgumentNullException(nameof(fields));
 
         return string.Join(signals.Delimiter, fields.Select(field => QuoteAndEscapeField(field ?? string.Empty, signals, forceQuotes)));
     }
