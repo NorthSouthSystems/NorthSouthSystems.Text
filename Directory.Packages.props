@@ -1,0 +1,11 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageVersion Include="CsvHelper" Version="33.0.1" />
+        <PackageVersion Include="Microsoft.VisualBasic" Version="10.3.0" />
+        <PackageVersion Include="morelinq" Version="4.4.0" />
+    </ItemGroup>
+</Project>

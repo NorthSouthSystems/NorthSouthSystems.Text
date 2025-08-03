@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="1.0.4" />
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="2.3.4" />
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="CsvHelper" Version="33.0.1" />
+        <PackageReference Include="CsvHelper" />
     </ItemGroup>
 
     <ItemGroup>
