@@ -7,17 +7,18 @@ jobs:
         runs-on: windows-latest
 
         steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
           with:
               fetch-depth: 0 # Nerdbank.GitVersioning requires deep clone. Deep clone improves Sonar.
         
-        - uses: actions/setup-dotnet@v3
+        - uses: actions/setup-dotnet@v4
           with:
-              dotnet-version: 8.0.x
+              dotnet-version: '9.0.x'
+              dotnet-quality: 'ga'
 
         - run: dotnet tool install --global dotnet-coverage
   
-        - uses: actions/setup-java@v3 # Sonar.
+        - uses: actions/setup-java@v4 # Sonar.
           with:
               java-version: 17
               distribution: 'zulu'
