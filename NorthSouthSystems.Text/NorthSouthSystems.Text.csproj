@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="2.3.4" />
-
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <Description>This .NET library contains string utilities including fluent APIs for splitting and joining quoted delimited text (e.g. CSV used by Microsoft Excel) and fixed-width positional text.</Description>

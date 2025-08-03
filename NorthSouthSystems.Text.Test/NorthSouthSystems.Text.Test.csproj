@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="2.3.4" />
-
     <PropertyGroup>
         <TargetFrameworks>net48;net8.0</TargetFrameworks>
     </PropertyGroup>
