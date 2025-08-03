@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFrameworks>net48;net8.0</TargetFrameworks>
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
+        <TargetFrameworks>net48;net9.0</TargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
