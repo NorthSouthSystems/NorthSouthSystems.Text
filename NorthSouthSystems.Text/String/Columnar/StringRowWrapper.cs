@@ -18,7 +18,7 @@ public readonly struct StringRowWrapper : IEquatable<StringRowWrapper>
 
     #region Value Equality
 
-    public override bool Equals(object obj) =>
+    public override bool Equals(object? obj) =>
         obj is StringRowWrapper wrapper && Equals(wrapper);
 
     public bool Equals(StringRowWrapper other) =>

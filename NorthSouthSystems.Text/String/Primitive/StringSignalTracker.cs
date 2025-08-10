@@ -11,10 +11,12 @@ internal static class StringSignalTracker
     internal static IStringSignalTracker Create(params string[] signals) =>
         Create((IReadOnlyList<string>)signals);
 
-    internal static IStringSignalTracker Create(IReadOnlyList<string> signals)
+    internal static IStringSignalTracker Create(IReadOnlyList<string>? signals)
     {
-        if ((signals?.Count ?? 0) <= 1)
-            return CreateCharTracker(signals?.SingleOrDefault());
+        if (signals == null)
+            return CreateCharTracker(null);
+        else if (signals.Count <= 1)
+            return CreateCharTracker(signals.SingleOrDefault());
         else if (signals.Count == 2)
             return new TwoCompositeTracker(CreateCharTrackers());
         else
@@ -24,11 +26,11 @@ internal static class StringSignalTracker
             signals.OrderByDescending(s => s?.Length ?? 0).Select(CreateCharTracker).ToArray();
     }
 
-    private static IStringSignalTracker CreateCharTracker(string signal)
+    private static IStringSignalTracker CreateCharTracker(string? signal)
     {
         if (string.IsNullOrEmpty(signal))
             return ZeroCharTracker.Singleton;
-        else if (signal.Length == 1)
+        else if (signal!.Length == 1)
             return new OneCharTracker(signal);
         else if (signal.Length == 2)
             return new TwoCharTracker(signal);

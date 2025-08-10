@@ -18,7 +18,7 @@ public static class TakeColumnHeadersExtensions
     /// <returns>The rows of fields converted to StringRowWrappers excluding the first row representing
     /// column headers.</returns>
     public static IEnumerable<StringRowWrapper> TakeColumnHeaders(this IEnumerable<string[]> rowsOfFields,
-        IEnumerable<string> expectedColumnNames = null, bool enforceExpectedColumnNamesOrder = false)
+        IEnumerable<string>? expectedColumnNames = null, bool enforceExpectedColumnNamesOrder = false)
     {
         if (rowsOfFields == null)
             throw new ArgumentNullException(nameof(rowsOfFields));
@@ -27,9 +27,9 @@ public static class TakeColumnHeadersExtensions
     }
 
     private static IEnumerable<StringRowWrapper> TakeColumnHeadersIterator(IEnumerable<string[]> rowsOfFields,
-        IEnumerable<string> expectedColumnNames, bool enforceExpectedColumnNamesOrder)
+        IEnumerable<string>? expectedColumnNames, bool enforceExpectedColumnNamesOrder)
     {
-        StringRowWrapperFactory rowWrapperFactory = null;
+        StringRowWrapperFactory? rowWrapperFactory = null;
 
         foreach (string[] rowFields in rowsOfFields)
         {

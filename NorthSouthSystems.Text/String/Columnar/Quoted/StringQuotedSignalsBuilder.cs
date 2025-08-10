@@ -12,7 +12,7 @@ public sealed class StringQuotedSignalsBuilder
     public StringQuotedSignalsBuilder Delimiter(string primary, params string[] alternates) =>
         MultiHelper(() => _delimiters, x => _delimiters = x, primary, alternates);
 
-    private string[] _delimiters;
+    private string[]? _delimiters;
 
     // We allow NewRowTolerant multi-signals to "starts-with-contains-overlap" (see MultiHelper), unlike Delimiters.
     // This is because we can safely hardcode this very common case in our SplitQuotedProcessor. Admittedly, the most
@@ -46,7 +46,7 @@ public sealed class StringQuotedSignalsBuilder
     public StringQuotedSignalsBuilder NewRow(string primary, params string[] alternates) =>
         MultiHelper(() => _newRows, x => _newRows = x, primary, alternates);
 
-    private string[] _newRows;
+    private string[]? _newRows;
 
     /// <summary>
     /// String used to surround (i.e. quote) a field and allow it to contain an instance of Delimiter or NewRow.
@@ -54,7 +54,7 @@ public sealed class StringQuotedSignalsBuilder
     public StringQuotedSignalsBuilder Quote(string signal) =>
         Helper(() => _quote, x => _quote = x, signal);
 
-    private string _quote;
+    private string? _quote;
 
     /// <summary>
     /// String used to escape the meaning of the immediately following character.
@@ -62,10 +62,10 @@ public sealed class StringQuotedSignalsBuilder
     public StringQuotedSignalsBuilder Escape(string signal) =>
         Helper(() => _escape, x => _escape = x, signal);
 
-    private string _escape;
+    private string? _escape;
 
-    private StringQuotedSignalsBuilder MultiHelper(Func<string[]> getter, Action<string[]> setter,
-        string primary, string[] alternates, [CallerMemberName] string callerMemberName = null)
+    private StringQuotedSignalsBuilder MultiHelper(Func<string[]?> getter, Action<string[]?> setter,
+        string primary, string[] alternates, [CallerMemberName] string? callerMemberName = null)
     {
         var multi = alternates.Prepend(primary).Where(StringExtensions.IsNotNullAndNotEmpty).Distinct().ToArray();
 
@@ -97,10 +97,13 @@ public sealed class StringQuotedSignalsBuilder
     {
         foreach (var delimiter in (_delimiters ?? []).DefaultIfEmpty())
             foreach (var newRow in (_newRows ?? []).DefaultIfEmpty())
-                if (StringExtensions.AnyPermutationPairContains(new[] { delimiter, newRow, _quote, _escape }.Where(StringExtensions.IsNotNullAndNotEmpty)))
+                if (AnyPermutationPairContains(delimiter, newRow, _quote, _escape))
                     return true;
 
         return false;
+
+        static bool AnyPermutationPairContains(params string?[] signals) =>
+            StringExtensions.AnyPermutationPairContains(signals.Where(StringExtensions.IsNotNullAndNotEmpty).Select(s => s!));
     }
 
     public StringQuotedSignals ToSignals()

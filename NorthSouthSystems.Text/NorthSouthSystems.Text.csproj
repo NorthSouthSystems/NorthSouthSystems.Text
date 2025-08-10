@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
         <Description>This .NET library contains string utilities including fluent APIs for splitting and joining quoted delimited text (e.g. CSV used by Microsoft Excel) and fixed-width positional text.</Description>
+        <NuGetLockFilePath>packages.lock.json</NuGetLockFilePath>
     </PropertyGroup>
 
 </Project>

@@ -9,20 +9,20 @@ using System.Xml;
 /// </summary>
 public readonly struct StringFieldWrapper : IEquatable<StringFieldWrapper>
 {
-    internal StringFieldWrapper(string columnName, string value)
+    internal StringFieldWrapper(string columnName, string? value)
     {
         ColumnName = columnName;
         Value = value;
     }
 
     public string ColumnName { get; }
-    public string Value { get; }
+    public string? Value { get; }
 
     public override string ToString() => Value ?? string.Empty;
 
     #region Value Equality
 
-    public override bool Equals(object obj) =>
+    public override bool Equals(object? obj) =>
         obj is StringFieldWrapper wrapper && Equals(wrapper);
 
     public bool Equals(StringFieldWrapper other) =>
@@ -73,82 +73,82 @@ public readonly struct StringFieldWrapper : IEquatable<StringFieldWrapper>
             where T : struct =>
         string.IsNullOrWhiteSpace(field.Value)
             ? null
-            : convert(field.Value);
+            : convert(field.Value!);
 
-    public static explicit operator string(StringFieldWrapper field) =>
+    public static explicit operator string?(StringFieldWrapper field) =>
         field.Value;
 
     public static explicit operator bool(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
+        Required(field, static value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
 
     public static explicit operator bool?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
+        Optional(field, static value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
 
     public static explicit operator int(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToInt32(field.Value));
+        Required(field, XmlConvert.ToInt32);
 
     public static explicit operator int?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToInt32(field.Value));
+        Optional(field, XmlConvert.ToInt32);
 
     public static explicit operator uint(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToUInt32(field.Value));
+        Required(field, XmlConvert.ToUInt32);
 
     public static explicit operator uint?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToUInt32(field.Value));
+        Optional(field, XmlConvert.ToUInt32);
 
     public static explicit operator long(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToInt64(field.Value));
+        Required(field, XmlConvert.ToInt64);
 
     public static explicit operator long?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToInt64(field.Value));
+        Optional(field, XmlConvert.ToInt64);
 
     public static explicit operator ulong(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToUInt64(field.Value));
+        Required(field, XmlConvert.ToUInt64);
 
     public static explicit operator ulong?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToUInt64(field.Value));
+        Optional(field, XmlConvert.ToUInt64);
 
     public static explicit operator float(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToSingle(field.Value));
+        Required(field, XmlConvert.ToSingle);
 
     public static explicit operator float?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToSingle(field.Value));
+        Optional(field, XmlConvert.ToSingle);
 
     public static explicit operator double(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToDouble(field.Value));
+        Required(field, XmlConvert.ToDouble);
 
     public static explicit operator double?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToDouble(field.Value));
+        Optional(field, XmlConvert.ToDouble);
 
     public static explicit operator decimal(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToDecimal(field.Value));
+        Required(field, XmlConvert.ToDecimal);
 
     public static explicit operator decimal?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToDecimal(field.Value));
+        Optional(field, XmlConvert.ToDecimal);
 
     public static explicit operator DateTime(StringFieldWrapper field) =>
-        Required(field, value => DateTime.Parse(field.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
+        Required(field, static value => DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
 
     public static explicit operator DateTime?(StringFieldWrapper field) =>
-        Optional(field, value => DateTime.Parse(field.Value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
+        Optional(field, static value => DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
 
     public static explicit operator DateTimeOffset(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToDateTimeOffset(field.Value));
+        Required(field, XmlConvert.ToDateTimeOffset);
 
     public static explicit operator DateTimeOffset?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToDateTimeOffset(field.Value));
+        Optional(field, XmlConvert.ToDateTimeOffset);
 
     public static explicit operator TimeSpan(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToTimeSpan(field.Value));
+        Required(field, XmlConvert.ToTimeSpan);
 
     public static explicit operator TimeSpan?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToTimeSpan(field.Value));
+        Optional(field, XmlConvert.ToTimeSpan);
 
     public static explicit operator Guid(StringFieldWrapper field) =>
-        Required(field, value => XmlConvert.ToGuid(field.Value));
+        Required(field, XmlConvert.ToGuid);
 
     public static explicit operator Guid?(StringFieldWrapper field) =>
-        Optional(field, value => XmlConvert.ToGuid(field.Value));
+        Optional(field, XmlConvert.ToGuid);
 
     #endregion
 }

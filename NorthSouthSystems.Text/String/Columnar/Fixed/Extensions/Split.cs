@@ -149,7 +149,7 @@ public static partial class StringFixedExtensions
     {
         using var charEnumerator = rows.GetEnumerator();
 
-        string[] fields = null;
+        string[]? fields = null;
 
         do
         {

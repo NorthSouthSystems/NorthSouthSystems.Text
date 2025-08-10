@@ -61,7 +61,7 @@ public static partial class StringQuotedExtensions
         if (signals == null)
             throw new ArgumentNullException(nameof(signals));
 
-        string[] fields = null;
+        string[]? fields = null;
 
         foreach (string[] fieldsTemp in CreateSplitQuotedProcessor(signals).Process(row))
         {

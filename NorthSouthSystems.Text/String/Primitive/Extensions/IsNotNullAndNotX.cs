@@ -1,5 +1,7 @@
 ﻿namespace NorthSouthSystems.Text;
 
+using System.Diagnostics.CodeAnalysis;
+
 public static partial class StringExtensions
 {
     /// <summary>
@@ -22,12 +24,12 @@ public static partial class StringExtensions
     /// a<br/>
     /// bc<br/>
     /// </example>
-    public static bool IsNotNullAndNotEmpty(string value) => !string.IsNullOrEmpty(value);
+    public static bool IsNotNullAndNotEmpty([NotNullWhen(true)] string? value) => !string.IsNullOrEmpty(value);
 
     /// <summary>
     /// Despite its location in the StringExtensions class, this is not an extension method.
     /// Instead, it is a simple static method that is the inverse of string.IsNullOrWhiteSpace.
     /// </summary>
     /// <remarks><see cref="IsNotNullAndNotEmpty(string)"/></remarks>
-    public static bool IsNotNullAndNotWhiteSpace(string value) => !string.IsNullOrWhiteSpace(value);
+    public static bool IsNotNullAndNotWhiteSpace([NotNullWhen(true)] string? value) => !string.IsNullOrWhiteSpace(value);
 }

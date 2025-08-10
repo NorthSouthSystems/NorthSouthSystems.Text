@@ -19,7 +19,7 @@ jobs:
               dotnet-version: '9.0.x'
               dotnet-quality: 'ga'
               
-        - run: dotnet restore
+        - run: dotnet restore --locked-mode
   
         - shell: pwsh
           run: |

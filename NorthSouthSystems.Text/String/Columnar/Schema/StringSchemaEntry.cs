@@ -18,7 +18,7 @@ public sealed class StringSchemaEntry
     /// The names of all of the columns in the schema if available. Split results will be wrapped in StringRowWrappers which allow
     /// indexed and columnName based access to fields. (default = null)
     /// </param>
-    public StringSchemaEntry(string header, int[] columnWidths, char fillCharacter = ' ', string[] columnNames = null)
+    public StringSchemaEntry(string header, int[] columnWidths, char fillCharacter = ' ', string[]? columnNames = null)
     {
         if (string.IsNullOrEmpty(header))
             throw new ArgumentException("Must be non-null non-empty.", nameof(header));

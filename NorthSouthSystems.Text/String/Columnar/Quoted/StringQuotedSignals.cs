@@ -54,7 +54,7 @@ public sealed class StringQuotedSignals
 
     private static readonly IEnumerable<string> _newRowsTolerant = ["\n", "\r", "\r\n"];
 
-    internal StringQuotedSignals(string[] delimiters, string[] newRows, string quote, string escape)
+    internal StringQuotedSignals(string[]? delimiters, string[]? newRows, string? quote, string? escape)
     {
         Delimiters = (delimiters ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
         Delimiter = Delimiters.Count > 0 ? Delimiters[0].NullToEmpty() : string.Empty;
