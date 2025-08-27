@@ -1,5 +1,11 @@
 <Project>
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="5.0.2" />
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="6.0.2" />
+
+    <ItemGroup>
+        <Using Include="System" />
+        <Using Include="System.Collections.Generic" />
+        <Using Include="System.Linq" />
+    </ItemGroup>
 
 </Project>
