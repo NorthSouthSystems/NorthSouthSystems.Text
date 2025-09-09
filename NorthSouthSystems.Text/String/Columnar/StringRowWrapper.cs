@@ -1,5 +1,6 @@
 ﻿namespace NorthSouthSystems.Text;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 /// <summary>
@@ -45,10 +46,12 @@ public readonly struct StringRowWrapper : IEquatable<StringRowWrapper>
     // operator ==(StringRowWrapper, string) to detect and prevent the comparison to null.
 
     [Obsolete("Comparing a struct to null always returns false.", true)]
+    [ExcludeFromCodeCoverage]
     public static bool operator ==(StringRowWrapper left, string right) =>
         left.Equals(right);
 
     [Obsolete("Comparing a struct to null always returns false.", true)]
+    [ExcludeFromCodeCoverage]
     public static bool operator !=(StringRowWrapper left, string right) =>
         !left.Equals(right);
 
