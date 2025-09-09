@@ -40,8 +40,7 @@ jobs:
                   /v:$version `
                   /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
                   /d:sonar.dotnet.excludeTestProjects=true `
-                  /d:sonar.host.url="https://sonarcloud.io" `
-                  /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+                  /d:sonar.host.url="https://sonarcloud.io"
 
               dotnet build --no-restore --configuration Release
 
@@ -49,4 +48,4 @@ jobs:
                   "dotnet test --no-build --configuration Release --verbosity normal" `
                   -f xml -o "coverage.xml"
 
-              dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+              dotnet-sonarscanner end

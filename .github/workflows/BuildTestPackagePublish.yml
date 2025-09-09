@@ -32,7 +32,9 @@ jobs:
   
         - run: dotnet pack --no-build --configuration Release NorthSouthSystems.Text/NorthSouthSystems.Text.csproj
   
-        - run: dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_APIKEY}} "NorthSouthSystems.Text/bin/Release/*.nupkg"
+        - env:
+              NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
+          run: dotnet nuget push --source https://api.nuget.org/v3/index.json --api-key "$NUGET_APIKEY" "NorthSouthSystems.Text/bin/Release/*.nupkg"
   
         - uses: actions/github-script@v7
           with:
