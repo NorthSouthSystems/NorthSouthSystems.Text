@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_Coalesce
+﻿public class T_StringExtensions_Coalesce
 {
     [Fact]
     public void EmptyToNull()

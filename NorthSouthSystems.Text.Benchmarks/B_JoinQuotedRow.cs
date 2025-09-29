@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Text;
-
-[MemoryDiagnoser]
-public class JoinQuotedRowBenchmarks
+﻿[MemoryDiagnoser]
+public class B_JoinQuotedRow
 {
     [GlobalSetup]
     public void GlobalSetup() =>
-        _rowsFields = RealEstateSalesCsvs.LinuxNewLines
+        _rowsFields = B_RealEstateSalesCsvs.LinuxNewLines
             .SplitQuotedRows(StringQuotedSignals.CsvNewRowLinux)
             .ToArray();
 

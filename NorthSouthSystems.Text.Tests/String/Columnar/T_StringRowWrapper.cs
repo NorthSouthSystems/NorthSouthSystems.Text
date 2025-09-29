@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringRowWrapperTests
+﻿public class T_StringRowWrapper
 {
     [Fact]
     public void Equality()

@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_WhereIsInAnyCategory
+﻿public class T_StringExtensions_WhereIsInAnyCategory
 {
     [Theory]
     [InlineData("a1b2c3d", CharCategories.Digit | CharCategories.Letter, "a1b2c3d")]

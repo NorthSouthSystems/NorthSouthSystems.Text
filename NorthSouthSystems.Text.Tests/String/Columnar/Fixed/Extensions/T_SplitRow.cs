@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringFixedExtensionsTests_SplitRow
+﻿public class T_StringFixedExtensions_SplitRow
 {
     [Fact]
     public void Basic()

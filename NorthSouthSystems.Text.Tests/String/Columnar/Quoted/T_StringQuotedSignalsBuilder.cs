@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringQuotedSignalsBuilderTests
+﻿public class T_StringQuotedSignalsBuilder
 {
     [Fact]
     public void NewRowTolerant()

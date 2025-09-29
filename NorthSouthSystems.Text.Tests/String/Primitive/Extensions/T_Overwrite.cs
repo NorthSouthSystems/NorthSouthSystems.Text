@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_Overwrite
+﻿public class T_StringExtensions_Overwrite
 {
     [Fact]
     public void Basic()

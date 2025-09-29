@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringSignalTrackerTests
+﻿public class T_StringSignalTracker
 {
     [Fact]
     public void Empty()

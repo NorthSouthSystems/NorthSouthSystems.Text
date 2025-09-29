@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringSchemaTests
+﻿public class T_StringSchema
 {
     [Fact]
     public void Basic()

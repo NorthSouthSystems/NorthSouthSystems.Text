@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringFixedExtensionsTests_VerifyCoalesceAndFitFields
+﻿public class T_StringFixedExtensions_VerifyCoalesceAndFitFields
 {
     [Fact]
     public void Basic()

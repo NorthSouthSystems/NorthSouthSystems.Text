@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using MoreLinq;
 
-using MoreLinq;
-
-public class StringQuotedExtensionsTests_SplitRow
+public class T_StringQuotedExtensions_SplitRow
 {
     [Fact]
-    public void EmptyFields() => StringQuotedFixture.Signals.ForEach(signals =>
+    public void EmptyFields() => T_StringQuotedFixture.Signals.ForEach(signals =>
     {
         SplitAndAssert(string.Empty, 0);
 
@@ -63,17 +61,17 @@ public class StringQuotedExtensionsTests_SplitRow
         act = () => string.Empty.SplitQuotedRow(null);
         act.Should().ThrowExactly<ArgumentNullException>();
 
-        act = () => StringQuotedFixture.Replace("a,b,c{n}d", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
+        act = () => T_StringQuotedFixture.Replace("a,b,c{n}d", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
             .First()
             .SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
-        act = () => StringQuotedFixture.Replace("a,b,c{n}d,e,f", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
+        act = () => T_StringQuotedFixture.Replace("a,b,c{n}d,e,f", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
             .First()
             .SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");
 
-        act = () => StringQuotedFixture.Replace("a,b,c{n}d,e,f{n}g,h,i", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
+        act = () => T_StringQuotedFixture.Replace("a,b,c{n}d,e,f{n}g,h,i", StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180)
             .First()
             .SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
         act.Should().ThrowExactly<ArgumentException>("NewLineInArgument");

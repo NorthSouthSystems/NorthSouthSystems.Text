@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringSchemaEntryTests
+﻿public class T_StringSchemaEntry
 {
     [Fact]
     public void Construction()

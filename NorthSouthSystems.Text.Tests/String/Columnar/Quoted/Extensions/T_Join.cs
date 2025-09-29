@@ -1,12 +1,10 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using MoreLinq;
 
-using MoreLinq;
-
-public class StringQuotedExtensionsTests_Join
+public class T_StringQuotedExtensions_Join
 {
     [Fact]
     public void Quoting() =>
-        StringQuotedFixture.Signals.Where(signals => signals.QuoteIsSpecified).ForEach(signals =>
+        T_StringQuotedFixture.Signals.Where(signals => signals.QuoteIsSpecified).ForEach(signals =>
     {
         JoinAndAssert(["a", "b", "c"], signals, false, "a{d}b{d}c");
         JoinAndAssert([null, "b", "c"], signals, false, "{d}b{d}c");
@@ -30,7 +28,7 @@ public class StringQuotedExtensionsTests_Join
 
     [Fact]
     public void Escaping() =>
-        StringQuotedFixture.Signals.Where(signals => signals.EscapeIsSpecified && !signals.QuoteIsSpecified).ForEach(signals =>
+        T_StringQuotedFixture.Signals.Where(signals => signals.EscapeIsSpecified && !signals.QuoteIsSpecified).ForEach(signals =>
     {
         foreach (string delimiter in signals.Delimiters)
             JoinAndAssert(["a" + delimiter, "b", "c"], signals, false, "a{e}{do}{d}b{d}c", expectedDelimiterOverride: delimiter);
@@ -61,7 +59,7 @@ public class StringQuotedExtensionsTests_Join
         }
 
         string Expected(string format) =>
-            StringQuotedFixture.Replace(format, signals)
+            T_StringQuotedFixture.Replace(format, signals)
                 .First()
                 .Replace("{do}", expectedDelimiterOverride ?? signals.Delimiter)
                 .Replace("{no}", expectedNewRowOverride ?? signals.NewRow);

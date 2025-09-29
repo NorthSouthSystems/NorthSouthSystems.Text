@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_VisualBasic
+﻿public class T_StringExtensions_VisualBasic
 {
     [Theory]
     [InlineData("", 0)]

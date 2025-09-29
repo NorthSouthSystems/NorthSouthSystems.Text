@@ -1,10 +1,8 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.IO;
 
-using System.IO;
-
-internal static class RealEstateSalesCsvs
+internal static class B_RealEstateSalesCsvs
 {
-    static RealEstateSalesCsvs()
+    static B_RealEstateSalesCsvs()
     {
         string filepath = Path.Combine(Program.CatalogDataGovDirectory, "Real_Estate_Sales_2001-2020_GL.csv");
 

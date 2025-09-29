@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_CamelCase
+﻿public class T_StringExtensions_CamelCase
 {
     [Theory]
     [InlineData("DanTerry", "danTerry")]

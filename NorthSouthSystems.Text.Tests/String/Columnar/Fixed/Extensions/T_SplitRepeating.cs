@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringFixedExtensionsTests_SplitRepeating
+﻿public class T_StringFixedExtensions_SplitRepeating
 {
     [Fact]
     public void Basic()

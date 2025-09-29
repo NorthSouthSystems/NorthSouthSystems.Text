@@ -1,11 +1,9 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using MoreLinq;
 
-using MoreLinq;
-
-public class StringQuotedExtensionsTests_SplitRows
+public class T_StringQuotedExtensions_SplitRows
 {
     [Fact]
-    public void EmptyRows() => StringQuotedFixture.Signals.ForEach(signals =>
+    public void EmptyRows() => T_StringQuotedFixture.Signals.ForEach(signals =>
     {
         SplitAndAssert(string.Empty, 0);
 

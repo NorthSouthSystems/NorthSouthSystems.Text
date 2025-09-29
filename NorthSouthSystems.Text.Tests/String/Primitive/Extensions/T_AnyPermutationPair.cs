@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_AnyPermutationPair
+﻿public class T_StringExtensions_AnyPermutationPair
 {
     [Theory]
     [InlineData(false, "")]

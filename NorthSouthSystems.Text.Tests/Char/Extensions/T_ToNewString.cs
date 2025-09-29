@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class CharExtensionsTests_ToNewString
+﻿public class T_CharExtensions_ToNewString
 {
     [Fact]
     public void Basic()

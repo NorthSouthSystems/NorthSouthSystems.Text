@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_NormalizeWhiteSpace
+﻿public class T_StringExtensions_NormalizeWhiteSpace
 {
     [Theory]
     [InlineData("")]

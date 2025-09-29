@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class CharExtensionsTests_Ascii
+﻿public class T_CharExtensions_Ascii
 {
     [Theory]
     [InlineData('a')]

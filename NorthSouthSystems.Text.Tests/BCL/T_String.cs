@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringTests
+﻿public class T_String
 {
     /// <summary>
     /// This test method demonstrates that String.Join allows one of the joined values to be null; therefore, our

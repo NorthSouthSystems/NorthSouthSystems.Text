@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class CharExtensionsTests_Categories
+﻿public class T_CharExtensions_Categories
 {
     [Theory]
     [InlineData('a')]

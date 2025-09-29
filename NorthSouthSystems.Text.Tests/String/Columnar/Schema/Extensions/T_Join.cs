@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringSchemaExtensionsTests_Join
+﻿public class T_StringSchemaExtensions_Join
 {
     [Fact]
     public void Basic()

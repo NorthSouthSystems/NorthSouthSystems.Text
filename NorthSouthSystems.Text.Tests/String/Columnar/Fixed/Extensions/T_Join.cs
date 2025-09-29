@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringFixedExtensionsTests_Join
+﻿public class T_StringFixedExtensions_Join
 {
     [Fact]
     public void Basic()

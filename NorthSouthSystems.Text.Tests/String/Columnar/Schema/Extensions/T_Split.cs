@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringSchemaExtensionsTests_Split
+﻿public class T_StringSchemaExtensions_Split
 {
     [Fact]
     public void Basic()

@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringFixedExtensionsTests_VerifyColumnWidths
+﻿public class T_StringFixedExtensions_VerifyColumnWidths
 {
     [Fact]
     public void Basic()

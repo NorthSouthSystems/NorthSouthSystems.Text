@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringExtensionsTests_IsNotNullAndNotX
+﻿public class T_StringExtensions_IsNotNullAndNotX
 {
     [Fact]
     public void IsNotNullAndNotEmpty()

@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class TakeColumnHeadersExtensionsTests
+﻿public class T_TakeColumnHeadersExtensions
 {
     [Fact]
     public void Basic()

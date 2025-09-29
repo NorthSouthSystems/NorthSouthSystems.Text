@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-internal static class StringQuotedFixture
+﻿internal static class T_StringQuotedFixture
 {
     internal static IEnumerable<string> Replace(string format, StringQuotedSignals signals)
     {
@@ -48,7 +46,7 @@ internal static class StringQuotedFixture
     ];
 }
 
-internal class SplitQuotedRawParsedFieldPair
+internal class T_SplitQuotedRawParsedFieldPair
 {
     internal static IEnumerable<(string Raw, string Parsed)> Fuzzing(StringQuotedSignals signals)
     {
@@ -61,19 +59,19 @@ internal class SplitQuotedRawParsedFieldPair
             .Where(p => p.IsRelevant(signals))
             .Where(p => p._rawFormat != "{e}"))
         {
-            string delimiter = StringQuotedFixture.Random(signals.Delimiters);
-            string newRow = StringQuotedFixture.Random(signals.NewRows);
+            string delimiter = T_StringQuotedFixture.Random(signals.Delimiters);
+            string newRow = T_StringQuotedFixture.Random(signals.NewRows);
 
             if (newRow == "\r\n" && pair._rawFormat.Contains("{e}{n}") && signals.NewRows.Contains("\n"))
                 continue;
 
             yield return (
-                StringQuotedFixture.Replace(pair._rawFormat, delimiter, newRow, signals.Quote, signals.Escape),
-                StringQuotedFixture.Replace(pair._parsedFormat, delimiter, newRow, signals.Quote, signals.Escape));
+                T_StringQuotedFixture.Replace(pair._rawFormat, delimiter, newRow, signals.Quote, signals.Escape),
+                T_StringQuotedFixture.Replace(pair._parsedFormat, delimiter, newRow, signals.Quote, signals.Escape));
         }
     }
 
-    private static readonly IReadOnlyList<SplitQuotedRawParsedFieldPair> _pairs =
+    private static readonly IReadOnlyList<T_SplitQuotedRawParsedFieldPair> _pairs =
     [
         // Simple
 
@@ -162,7 +160,7 @@ internal class SplitQuotedRawParsedFieldPair
         new("{q}{e}{q}a{d}{e}{q}{n}{q}", "{q}a{d}{q}{n}"),
     ];
 
-    private SplitQuotedRawParsedFieldPair(string rawFormat, string parsedFormat)
+    private T_SplitQuotedRawParsedFieldPair(string rawFormat, string parsedFormat)
     {
         _rawFormat = rawFormat;
         _parsedFormat = parsedFormat;

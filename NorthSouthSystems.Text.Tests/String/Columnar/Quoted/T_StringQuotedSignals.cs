@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringQuotedSignalsTests
+﻿public class T_StringQuotedSignals
 {
     [Fact]
     public void Basic()

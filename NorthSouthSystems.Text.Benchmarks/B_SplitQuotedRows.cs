@@ -1,16 +1,14 @@
-﻿namespace NorthSouthSystems.Text;
-
-using BenchmarkDotNet.Engines;
+﻿using BenchmarkDotNet.Engines;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
 using System.IO;
 
 [MemoryDiagnoser]
-public class SplitQuotedRowsBenchmarks
+public class B_SplitQuotedRows
 {
     [GlobalSetup]
-    public void GlobalSetup() { bool _ = RealEstateSalesCsvs.IsInitialized; }
+    public void GlobalSetup() { bool _ = B_RealEstateSalesCsvs.IsInitialized; }
 
     private readonly Consumer _consumer = new();
 
@@ -31,8 +29,8 @@ public class SplitQuotedRowsBenchmarks
 
     private string GetCsv() => NewRow switch
     {
-        NewRowType.Linux => ForcedQuotes ? RealEstateSalesCsvs.LinuxNewLinesForcedQuotes : RealEstateSalesCsvs.LinuxNewLines,
-        NewRowType.Windows => ForcedQuotes ? RealEstateSalesCsvs.WindowsNewLinesForcedQuotes : RealEstateSalesCsvs.WindowsNewLines,
+        NewRowType.Linux => ForcedQuotes ? B_RealEstateSalesCsvs.LinuxNewLinesForcedQuotes : B_RealEstateSalesCsvs.LinuxNewLines,
+        NewRowType.Windows => ForcedQuotes ? B_RealEstateSalesCsvs.WindowsNewLinesForcedQuotes : B_RealEstateSalesCsvs.WindowsNewLines,
 
         _ => throw new NotImplementedException(NewRow.ToString())
     };

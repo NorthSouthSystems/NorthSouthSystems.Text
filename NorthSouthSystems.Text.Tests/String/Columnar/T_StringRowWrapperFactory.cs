@@ -1,6 +1,4 @@
-﻿namespace NorthSouthSystems.Text;
-
-public class StringRowWrapperFactoryTests
+﻿public class T_StringRowWrapperFactory
 {
     [Fact]
     public void Exceptions()
