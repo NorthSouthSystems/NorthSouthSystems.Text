@@ -5,9 +5,9 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text", "NorthSouthSystems.Text\NorthSouthSystems.Text.csproj", "{33E427CF-A022-4053-BD21-D195F0E49FBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Test", "NorthSouthSystems.Text.Test\NorthSouthSystems.Text.Test.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Tests", "NorthSouthSystems.Text.Tests\NorthSouthSystems.Text.Tests.csproj", "{8FB74CD1-DA28-4B65-96CA-799F66F8BF02}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Benchmark", "NorthSouthSystems.Text.Benchmark\NorthSouthSystems.Text.Benchmark.csproj", "{4877B00D-91A0-4195-95B0-B1564399DA01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NorthSouthSystems.Text.Benchmarks", "NorthSouthSystems.Text.Benchmarks\NorthSouthSystems.Text.Benchmarks.csproj", "{4877B00D-91A0-4195-95B0-B1564399DA01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8C897E58-6DF8-4261-863C-3D4AAB5CAD3A}"
 	ProjectSection(SolutionItems) = preProject
