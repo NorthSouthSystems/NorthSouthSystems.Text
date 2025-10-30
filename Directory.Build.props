@@ -1,6 +1,6 @@
 <Project>
 
-    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="7.2.4" />
+    <Sdk Name="NorthSouthSystems.NET.Sdk" Version="7.5.6" />
 
     <ItemGroup>
         <Using Include="System" />
