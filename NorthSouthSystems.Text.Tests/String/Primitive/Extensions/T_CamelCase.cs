@@ -44,6 +44,46 @@
         shouldBe.SpaceCamelCase().Should().Be(shouldBe);
     }
 
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("DanTerry", "Dan-Terry")]
+    [InlineData("DanTerry DanTerry", "Dan-Terry Dan-Terry")]
+    [InlineData("DanTerryDan DanTerryDan", "Dan-Terry-Dan Dan-Terry-Dan")]
+    [InlineData("1A", "1-A")]
+    [InlineData("123A", "123-A")]
+    [InlineData("123a", "123-a")]
+    [InlineData("A1", "A-1")]
+    [InlineData("A123", "A-123")]
+    [InlineData("a123", "a-123")]
+    [InlineData("A1A", "A-1-A")]
+    [InlineData("A123A", "A-123-A")]
+    [InlineData("a123a", "a-123-a")]
+    public void Dash(string value, string shouldBe)
+    {
+        value.DelimitCamelCase("-").Should().Be(shouldBe);
+        shouldBe.DelimitCamelCase("-").Should().Be(shouldBe);
+    }
+
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("DanTerry", "Dan<>Terry")]
+    [InlineData("DanTerry DanTerry", "Dan<>Terry Dan<>Terry")]
+    [InlineData("DanTerryDan DanTerryDan", "Dan<>Terry<>Dan Dan<>Terry<>Dan")]
+    [InlineData("1A", "1<>A")]
+    [InlineData("123A", "123<>A")]
+    [InlineData("123a", "123<>a")]
+    [InlineData("A1", "A<>1")]
+    [InlineData("A123", "A<>123")]
+    [InlineData("a123", "a<>123")]
+    [InlineData("A1A", "A<>1<>A")]
+    [InlineData("A123A", "A<>123<>A")]
+    [InlineData("a123a", "a<>123<>a")]
+    public void Angles(string value, string shouldBe)
+    {
+        value.DelimitCamelCase("<>").Should().Be(shouldBe);
+        shouldBe.DelimitCamelCase("<>").Should().Be(shouldBe);
+    }
+
     [Fact]
     public void Exceptions()
     {

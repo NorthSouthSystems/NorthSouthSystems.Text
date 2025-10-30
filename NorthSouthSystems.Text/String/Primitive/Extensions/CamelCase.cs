@@ -99,10 +99,43 @@ public static partial class StringExtensions
         if (chars == null)
             throw new ArgumentNullException(nameof(chars));
 
-        return SpaceCamelCaseIterator(chars);
+        return DelimitCamelCaseIterator(chars, " ");
     }
 
-    private static IEnumerable<char> SpaceCamelCaseIterator(IEnumerable<char> chars)
+    /// <inheritdoc cref="DelimitCamelCase(IEnumerable{char}, string)"/>
+    public static string DelimitCamelCase(this string value, string delimiter) => DelimitCamelCase((IEnumerable<char>)value, delimiter).ToNewString();
+
+    /// <summary>
+    /// Process a sequence of characters and returns the same sequence of characters but with delimiter inserted
+    /// whenever camel casing indicates the start of a new word.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// Console.WriteLine("FooBarFoo FooBarFoo".DelimitCamelCase("-"));
+    /// Console.WriteLine("123A".DelimitCamelCase("-"));
+    /// Console.WriteLine("123a".DelimitCamelCase("-"));
+    /// Console.WriteLine("A123".DelimitCamelCase("-"));
+    /// Console.WriteLine("A123A".DelimitCamelCase("-"));
+    /// </code>
+    /// Console Output:<br/>
+    /// Foo-Bar-Foo Foo-Bar-Foo<br/>
+    /// 123-A<br/>
+    /// 123-a<br/>
+    /// A-123<br/>
+    /// A-123-A<br/>
+    /// </example>
+    public static IEnumerable<char> DelimitCamelCase(this IEnumerable<char> chars, string delimiter)
+    {
+        if (chars == null)
+            throw new ArgumentNullException(nameof(chars));
+
+        if (delimiter == null)
+            throw new ArgumentNullException(nameof(delimiter));
+
+        return DelimitCamelCaseIterator(chars, delimiter);
+    }
+
+    private static IEnumerable<char> DelimitCamelCaseIterator(IEnumerable<char> chars, string delimiter)
     {
         bool first = true;
 
@@ -129,7 +162,8 @@ public static partial class StringExtensions
                     || (isDigit && previousIsLetter)
                     || (isUpper && previousIsLower))
                 {
-                    yield return ' ';
+                    foreach (char d in delimiter)
+                        yield return d;
                 }
 
                 yield return c;
