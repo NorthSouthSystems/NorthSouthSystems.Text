@@ -1,10 +1,12 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace NorthSouthSystems.Text;
 
 using System.Globalization;
 
 public static partial class StringFixedExtensions
 {
-    internal static void VerifyColumnWidths(int[] columnWidths)
+    internal static void VerifyColumnWidths([NotNull] int[] columnWidths)
     {
         ArgumentNullException.ThrowIfNull(columnWidths);
 
@@ -15,7 +17,7 @@ public static partial class StringFixedExtensions
             throw new ArgumentOutOfRangeException(nameof(columnWidths), "Each column width must be > 0");
     }
 
-    internal static void VerifyCoalesceAndFitFields(string[] fields, int[] columnWidths, bool leftToFit)
+    internal static void VerifyCoalesceAndFitFields([NotNull] string[] fields, int[] columnWidths, bool leftToFit)
     {
         ArgumentNullException.ThrowIfNull(fields);
 
