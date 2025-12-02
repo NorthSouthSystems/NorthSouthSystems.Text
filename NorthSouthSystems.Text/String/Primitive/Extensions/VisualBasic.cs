@@ -11,9 +11,7 @@ public static partial class StringExtensions
     public static string Left(this string value, int length)
     {
         ArgumentNullException.ThrowIfNull(value);
-
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length));
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
 
         if (length == 0)
             return string.Empty;
@@ -31,9 +29,7 @@ public static partial class StringExtensions
     public static string Right(this string value, int length)
     {
         ArgumentNullException.ThrowIfNull(value);
-
-        if (length < 0)
-            throw new ArgumentOutOfRangeException(nameof(length));
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
 
         if (length == 0)
             return string.Empty;
