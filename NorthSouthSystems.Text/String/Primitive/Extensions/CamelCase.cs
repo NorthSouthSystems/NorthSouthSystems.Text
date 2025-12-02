@@ -1,4 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Globalization;
+
+namespace NorthSouthSystems.Text;
 
 public static partial class StringExtensions
 {
@@ -53,9 +55,9 @@ public static partial class StringExtensions
             if (!char.IsWhiteSpace(c))
             {
                 if (isLower && outputIndex == 0)
-                    yield return char.ToLower(c);
+                    yield return char.ToLower(c, CultureInfo.CurrentCulture);
                 else if (previousWhiteSpace)
-                    yield return char.ToUpper(c);
+                    yield return char.ToUpper(c, CultureInfo.CurrentCulture);
                 else
                     yield return c;
 

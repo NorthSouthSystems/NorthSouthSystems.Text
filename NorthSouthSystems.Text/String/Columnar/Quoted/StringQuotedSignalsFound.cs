@@ -6,8 +6,8 @@ internal readonly struct StringQuotedSignalsFound
     {
         DelimiterFound = signals.Delimiters.Any(field.Contains);
         NewRowFound = signals.NewRows.Any(field.Contains);
-        QuoteFound = signals.QuoteIsSpecified && field.Contains(signals.Quote);
-        EscapeFound = signals.EscapeIsSpecified && field.Contains(signals.Escape);
+        QuoteFound = signals.QuoteIsSpecified && field.Contains(signals.Quote, StringComparison.CurrentCulture);
+        EscapeFound = signals.EscapeIsSpecified && field.Contains(signals.Escape, StringComparison.CurrentCulture);
 
         RequiresQuotingOrEscaping = DelimiterFound || QuoteFound || NewRowFound;
     }

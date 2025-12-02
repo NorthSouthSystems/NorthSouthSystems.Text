@@ -72,8 +72,12 @@ public sealed class StringQuotedSignalsBuilder
         // We know that all strings are NotNull, NotEmpty (Length >= 1), and Distinct by the LINQ above. We also know that
         // AnyPermutationPair sorts from longest to shortest string. We leverage both facts here when we ensure that no signals
         // are impossible to trigger by being "hidden" by other "nested" signals.
-        if (StringExtensions.AnyPermutationPair(multi, (x, y) => x.Length > y.Length && x.Substring(0, x.Length - 1).Contains(y)))
+        if (StringExtensions.AnyPermutationPair(
+                multi,
+                (x, y) => x.Length > y.Length && x[..^1].Contains(y, StringComparison.CurrentCulture)))
+        {
             throw new ArgumentException($"{callerMemberName} may only EndsWith another {callerMemberName}. All other StartsWith or Contains are invalid.");
+        }
 
         return Helper(getter, setter, multi);
     }

@@ -13,7 +13,7 @@
 /// can result in unexpected behavior; however, there are several rules of thumb.
 /// <list type="bullet">
 /// <item>
-/// <description>When Splitting, Escape behaves identically both outside of and inside of Quotes.</description>   
+/// <description>When Splitting, Escape behaves identically both outside of and inside of Quotes.</description>
 /// </item>
 /// <item>
 /// <description>
@@ -130,7 +130,7 @@ internal sealed class StringQuotedSignalsEscaping
             string replaceOld = signal;
 
             foreach (var replacement in replacements)
-                replaceOld = replaceOld.Replace(replacement.ReplaceOld, replacement.ReplaceNew);
+                replaceOld = replaceOld.Replace(replacement.ReplaceOld, replacement.ReplaceNew, StringComparison.CurrentCulture);
 
             replacements.Add((replaceOld, escape + signal));
         }

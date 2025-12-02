@@ -35,8 +35,7 @@ public readonly struct StringFieldWrapper : IEquatable<StringFieldWrapper>
     public static bool operator !=(StringFieldWrapper left, StringFieldWrapper right) =>
         !left.Equals(right);
 
-    public override int GetHashCode() =>
-        (ColumnName?.GetHashCode() ?? 0) ^ (Value?.GetHashCode() ?? 0);
+    public override int GetHashCode() => HashCode.Combine(ColumnName, Value);
 
     // We protect from the "missing" compiler warning when comparing StringFieldWrapper to null. This
     // issue only occurs because operator ==(StringFieldWrapper, StringFieldWrapper) is overloaded which causes
@@ -81,11 +80,13 @@ public readonly struct StringFieldWrapper : IEquatable<StringFieldWrapper>
     public static explicit operator string?(StringFieldWrapper field) =>
         field.Value;
 
+#pragma warning disable CA1308 // XmlConvert.ToBoolean requires lowercase.
     public static explicit operator bool(StringFieldWrapper field) =>
         Required(field, static value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
 
     public static explicit operator bool?(StringFieldWrapper field) =>
         Optional(field, static value => XmlConvert.ToBoolean(value.ToLower(CultureInfo.InvariantCulture)));
+#pragma warning restore
 
     public static explicit operator int(StringFieldWrapper field) =>
         Required(field, XmlConvert.ToInt32);

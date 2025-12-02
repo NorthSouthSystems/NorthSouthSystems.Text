@@ -2,8 +2,8 @@
 
 public static partial class StringExtensions
 {
-    internal static bool AnyPermutationPairContains(IEnumerable<string> values) =>
-        AnyPermutationPair(values, (x, y) => x.Contains(y));
+    internal static bool AnyPermutationPairContains(IEnumerable<string> values, StringComparison comparison = default) =>
+        AnyPermutationPair(values, (x, y) => x.Contains(y, comparison));
 
     internal static bool AnyPermutationPairStartsWith(IEnumerable<string> values, StringComparison comparison = default) =>
         AnyPermutationPair(values, (x, y) => x.StartsWith(y, comparison));
