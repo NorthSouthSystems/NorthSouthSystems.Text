@@ -1,15 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-        <TargetFrameworks>net48;net9.0</TargetFrameworks>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' ">
-        <TargetFramework>net9.0</TargetFramework>
-    </PropertyGroup>
-
     <ItemGroup>
-        <PackageReference Include="Microsoft.VisualBasic" />
         <PackageReference Include="morelinq" />
     </ItemGroup>
 
