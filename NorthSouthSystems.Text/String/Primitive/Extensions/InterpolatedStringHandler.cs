@@ -4,7 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace NorthSouthSystems.Text;
 
-public static partial class StringExtensions
+// Since these extensions are visible directly from "string", we are not putting them into the StringExtensions
+// partial class where they can collide with other "extension(string)" blocks.
+public static class StringInterpolatedStringHandlerExtensions
 {
 #pragma warning disable CA1034 // False positive.
     extension(string)

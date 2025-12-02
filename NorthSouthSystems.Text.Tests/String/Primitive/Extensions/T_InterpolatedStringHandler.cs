@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-public class T_StringExtensions_InterpolatedStringHandler
+public class T_StringInterpolatedStringHandlerExtensions
 {
     [Fact]
     public void CurrentAndInvariant()

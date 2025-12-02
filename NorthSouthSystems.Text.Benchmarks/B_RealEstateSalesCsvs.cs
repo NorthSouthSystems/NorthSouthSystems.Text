@@ -24,7 +24,7 @@ internal static class B_RealEstateSalesCsvs
 
     internal static bool IsInitialized =>
         new[] { LinuxNewLines, LinuxNewLinesForcedQuotes, WindowsNewLines, WindowsNewLinesForcedQuotes }
-            .All(StringExtensions.IsNotNullAndNotEmpty);
+            .All(string.IsNotNullAndNotEmpty);
 
     internal static string LinuxNewLines { get; }
     internal static string LinuxNewLinesForcedQuotes { get; }

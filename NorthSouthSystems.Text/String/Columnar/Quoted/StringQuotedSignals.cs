@@ -56,13 +56,13 @@ public sealed class StringQuotedSignals
 
     internal StringQuotedSignals(string[]? delimiters, string[]? newRows, string? quote, string? escape)
     {
-        Delimiters = (delimiters ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
+        Delimiters = (delimiters ?? []).Where(string.IsNotNullAndNotEmpty).ToArray();
         Delimiter = Delimiters.Count > 0 ? Delimiters[0].NullToEmpty() : string.Empty;
 
         if (!DelimiterIsSpecified)
             throw new ArgumentException("Delimiter must be non-null and non-empty.");
 
-        NewRows = (newRows ?? []).Where(StringExtensions.IsNotNullAndNotEmpty).ToArray();
+        NewRows = (newRows ?? []).Where(string.IsNotNullAndNotEmpty).ToArray();
         NewRow = NewRows.Count > 0 ? NewRows[0].NullToEmpty() : string.Empty;
 
         Quote = quote.NullToEmpty();
@@ -90,13 +90,15 @@ public sealed class StringQuotedSignals
     public string Escape { get; }
 
     internal bool IsSimple =>
-        (Delimiters.Count == 1 && Delimiter.Length == 1)
+        Delimiters.Count == 1
+        && Delimiter.Length == 1
         && (!NewRowIsSpecified || (NewRows.Count == 1 && NewRow.Length == 1))
         && (!QuoteIsSpecified || Quote.Length == 1)
         && (!EscapeIsSpecified || Escape.Length == 1);
 
     internal bool IsNewRowTolerantSimple =>
-        (Delimiters.Count == 1 && Delimiter.Length == 1)
+        Delimiters.Count == 1
+        && Delimiter.Length == 1
         && IsNewRowTolerant
         && (!QuoteIsSpecified || Quote.Length == 1)
         && (!EscapeIsSpecified || Escape.Length == 1);

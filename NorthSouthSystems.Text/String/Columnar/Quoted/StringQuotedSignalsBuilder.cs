@@ -67,7 +67,7 @@ public sealed class StringQuotedSignalsBuilder
     private StringQuotedSignalsBuilder MultiHelper(Func<string[]?> getter, Action<string[]?> setter,
         string primary, string[] alternates, [CallerMemberName] string? callerMemberName = null)
     {
-        var multi = alternates.Prepend(primary).Where(StringExtensions.IsNotNullAndNotEmpty).Distinct().ToArray();
+        string[] multi = alternates.Prepend(primary).Where(string.IsNotNullAndNotEmpty).Distinct().ToArray();
 
         // We know that all strings are NotNull, NotEmpty (Length >= 1), and Distinct by the LINQ above. We also know that
         // AnyPermutationPair sorts from longest to shortest string. We leverage both facts here when we ensure that no signals
@@ -99,15 +99,15 @@ public sealed class StringQuotedSignalsBuilder
 
     private bool AnySignalContainsAnyOther()
     {
-        foreach (var delimiter in (_delimiters ?? []).DefaultIfEmpty())
-            foreach (var newRow in (_newRows ?? []).DefaultIfEmpty())
+        foreach (string? delimiter in (_delimiters ?? []).DefaultIfEmpty())
+            foreach (string? newRow in (_newRows ?? []).DefaultIfEmpty())
                 if (AnyPermutationPairContains(delimiter, newRow, _quote, _escape))
                     return true;
 
         return false;
 
         static bool AnyPermutationPairContains(params string?[] signals) =>
-            StringExtensions.AnyPermutationPairContains(signals.Where(StringExtensions.IsNotNullAndNotEmpty).Select(s => s!));
+            StringExtensions.AnyPermutationPairContains(signals.Where(string.IsNotNullAndNotEmpty).Select(s => s!));
     }
 
     public StringQuotedSignals ToSignals()
