@@ -1,6 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Text;
 
-using System.Text;
+namespace NorthSouthSystems.Text;
 
 /// <summary>
 /// Extension methods for Splitting and Joining rows (sequences of chars), arranged in fixed-width columns.

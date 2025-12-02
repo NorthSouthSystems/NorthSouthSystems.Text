@@ -1,7 +1,7 @@
-﻿namespace NorthSouthSystems.Text;
-
-using System.Globalization;
+﻿using System.Globalization;
 using System.Threading;
+
+namespace NorthSouthSystems.Text;
 
 /// <summary>
 /// StringRowWrapperFactory is the only path for creating StringRowWrappers. Given columnNames, it can then be used

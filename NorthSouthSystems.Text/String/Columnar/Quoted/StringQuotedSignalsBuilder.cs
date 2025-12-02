@@ -1,6 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Runtime.CompilerServices;
 
-using System.Runtime.CompilerServices;
+namespace NorthSouthSystems.Text;
 
 public sealed class StringQuotedSignalsBuilder
 {

@@ -1,7 +1,7 @@
-﻿namespace NorthSouthSystems.Text;
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+
+namespace NorthSouthSystems.Text;
 
 /// <summary>
 /// Wraps the fields in a row and then allows for index or column name based access to them.

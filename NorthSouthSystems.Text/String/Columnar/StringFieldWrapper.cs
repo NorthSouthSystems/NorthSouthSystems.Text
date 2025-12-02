@@ -1,8 +1,8 @@
-﻿namespace NorthSouthSystems.Text;
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
+
+namespace NorthSouthSystems.Text;
 
 /// <summary>
 /// Wraps an individual field of a string row and allows for XElement style explicit type conversion

@@ -1,6 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using BenchmarkDotNet.Running;
 
-using BenchmarkDotNet.Running;
+namespace NorthSouthSystems.Text;
 
 internal class Program
 {

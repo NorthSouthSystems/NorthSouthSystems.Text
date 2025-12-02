@@ -1,6 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Text;
 
-using System.Text;
+namespace NorthSouthSystems.Text;
 
 public static partial class StringQuotedExtensions
 {

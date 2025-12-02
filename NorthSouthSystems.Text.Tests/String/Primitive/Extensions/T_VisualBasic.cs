@@ -1,4 +1,6 @@
-﻿public class T_StringExtensions_VisualBasic
+﻿using VBStrings = Microsoft.VisualBasic.Strings;
+
+public class T_StringExtensions_VisualBasic
 {
     [Theory]
     [InlineData("", 0)]
@@ -15,7 +17,7 @@
     [InlineData("abc", 3)]
     [InlineData("abc", 4)]
     public void Left(string value, int length) =>
-        StringExtensions.Left(value, length).Should().Be(Microsoft.VisualBasic.Strings.Left(value, length));
+        StringExtensions.Left(value, length).Should().Be(VBStrings.Left(value, length));
 
     [Theory]
     [InlineData("", 0)]
@@ -32,7 +34,7 @@
     [InlineData("abc", 3)]
     [InlineData("abc", 4)]
     public void Right(string value, int length) =>
-        StringExtensions.Right(value, length).Should().Be(Microsoft.VisualBasic.Strings.Right(value, length));
+        StringExtensions.Right(value, length).Should().Be(VBStrings.Right(value, length));
 
     [Fact]
     public void Exceptions()

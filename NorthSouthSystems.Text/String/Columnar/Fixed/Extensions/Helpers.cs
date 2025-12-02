@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace NorthSouthSystems.Text;
-
-using System.Globalization;
 
 public static partial class StringFixedExtensions
 {

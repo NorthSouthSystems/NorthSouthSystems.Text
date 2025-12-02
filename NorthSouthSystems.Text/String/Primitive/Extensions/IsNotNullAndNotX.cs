@@ -1,6 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
-using System.Diagnostics.CodeAnalysis;
+namespace NorthSouthSystems.Text;
 
 public static partial class StringExtensions
 {

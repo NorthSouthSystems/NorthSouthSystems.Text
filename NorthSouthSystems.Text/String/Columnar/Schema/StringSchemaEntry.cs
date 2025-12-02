@@ -1,6 +1,6 @@
-﻿namespace NorthSouthSystems.Text;
+﻿using System.Globalization;
 
-using System.Globalization;
+namespace NorthSouthSystems.Text;
 
 /// <summary>
 /// StringSchemaEntry is a class to hold the immutable data for a single Entry in a StringSchema.
