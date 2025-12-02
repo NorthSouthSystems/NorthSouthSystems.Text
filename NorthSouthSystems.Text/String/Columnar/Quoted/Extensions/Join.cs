@@ -8,11 +8,8 @@ public static partial class StringQuotedExtensions
 {
     public static string JoinQuotedRows(this IEnumerable<IEnumerable<string>> rowsOfFields, StringQuotedSignals signals, bool forceQuotes = false)
     {
-        if (rowsOfFields == null)
-            throw new ArgumentNullException(nameof(rowsOfFields));
-
-        if (signals == null)
-            throw new ArgumentNullException(nameof(signals));
+        ArgumentNullException.ThrowIfNull(rowsOfFields);
+        ArgumentNullException.ThrowIfNull(signals);
 
         if (!signals.NewRowIsSpecified)
             throw new ArgumentException("signals.NewRow must not be null or empty.");
@@ -65,8 +62,7 @@ public static partial class StringQuotedExtensions
     /// </example>
     public static string JoinQuotedRow(this IEnumerable<string> fields, StringQuotedSignals signals, bool forceQuotes = false)
     {
-        if (signals == null)
-            throw new ArgumentNullException(nameof(signals));
+        ArgumentNullException.ThrowIfNull(signals);
 
         if (forceQuotes && !signals.QuoteIsSpecified)
             throw new ArgumentException("Quote'ing forced; therefore, signals.Quote must not be null or empty.");
@@ -76,8 +72,7 @@ public static partial class StringQuotedExtensions
 
     private static string JoinQuotedRowImpl(IEnumerable<string> fields, StringQuotedSignals signals, bool forceQuotes)
     {
-        if (fields == null)
-            throw new ArgumentNullException(nameof(fields));
+        ArgumentNullException.ThrowIfNull(fields);
 
         return string.Join(signals.Delimiter, fields.Select(field => QuoteAndEscapeField(field ?? string.Empty, signals, forceQuotes)));
     }

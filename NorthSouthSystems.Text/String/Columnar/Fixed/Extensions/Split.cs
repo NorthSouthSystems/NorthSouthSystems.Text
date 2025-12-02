@@ -69,8 +69,7 @@ public static partial class StringFixedExtensions
     /// </example>
     public static string[] SplitFixedRow(this IEnumerable<char> row, int[] columnWidths, char fillCharacter = ' ')
     {
-        if (row == null)
-            throw new ArgumentNullException(nameof(row));
+        ArgumentNullException.ThrowIfNull(row);
 
         VerifyColumnWidths(columnWidths);
 
@@ -137,8 +136,7 @@ public static partial class StringFixedExtensions
     /// </example>
     public static IEnumerable<string[]> SplitFixedRepeating(this IEnumerable<char> rows, int[] columnWidths, char fillCharacter = ' ')
     {
-        if (rows == null)
-            throw new ArgumentNullException(nameof(rows));
+        ArgumentNullException.ThrowIfNull(rows);
 
         VerifyColumnWidths(columnWidths);
 

@@ -19,8 +19,7 @@ public sealed class StringSchema
     /// </summary>
     public void AddEntry(StringSchemaEntry entry)
     {
-        if (entry == null)
-            throw new ArgumentNullException(nameof(entry));
+        ArgumentNullException.ThrowIfNull(entry);
 
         if (_entries.Values.Any(existingEntry => existingEntry.HeaderOverlaps(entry)))
             throw new ArgumentOutOfRangeException(nameof(entry), entry.Header, "No entry.Header may StartWith any other existing entry.Header.");

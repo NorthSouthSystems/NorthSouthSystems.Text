@@ -38,8 +38,7 @@ public static partial class StringExtensions
 
     private static IEnumerable<char> ToCamelCase(IEnumerable<char> chars, bool isLower)
     {
-        if (chars == null)
-            throw new ArgumentNullException(nameof(chars));
+        ArgumentNullException.ThrowIfNull(chars);
 
         return ToCamelCaseIterator(chars, isLower);
     }
@@ -96,8 +95,7 @@ public static partial class StringExtensions
     /// </example>
     public static IEnumerable<char> SpaceCamelCase(this IEnumerable<char> chars)
     {
-        if (chars == null)
-            throw new ArgumentNullException(nameof(chars));
+        ArgumentNullException.ThrowIfNull(chars);
 
         return DelimitCamelCaseIterator(chars, " ");
     }
@@ -126,11 +124,8 @@ public static partial class StringExtensions
     /// </example>
     public static IEnumerable<char> DelimitCamelCase(this IEnumerable<char> chars, string delimiter)
     {
-        if (chars == null)
-            throw new ArgumentNullException(nameof(chars));
-
-        if (delimiter == null)
-            throw new ArgumentNullException(nameof(delimiter));
+        ArgumentNullException.ThrowIfNull(chars);
+        ArgumentNullException.ThrowIfNull(delimiter);
 
         return DelimitCamelCaseIterator(chars, delimiter);
     }

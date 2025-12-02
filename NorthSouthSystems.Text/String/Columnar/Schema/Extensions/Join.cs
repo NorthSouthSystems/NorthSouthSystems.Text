@@ -37,8 +37,8 @@ public static partial class StringSchemaExtensions
     /// </example>
     public static string JoinSchemaRow(this string[] fields, StringSchemaEntry entry, bool leftToFit = false)
     {
-        if (entry == null)
-            throw new ArgumentNullException(nameof(entry));
+        ArgumentNullException.ThrowIfNull(fields);
+        ArgumentNullException.ThrowIfNull(entry);
 
         return entry.Header
             + StringFixedExtensions.JoinFixedRowNoVerifyColumnWidths(fields, entry.Widths, entry.FillCharacter, leftToFit);

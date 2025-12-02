@@ -20,8 +20,7 @@ public static class TakeColumnHeadersExtensions
     public static IEnumerable<StringRowWrapper> TakeColumnHeaders(this IEnumerable<string[]> rowsOfFields,
         IEnumerable<string>? expectedColumnNames = null, bool enforceExpectedColumnNamesOrder = false)
     {
-        if (rowsOfFields == null)
-            throw new ArgumentNullException(nameof(rowsOfFields));
+        ArgumentNullException.ThrowIfNull(rowsOfFields);
 
         return TakeColumnHeadersIterator(rowsOfFields, expectedColumnNames, enforceExpectedColumnNamesOrder);
     }

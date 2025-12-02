@@ -18,19 +18,19 @@ public static partial class StringSchemaExtensions
     ///
     /// var split = "A123".SplitSchemaRow(schema);
     /// Console.WriteLine(split.Entry.Header);
-    /// 
+    ///
     /// foreach(StringFieldWrapper field in split.Result.Fields)
     ///     Console.WriteLine(field);
     ///
     /// split = "B123456".SplitSchemaRow(schema);
     /// Console.WriteLine(split.Entry.Header);
-    /// 
+    ///
     /// foreach(StringFieldWrapper field in split.Result.Fields)
     ///     Console.WriteLine(field);
     ///
     /// split = "CD123456789".SplitSchemaRow(schema);
     /// Console.WriteLine(split.Entry.Header);
-    /// 
+    ///
     /// foreach(StringFieldWrapper field in split.Result.Fields)
     ///     Console.WriteLine(field);
     /// </code>
@@ -50,11 +50,8 @@ public static partial class StringSchemaExtensions
     /// </example>
     public static StringSchemaSplitResult SplitSchemaRow(this string row, StringSchema schema)
     {
-        if (row == null)
-            throw new ArgumentNullException(nameof(row));
-
-        if (schema == null)
-            throw new ArgumentNullException(nameof(schema));
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(schema);
 
         var entry = schema.GetEntryForRow(row);
 

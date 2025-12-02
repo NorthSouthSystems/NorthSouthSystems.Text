@@ -12,8 +12,7 @@ public sealed class StringRowWrapperFactory
 {
     public StringRowWrapperFactory(string[] columnNames)
     {
-        if (columnNames == null)
-            throw new ArgumentNullException(nameof(columnNames));
+        ArgumentNullException.ThrowIfNull(columnNames);
 
         string[] duplicateColumnNames = columnNames.GroupBy(columnName => columnName)
             .Where(group => group.Count() > 1)

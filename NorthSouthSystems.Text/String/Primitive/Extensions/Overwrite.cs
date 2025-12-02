@@ -28,8 +28,7 @@ public static partial class StringExtensions
     /// </example>
     public static string Overwrite(this string value, int startIndex, string newValue)
     {
-        if (value == null)
-            throw new ArgumentNullException(nameof(value));
+        ArgumentNullException.ThrowIfNull(value);
 
         if (startIndex < 0)
             throw new ArgumentOutOfRangeException(nameof(startIndex), startIndex, "startIndex must be >= 0.");
@@ -37,8 +36,7 @@ public static partial class StringExtensions
         if (startIndex > value.Length)
             throw new ArgumentOutOfRangeException(nameof(startIndex), "startIndex must be <= value.Length.");
 
-        if (newValue == null)
-            throw new ArgumentNullException(nameof(newValue));
+        ArgumentNullException.ThrowIfNull(newValue);
 
         return startIndex == value.Length
             ? value + newValue

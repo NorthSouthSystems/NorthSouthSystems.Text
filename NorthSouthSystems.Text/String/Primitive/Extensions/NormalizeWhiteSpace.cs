@@ -29,8 +29,7 @@ public static partial class StringExtensions
     /// </example>
     public static IEnumerable<char> NormalizeWhiteSpace(this IEnumerable<char> chars, string respectNewLine)
     {
-        if (chars == null)
-            throw new ArgumentNullException(nameof(chars));
+        ArgumentNullException.ThrowIfNull(chars);
 
         if (!string.IsNullOrWhiteSpace(respectNewLine))
             throw new ArgumentException("Must only contain WhiteSpace chars.", nameof(respectNewLine));

@@ -6,8 +6,7 @@ public static partial class StringFixedExtensions
 {
     internal static void VerifyColumnWidths(int[] columnWidths)
     {
-        if (columnWidths == null)
-            throw new ArgumentNullException(nameof(columnWidths));
+        ArgumentNullException.ThrowIfNull(columnWidths);
 
         if (columnWidths.Length == 0)
             throw new ArgumentException("Length must be > 0", nameof(columnWidths));
@@ -18,8 +17,7 @@ public static partial class StringFixedExtensions
 
     internal static void VerifyCoalesceAndFitFields(string[] fields, int[] columnWidths, bool leftToFit)
     {
-        if (fields == null)
-            throw new ArgumentNullException(nameof(fields));
+        ArgumentNullException.ThrowIfNull(fields);
 
         if (fields.Length != columnWidths.Length)
             throw new ArgumentException("Number of fields must equal number of column widths.");

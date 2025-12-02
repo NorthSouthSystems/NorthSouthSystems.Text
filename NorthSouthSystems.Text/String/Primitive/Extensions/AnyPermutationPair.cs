@@ -13,11 +13,8 @@ public static partial class StringExtensions
 
     internal static bool AnyPermutationPair(IEnumerable<string> values, Func<string, string, bool> operation)
     {
-        if (values == null)
-            throw new ArgumentNullException(nameof(values));
-
-        if (operation == null)
-            throw new ArgumentNullException(nameof(operation));
+        ArgumentNullException.ThrowIfNull(values);
+        ArgumentNullException.ThrowIfNull(operation);
 
         string[] valuesLengthDescending = values.OrderByDescending(s => s.Length).ToArray();
 

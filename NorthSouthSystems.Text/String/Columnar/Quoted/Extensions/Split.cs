@@ -12,7 +12,7 @@ public static partial class StringQuotedExtensions
     /// <code>
     /// string row = "a,b,c";
     /// string[] fields = row.SplitQuotedRow(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
-    /// 
+    ///
     /// foreach(string field in fields);
     ///     Console.WriteLine(field);
     /// </code>
@@ -28,7 +28,7 @@ public static partial class StringQuotedExtensions
     ///     .ToSignals();
     /// string row = "'a,a',b,c";
     /// string[] fields = row.SplitQuotedRow(signals);
-    /// 
+    ///
     /// foreach(string field in fields);
     ///     Console.WriteLine(field);
     /// </code>
@@ -44,7 +44,7 @@ public static partial class StringQuotedExtensions
     ///     .ToSignals();
     /// string row = "a''a,b,c";
     /// string[] fields = row.SplitQuotedRow(signals);
-    /// 
+    ///
     /// foreach(string field in fields);
     ///     Console.WriteLine(field);
     /// </code>
@@ -55,11 +55,8 @@ public static partial class StringQuotedExtensions
     /// </example>
     public static string[] SplitQuotedRow(this IEnumerable<char> row, StringQuotedSignals signals)
     {
-        if (row == null)
-            throw new ArgumentNullException(nameof(row));
-
-        if (signals == null)
-            throw new ArgumentNullException(nameof(signals));
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(signals);
 
         string[]? fields = null;
 
@@ -85,11 +82,11 @@ public static partial class StringQuotedExtensions
     /// <code>
     /// string rows = "a,b,c" + Environment.NewLine + "d,e,f";
     /// var rowsFields = rows.SplitQuotedRows(StringQuotedSignals.CsvNewRowTolerantWindowsPrimaryRFC4180);
-    /// 
+    ///
     /// foreach(string[] rowFields in rowsFields)
     /// {
     ///     Console.WriteLine("Row");
-    ///     
+    ///
     ///     foreach(string field in rowFields)
     ///         Console.WriteLine(field);
     /// }
@@ -106,11 +103,8 @@ public static partial class StringQuotedExtensions
     /// </example>
     public static IEnumerable<string[]> SplitQuotedRows(this IEnumerable<char> rows, StringQuotedSignals signals)
     {
-        if (rows == null)
-            throw new ArgumentNullException(nameof(rows));
-
-        if (signals == null)
-            throw new ArgumentNullException(nameof(signals));
+        ArgumentNullException.ThrowIfNull(rows);
+        ArgumentNullException.ThrowIfNull(signals);
 
         return CreateSplitQuotedProcessor(signals).Process(rows);
     }

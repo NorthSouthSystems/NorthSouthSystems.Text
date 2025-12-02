@@ -28,8 +28,7 @@ public static partial class StringExtensions
     /// </example>
     public static IEnumerable<char> WhereIsInAnyCategory(this IEnumerable<char> chars, CharCategories categories)
     {
-        if (chars == null)
-            throw new ArgumentNullException(nameof(chars));
+        ArgumentNullException.ThrowIfNull(chars);
 
         return categories == CharCategories.All ? chars : chars.Where(c => c.IsInAnyCategory(categories));
     }
