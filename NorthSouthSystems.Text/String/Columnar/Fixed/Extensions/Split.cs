@@ -6,18 +6,19 @@ public static partial class StringFixedExtensions
     /// Splits a row (sequence of chars) into fields arranged in columns of fixed widths. The fillCharacter used to pad
     /// fields to fill their column's width are trimmed from the split results.
     /// </summary>
+    /// <param name="row">The row (sequence of chars) to be split.</param>
     /// <param name="columnWidths">The width of each column. E.g. The first field in the result will be found in a column the size of the first width in columnWidths.</param>
     /// <param name="fillCharacter">The character used to pad a field so that its width reaches its column's width. Trimmed from the split results. (default = ' ')</param>
     /// <example>
     /// <code>
     /// string row = "ABC";
     /// string[] fields = row.SplitFixedRow(new [] { 1, 1, 1 }, ' ');
-    /// 
+    ///
     /// foreach(string field in fields)
     ///     Console.WriteLine(field);
-    /// 
+    ///
     /// fields = row.SplitFixedRow(new [] { 1, 1, 1 }, '-');
-    /// 
+    ///
     /// foreach(string field in fields)
     ///     Console.WriteLine(field);
     /// </code>
@@ -31,12 +32,12 @@ public static partial class StringFixedExtensions
     /// <code>
     /// string row = "A-BC";
     /// string[] fields = row.SplitFixedRow(new [] { 2, 1, 1 }, ' ');
-    /// 
+    ///
     /// foreach(string field in fields)
     ///     Console.WriteLine(field);
-    /// 
+    ///
     /// fields = row.SplitFixedRow(new [] { 2, 1, 1 }, '-');
-    /// 
+    ///
     /// foreach(string field in fields)
     ///     Console.WriteLine(field);
     /// </code>
@@ -50,12 +51,12 @@ public static partial class StringFixedExtensions
     /// <code>
     /// string row = "A-B-C";
     /// string[] fields = row.SplitFixedRow(new [] { 2, 2, 1 }, ' ');
-    /// 
+    ///
     /// foreach(string field in fields)
     ///     Console.WriteLine(field);
-    /// 
+    ///
     /// fields = row.SplitFixedRow(new [] { 2, 2, 1 }, '-');
-    /// 
+    ///
     /// foreach(string field in fields)
     ///     Console.WriteLine(field);
     /// </code>
@@ -75,7 +76,7 @@ public static partial class StringFixedExtensions
 
         using var charEnumerator = row.GetEnumerator();
 
-        var fields = SplitFixedRowImplementation(charEnumerator, columnWidths, fillCharacter);
+        string[] fields = SplitFixedRowImplementation(charEnumerator, columnWidths, fillCharacter);
 
         if (fields.Length == 0)
             throw new ArgumentException("Empty row.", nameof(row));
@@ -94,11 +95,11 @@ public static partial class StringFixedExtensions
     /// <code>
     /// string rows = "ABCDEF";
     /// string[][] rowsFields = row.SplitFixedRepeating(new [] { 1, 1, 1 }, ' ');
-    /// 
+    ///
     /// foreach(string[] rowFields in rowsFields)
     /// {
     ///     Console.WriteLine("Row");
-    ///     
+    ///
     ///     foreach(string field in rowFields)
     ///         Console.WriteLine(field);
     /// }
@@ -115,11 +116,11 @@ public static partial class StringFixedExtensions
     /// <code>
     /// string rows = "A-BCD-EF";
     /// string[][] rowsFields = row.SplitFixedRepeating(new [] { 2, 1, 1 }, '-');
-    /// 
+    ///
     /// foreach(string[] rowFields in rowsFields)
     /// {
     ///     Console.WriteLine("Row");
-    ///     
+    ///
     ///     foreach(string field in rowFields)
     ///         Console.WriteLine(field);
     /// }
@@ -155,8 +156,7 @@ public static partial class StringFixedExtensions
 
             if (fields.Length > 0)
                 yield return fields;
-        }
-        while (fields.Length > 0);
+        } while (fields.Length > 0);
     }
 
     internal static string[] SplitFixedRowImplementation(IEnumerator<char> charEnumerator, int[] columnWidths, char fillCharacter)

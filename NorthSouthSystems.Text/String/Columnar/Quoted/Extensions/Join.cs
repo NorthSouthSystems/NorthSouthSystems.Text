@@ -25,6 +25,7 @@ public static partial class StringQuotedExtensions
     /// to occur within individual fields.  Such fields will be quoted (surrounded by Quote) to allow for this behavior. Instances
     /// of the Quote signal within fields will be escaped by doubling (Quote + Quote).
     /// </summary>
+    /// <param name="fields">The fields (strings) to be joined.</param>
     /// <param name="forceQuotes">
     /// Dictates whether to force every field to be quoted regardless of whether or not the field contains an instance
     /// of Delimiter or NewRow. (default = false)

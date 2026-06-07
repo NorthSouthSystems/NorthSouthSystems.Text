@@ -2,6 +2,9 @@
 
     <PropertyGroup>
         <Description>This .NET library contains string utilities including fluent APIs for splitting and joining quoted delimited text (e.g. CSV used by Microsoft Excel) and fixed-width positional text.</Description>
+        <!-- TODO: CS1573 - Fully document all params for documented methods. -->
+        <!-- TODO: CS1591 - Fully document all publicly visible members. -->
+        <NoWarn>CS1573,CS1591</NoWarn>
     </PropertyGroup>
 
 </Project>

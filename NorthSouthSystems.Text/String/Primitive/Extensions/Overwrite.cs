@@ -6,10 +6,10 @@ public static partial class StringExtensions
     /// Overwrites characters in a string starting at a provided index.
     /// </summary>
     /// <param name="value">The string within which to overwrite characters.</param>
-    /// <param name="startIndex">The index within <paramref name="value"> at which to begin overwriting characters.
-    /// Overwriting is also allowed when <paramref name="startIndex"> equals the length of <paramref name="value">.</param>
+    /// <param name="startIndex">The index within <paramref name="value"/> at which to begin overwriting characters.
+    /// Overwriting is also allowed when <paramref name="startIndex"/> equals the length of <paramref name="value"/>.</param>
     /// <param name="newValue">The string to be used for overwriting characters. Overwriting will continue
-    /// past the length of <paramref name="value"> when applicable.</param>
+    /// past the length of <paramref name="value"/> when applicable.</param>
     /// <returns>The new string resulting from the overwrite.</returns>
     /// <example>
     /// <code>

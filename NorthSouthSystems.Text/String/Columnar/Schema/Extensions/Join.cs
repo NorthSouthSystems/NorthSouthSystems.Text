@@ -11,6 +11,7 @@ public static partial class StringSchemaExtensions
     /// <summary>
     /// Joins the set of string fields using the StringSchemaEntry for instructions.
     /// </summary>
+    /// <param name="fields">The fields (strings) to be joined.</param>
     /// <param name="leftToFit">Determines whether to Left a field to fit its column's width or throw an exception when a field exceeds the allowable column width. (default = false)</param>
     /// <example>
     /// <code>

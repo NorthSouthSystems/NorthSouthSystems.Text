@@ -3,8 +3,8 @@
 public static class TakeColumnHeadersExtensions
 {
     /// <summary>
-    /// Provides an extension method for converting rows of fields (IEnumerable<string[]>) to
-    /// StringRowWrappers (IEnumerable<StringRowWrapper) by taking the first row to construct
+    /// Provides an extension method for converting rows of fields (IEnumerable&lt;string[]&gt;) to
+    /// StringRowWrappers (IEnumerable&lt;StringRowWrapper&gt;) by taking the first row to construct
     /// a StringRowWrapperFactory used to wrap subsequent rows. This is intended to be used fluently
     /// after a call to any of the Split*Rows extensions methods.
     /// </summary>
@@ -37,7 +37,7 @@ public static class TakeColumnHeadersExtensions
                 if (expectedColumnNames?.Any() ?? false)
                     ThrowIfIncorrectColumnNames(rowFields, expectedColumnNames, enforceExpectedColumnNamesOrder);
 
-                rowWrapperFactory = new StringRowWrapperFactory(rowFields);
+                rowWrapperFactory = new(rowFields);
             }
             else
                 yield return rowWrapperFactory.Wrap(rowFields);
